@@ -7,11 +7,13 @@
 #include <filesystem>
 #include <fstream>
 #include <format>
+#include <set>
 
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <arpa/inet.h>
 
 static const std::unordered_map<std::string, std::string> mime_types = {
     // Web Essentials (Updated)
@@ -107,11 +109,86 @@ std::string string_format(const std::string& format, Args... args) {
     return std::string(buf.data(), buf.data() + size - 1);
 }
 
-// FIXME: also from gemini:
-std::string read_binary_to_string(const std::string& path) {
-    // Open in binary mode!
+std::set<char> chars_to_escape = {
+    '!',  // history expansion
+    '"',  // shell syntax
+    '#',  // comment start / zsh wildcards
+    '$',  // shell syntax
+    '&',  // shell syntax
+    '\'', // shell syntax (escaped for C++)
+    '(',  // ksh extended globs / zsh wildcards
+    ')',  // shell syntax
+    '*',  // sh wildcard
+    ',',  // brace expansion
+    ';',  // shell syntax
+    '<',  // shell syntax
+    '=',  // assignment / zsh PATH lookup
+    '>',  // shell syntax
+    '?',  // sh wildcard
+    '[',  // sh wildcard
+    '\\', // shell syntax (escaped backslash for C++)
+    ']',  // wildcard/globbing
+    '^',  // history expansion / zsh wildcard
+    '`',  // shell syntax
+    '{',  // brace expansion
+    '|',  // shell syntax
+    '}',  // brace expansion / zsh logic
+    '~'   // home directory expansion
+};
+
+unsigned long long get_binary_size(const std::string unescaped_path) {
+    auto path = unescaped_path;
+    std::string target = "%20";
+    std::string replacement = " ";
+    size_t pos = 0;
+
+    // Search for the target substring starting from 'pos'
+    while ((pos = path.find(target, pos)) != std::string::npos) {
+        // replace(starting_index, length_to_remove, new_pathing)
+        path.replace(pos, target.length(), replacement);
+        
+        // Move pos forward by the length of the replacement 
+        // to avoid infinite loops or re-scanning
+        pos += replacement.length();
+    }
     std::ifstream file(path, std::ios::binary);
-    if (!file) return "";
+    if (!file) {
+        std::cout << "ERROR!: " << path << std::endl;
+        return 0;
+    }
+
+    // 1. Move the file pointer to the end of the file
+    file.seekg(0, std::ios::end);
+
+    // 2. Get the current position (which is the total size in bytes)
+    std::streampos size = file.tellg();
+
+    // 3. Close the file and return the size as a string
+    file.close();
+    return size;
+}
+// FIXME: also from gemini:
+std::string read_binary_to_string(const std::string unescaped_path) {
+    // Open in binary mode!
+    auto path = unescaped_path;
+    std::string target = "%20";
+    std::string replacement = " ";
+    size_t pos = 0;
+
+    // Search for the target substring starting from 'pos'
+    while ((pos = path.find(target, pos)) != std::string::npos) {
+        // replace(starting_index, length_to_remove, new_pathing)
+        path.replace(pos, target.length(), replacement);
+        
+        // Move pos forward by the length of the replacement 
+        // to avoid infinite loops or re-scanning
+        pos += replacement.length();
+    }
+    std::ifstream file(path, std::ios::binary);
+    if (!file) {
+        std::cout << "ERROR!: " << path << std::endl;
+        return "Error";
+    }
 
     // Read the entire file into the string
     return std::string((std::istreambuf_iterator<char>(file)),
@@ -136,21 +213,36 @@ std::string read_entire_file(std::string path) {
     return result;
 }
 
-const auto buttonTemplate = "<a href=\"./%s\">%s</a><br/>";
-const auto imageTemplate = "<image class=\"thumbnail-image\" src=\"./%s\"/><br/>";
-const auto videoTemplate = "<a href=\"./%s\"><image class=\"thumbnail-image\" src=\"./%s\"/></a><br/>";
+const auto buttonTemplate = 
+            "<div class=\"item\">"
+                "<a class=\"item-name\" href=\"%s\">%s</a>"
+            "</div>";
+const auto imageTemplate =
+            "<div class=\"item\">"
+                "<img class=\"item-thumbnail\" src=\"%s\">"
+                "<a class=\"item-name\" href=\"%s\">%s</a>"
+            "</div>";
+const auto videoTemplate =
+            "<div class=\"item\">"
+                "<video width=\"100%\" height=\"95%\" class=\"item-thumbnail\" src=\"%s\" controls loop>brrp</video>"
+                "<a class=\"item-name\" href=\"%s\">%s</a>"
+            "</div>";
 const auto ffmpegCommand = "ffmpeg -i %s -ss 00:00:10 -vframes 1 thumbnail-%s.jpg";
 std::string list_contents(std::string current_address, std::string path) {
     std::string output = "";
 	for (const auto & entry : std::filesystem::directory_iterator(path)){
 		try {
 			if (!entry.is_regular_file() && !entry.is_directory()) continue;
-            auto filepath = std::string(entry.path().c_str());
-            auto filename = current_address + "/" + std::string(entry.path().filename().c_str());
+            if (current_address.back() != '/')
+                current_address += '/';
+            auto filename = std::string(entry.path().filename());
+            auto filepath = current_address + filename;
             if (get_mime_type(filename).starts_with("image")) {
-                output += string_format(imageTemplate, filename.c_str());
+                output += string_format(imageTemplate, filepath.c_str(), filepath.c_str(), filename.c_str());
+            } else if (get_mime_type(filename).starts_with("video") && entry.file_size() < 5e+7) {
+                output += string_format(videoTemplate, filepath.c_str(), filepath.c_str(), filename.c_str());
             } else {
-                output += string_format(buttonTemplate, filename.c_str(), filepath.c_str());
+                output += string_format(buttonTemplate, filepath.c_str(), filename.c_str());
             }
 		} catch (std::exception& e) {
             std::cout << "Error: " << entry.path().c_str() << e.what() << std::endl;
@@ -279,23 +371,41 @@ public:
             // parse message
             HttpMessage httpmsg(message);
             std::string lscontent;
+
             std::string mimetype = get_mime_type(httpmsg.address);
-            if (std::filesystem::is_directory(path + httpmsg.address))
+            // send different things for different request mime type
+            auto is_dir = std::filesystem::is_directory(path + httpmsg.address);
+            if (is_dir) {
                 lscontent = list_contents(httpmsg.address, path + httpmsg.address);
-            else if (mimetype.starts_with("text"))
+                mimetype = "text/html";
+            } else if (mimetype.starts_with("text")) {
                 lscontent = read_entire_file(path + httpmsg.address);
-            else
+            } else {
                 lscontent = read_binary_to_string(path+httpmsg.address);
+            }
+
             std::string content = lscontent;
             if (mimetype == "text/html")
-                content = string_format(this->htmltemplate, lscontent.c_str());
+                content = string_format(this->htmltemplate, (path+httpmsg.address).c_str(), lscontent.c_str());
             std::string ok_message = HttpMessage::OK(content, mimetype);
+
+
             send(client_socket, ok_message.c_str(), ok_message.length(), 0);
         }
     }
     void start() {
         while (true) {
-            int client_socket = accept(socketfd, (struct sockaddr*)&server_address, &address_length);
+            struct sockaddr_in clientAddr;
+            socklen_t clientLen = sizeof(clientAddr);
+            int client_socket = accept(socketfd, (struct sockaddr*)&clientAddr, &clientLen);
+            char clientIp[INET_ADDRSTRLEN];
+            inet_ntop(AF_INET, &clientAddr.sin_addr, clientIp, INET_ADDRSTRLEN);
+
+            // Simple check: Does the IP start with "192.168."?
+            std::string ipStr(clientIp);
+            if (!ipStr.starts_with("10.42.") && ipStr != "127.0.0.1") {
+                close(client_socket); // Reject connection
+            }
             if (client_socket < 0) {
                 std::cout << "Error: serveClient->accept" << std::endl;
                 return;
