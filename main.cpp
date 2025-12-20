@@ -167,10 +167,8 @@ unsigned long long get_binary_size(const std::string unescaped_path) {
     file.close();
     return size;
 }
-// FIXME: also from gemini:
-std::string read_binary_to_string(const std::string unescaped_path) {
-    // Open in binary mode!
-    auto path = unescaped_path;
+
+std::string path_escape(std::string path) {
     std::string target = "%20";
     std::string replacement = " ";
     size_t pos = 0;
@@ -184,15 +182,26 @@ std::string read_binary_to_string(const std::string unescaped_path) {
         // to avoid infinite loops or re-scanning
         pos += replacement.length();
     }
+    return path;
+}
+
+// FIXME: also from gemini:
+std::string read_binary_to_string(const std::string unescaped_path, unsigned long long range_start, unsigned long long range_end) {
+    // Open in binary mode!
+    if (range_end < range_start) return "error: range";
+    auto path = path_escape(unescaped_path);
+
     std::ifstream file(path, std::ios::binary);
     if (!file) {
         std::cout << "ERROR!: " << path << std::endl;
         return "Error";
     }
-
-    // Read the entire file into the string
-    return std::string((std::istreambuf_iterator<char>(file)),
-                        std::istreambuf_iterator<char>());
+    file.seekg(range_start);
+    std::string strbuff(range_end-range_start, '\0');
+    std::cout << "range_start: " << range_start << ", range_end: " << range_end << std::endl;
+    if (!file.read(&strbuff[0], range_end-range_start))
+        return "error: read";
+    return strbuff;
 }
 
 std::string read_entire_file(std::string path) {
@@ -302,8 +311,15 @@ public:
             s = s.substr(new_line_pos+1);
         }
     }
-    static std::string OK(std::string content = "Hello World!\n", std::string contentType="text/html") {
-        return "HTTP/1.1 200 OK\nContent-Length: "+std::to_string(content.length())+"\nContent-Type: "+contentType+"\n\n"+content;
+    static std::string respond(std::string content = "Hello World!\n", std::string contentType="text/html", int status=200, uintmax_t range_start=0, uintmax_t range_end=0, uintmax_t filesize=0) {
+        std::string content_range = "";
+        if (range_end != 0) {
+            content_range = "\nContent-Range: bytes ";
+            content_range += std::to_string(range_start)+"-"+std::to_string(range_end)+"/"+std::to_string(filesize);
+            
+        }
+        return "HTTP/1.1 "+std::to_string(status)+" OK\nAccept-Ranges: bytes"+content_range+
+            "\nContent-Length: "+std::to_string(content.length())+"\nContent-Type: "+contentType+"\n\n"+content;
     }
     void print() {
         std::cout << "Printing Message" << std::endl;
@@ -370,24 +386,50 @@ public:
             std::string message(message_buffer);
             // parse message
             HttpMessage httpmsg(message);
+            if (httpmsg.address.ends_with("favicon.ico")) return;
+            auto is_dir = std::filesystem::is_directory(path + httpmsg.address);
+            uintmax_t filesize = 0;
+            uintmax_t range_start = 0, range_end = 0;
+            if (!is_dir) {
+                filesize = std::filesystem::file_size(path_escape(path + httpmsg.address));
+                range_end = filesize;
+                for (auto [key, val] : httpmsg.headers) {
+                    if (key == "Range") {
+                        auto important_stuff = val.substr(val.find('=')+1);
+                        auto separtorpos = important_stuff.find('-');
+                        auto rstart = important_stuff.substr(0, separtorpos);
+                        std::cout << "Range parsing" << std::endl;
+                        std::cout << important_stuff << std::endl;
+                        std::cout << rstart << std::endl;
+                        range_start = std::stoi(rstart);
+                        if (val.size()-1 > separtorpos+1) {
+                            auto rend = important_stuff.substr(separtorpos+1);
+                        }
+                    }
+                }
+                const uintmax_t file_limit = 50000000;
+                if (range_end-range_start > file_limit) {
+                    range_end = range_start + file_limit;
+                }
+            }
+            std::cout << "filesize: " << filesize << std::endl;
             std::string lscontent;
 
             std::string mimetype = get_mime_type(httpmsg.address);
             // send different things for different request mime type
-            auto is_dir = std::filesystem::is_directory(path + httpmsg.address);
             if (is_dir) {
                 lscontent = list_contents(httpmsg.address, path + httpmsg.address);
                 mimetype = "text/html";
             } else if (mimetype.starts_with("text")) {
-                lscontent = read_entire_file(path + httpmsg.address);
+                lscontent = read_binary_to_string(path + httpmsg.address, range_start, range_end);
             } else {
-                lscontent = read_binary_to_string(path+httpmsg.address);
+                lscontent = read_binary_to_string(path+httpmsg.address, range_start, range_end);
             }
 
             std::string content = lscontent;
             if (mimetype == "text/html")
                 content = string_format(this->htmltemplate, (path+httpmsg.address).c_str(), lscontent.c_str());
-            std::string ok_message = HttpMessage::OK(content, mimetype);
+            std::string ok_message = HttpMessage::respond(content, mimetype, range_end ? 206 : 200, range_start, range_end, filesize);
 
 
             send(client_socket, ok_message.c_str(), ok_message.length(), 0);
