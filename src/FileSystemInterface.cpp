@@ -1,0 +1,124 @@
+#include "LookupTables.hpp"
+
+std::string get_mime_type(std::string name) {
+    auto dotpos = name.rfind('.');
+    if (dotpos == std::string::npos)
+        return "text/html";
+    std::string ext = name.substr(dotpos+1);
+    if (mime_types.find(ext) == mime_types.end()) return "text/plain";
+    return mime_types.at(ext);
+}
+
+std::string string_format(const std::string& format) {
+    return format;
+}
+
+template<typename T, typename... Args>
+std::string string_format(const std::string& format, T one_arg, Args... args) {
+    auto format_pos = format.find("{}");
+    if (format_pos == std::string::npos) return format;
+    std::string new_format = format.substr(0, format_pos) + one_arg + format.substr(format_pos+2);
+    return string_format(new_format, args...);;
+}
+
+std::string html_decode(std::string path) {
+    size_t pos = 0;
+    while ((pos = path.find('%', pos)) != std::string::npos) {
+        // FIXME: takes 2 char encoded string into consideration
+        path.replace(pos, 3, HtmlEncodeTable.at(path.substr(pos, 3)));
+    }
+    return path;
+}
+
+unsigned long long get_binary_size(const std::string unescaped_path) {
+    auto path = html_decode(unescaped_path);
+    std::ifstream file(path, std::ios::binary);
+    if (!file) {
+        std::cout << "ERROR!: " << path << std::endl;
+        return 0;
+    }
+
+    // 1. Move the file pointer to the end of the file
+    file.seekg(0, std::ios::end);
+
+    // 2. Get the current position (which is the total size in bytes)
+    std::streampos size = file.tellg();
+
+    // 3. Close the file and return the size as a string
+    file.close();
+    return size;
+}
+
+// FIXME: also from gemini:
+std::string read_binary_to_string(const std::string unescaped_path, unsigned long long range_start, unsigned long long range_end) {
+    // Open in binary mode!
+    if (range_end < range_start) return "error: range";
+    auto path = html_decode(unescaped_path);
+
+    std::ifstream file(path, std::ios::binary);
+    if (!file) {
+        std::cout << "ERROR!: " << path << std::endl;
+        return "Error";
+    }
+    file.seekg(range_start);
+    std::string strbuff(range_end-range_start, '\0');
+    if (!file.read(&strbuff[0], range_end-range_start))
+        return "error: read";
+    return strbuff;
+}
+
+std::string read_entire_file(std::string path) {
+    FILE* f = fopen(path.c_str(), "rb");
+    if (!f) {
+        std::cout << "Error: File not found: " << path << std::endl;
+        return "";
+    }
+    fseek(f, 0, SEEK_END);
+    long length = ftell(f);
+    rewind(f);
+    char *buff = (char*)malloc(length*sizeof(char)+1);
+    fread(buff, sizeof(char), length, f);
+    buff[length] = '\0';
+    fclose(f);
+    std::string result = buff;
+    free(buff);
+    return result;
+}
+
+const auto buttonTemplate = 
+            "<div class=\"item\">"
+                "<a class=\"item-name\" href=\"{}\">{}</a>"
+            "</div>";
+const auto imageTemplate =
+            "<div class=\"item\">"
+                "<img class=\"item-thumbnail\" src=\"{}\">"
+                "<a class=\"item-name\" href=\"{}\">{}</a>"
+            "</div>";
+const auto videoTemplate =
+            "<div class=\"item\">"
+                "<video width=\"100%\" height=\"95%\" class=\"item-thumbnail\" src=\"{}\" controls loop>brrp</video>"
+                "<a class=\"item-name\" href=\"{}\">{}</a>"
+            "</div>";
+const auto ffmpegCommand = "ffmpeg -i {} -ss 00:00:10 -vframes 1 thumbnail-{}.jpg";
+std::string list_contents(std::string current_address, std::string path) {
+    std::string output = "";
+	for (const auto & entry : std::filesystem::directory_iterator(path)){
+		try {
+			if (!entry.is_regular_file() && !entry.is_directory()) continue;
+            if (current_address.back() != '/')
+                current_address += '/';
+            auto filename = std::string(entry.path().filename());
+            auto filepath = current_address + filename;
+            if (get_mime_type(filename).starts_with("image")) {
+                output += string_format(imageTemplate, filepath, filepath, filename);
+            } else if (get_mime_type(filename).starts_with("video") && entry.file_size() < 5e+7) {
+                output += string_format(videoTemplate, filepath, filepath, filename);
+            } else {
+                output += string_format(buttonTemplate, filepath, filename);
+            }
+		} catch (std::exception& e) {
+            std::cout << "Error: " << entry.path().c_str() << e.what() << std::endl;
+		}
+	}
+    return output;
+}
