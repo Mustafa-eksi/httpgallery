@@ -30,30 +30,11 @@ std::string html_decode(std::string path) {
     return path;
 }
 
-unsigned long long get_binary_size(const std::string unescaped_path) {
-    auto path = html_decode(unescaped_path);
-    std::ifstream file(path, std::ios::binary);
-    if (!file) {
-        std::cout << "ERROR!: " << path << std::endl;
-        return 0;
-    }
-
-    // 1. Move the file pointer to the end of the file
-    file.seekg(0, std::ios::end);
-
-    // 2. Get the current position (which is the total size in bytes)
-    std::streampos size = file.tellg();
-
-    // 3. Close the file and return the size as a string
-    file.close();
-    return size;
-}
-
-// FIXME: also from gemini:
-std::string read_binary_to_string(const std::string unescaped_path, unsigned long long range_start, unsigned long long range_end) {
-    // Open in binary mode!
+std::string read_binary_to_string(const std::string unescaped_path,
+                                  uintmax_t range_start=0, uintmax_t range_end=0) {
     if (range_end < range_start) return "error: range";
     auto path = html_decode(unescaped_path);
+    if (range_end == 0) range_end = std::filesystem::file_size(path);
 
     std::ifstream file(path, std::ios::binary);
     if (!file) {
