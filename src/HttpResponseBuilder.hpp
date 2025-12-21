@@ -13,5 +13,6 @@ public:
     HttpResponseBuilder ContentLength(uintmax_t content_length);
     HttpResponseBuilder ContentType(std::string mime_type);
     HttpResponseBuilder Content(std::string content);
+    HttpResponseBuilder SetHeader(std::string header, std::string value);
     std::string build();
 };

@@ -1,1 +1,7 @@
 main
+*.gcda
+test/out/
+*.gcov
+*.gcno
+test/Http-getRange
+*.info
