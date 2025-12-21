@@ -36,6 +36,11 @@ HttpResponseBuilder HttpResponseBuilder::Content(std::string new_content) {
     return *this;
 }
 
+HttpResponseBuilder HttpResponseBuilder::SetHeader(std::string header, std::string value) {
+    this->headers[header] = value;
+    return *this;
+}
+
 std::string HttpResponseBuilder::build() {
     std::string response = "";
     response += protocol_version + " " + std::to_string(status) + " OK\n";

@@ -6,6 +6,17 @@ HttpMessageType to_http_message_type(std::string s) {
     return INVALID;
 }
 
+std::string html_decode(std::string path) {
+    size_t pos = 0;
+    while ((pos = path.find('%', pos)) != std::string::npos) {
+        // FIXME: takes 2 char encoded string into consideration
+        path.replace(pos, 3, HtmlEncodeTable.at(path.substr(pos, 3)));
+    }
+    return path;
+}
+
+HttpMessage::HttpMessage() {}
+
 HttpMessage::HttpMessage(std::string message) {
     std::string s = message;
     std::string line = s;
@@ -20,7 +31,7 @@ HttpMessage::HttpMessage(std::string message) {
     }
 
     if (line.find(" ") != std::string::npos) {
-        this->address = line.substr(0, line.find(" "));
+        this->address = html_decode(line.substr(0, line.find(" ")));
         line = line.substr(line.find(" ")+1);        
     }
     this->protocol_version = line;
@@ -49,10 +60,12 @@ std::optional<std::pair<uintmax_t, uintmax_t>> HttpMessage::getRange(uintmax_t f
     // FIXME: Make this work for multiple ranges
     // Range: <unit>=<range-start>-<range-end>
     std::string header_val = headers["Range"];
-    std::string units = header_val.substr(0, header_val.find('='));
+    auto unit_sep = header_val.find('=');
+    if (unit_sep == std::string::npos) return std::nullopt;
+    std::string units = header_val.substr(0, unit_sep);
     // currently only unit type that is specified in the standards is bytes
     if (units != "bytes") return std::nullopt;
-    std::string after_units = header_val.substr(+1);
+    std::string after_units = header_val.substr(unit_sep+1);
 
     uintmax_t range_start=0, range_end=0;
     auto separator_pos = after_units.find('-');
@@ -96,20 +109,18 @@ std::optional<std::pair<uintmax_t, uintmax_t>> HttpMessage::getRange(uintmax_t f
             return std::nullopt;
         }
     }
-    return std::make_pair(range_start, range_end);
-}
-
-std::string HttpMessage::respond(std::string content, std::string contentType,
-                                 int status, uintmax_t range_start,
-                                 uintmax_t range_end, uintmax_t filesize) {
-    std::string content_range = "";
-    if (range_end != 0) {
-        content_range = "\nContent-Range: bytes ";
-        content_range += std::to_string(range_start)+"-"+std::to_string(range_end)+"/"+std::to_string(filesize);
-        
+    if (range_start > range_end) {
+        // This should've actually be a 416 status response but imgur send the
+        // full file with 200 instead. So...
+        range_start = 0;
+        range_end = full_size;
     }
-    return "HTTP/1.1 "+std::to_string(status)+" OK\nAccept-Ranges: bytes"+content_range+
-        "\nContent-Length: "+std::to_string(content.length())+"\nContent-Type: "+contentType+"\n\n"+content;
+    if (range_end-range_start > full_size || range_start >= full_size)
+        return std::nullopt;
+    if (range_end > full_size) {
+        range_end = full_size;
+    }
+    return std::make_pair(range_start, range_end);
 }
 
 void HttpMessage::print() {

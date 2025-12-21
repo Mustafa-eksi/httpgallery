@@ -21,19 +21,9 @@ std::string string_format(const std::string& format, T one_arg, Args... args) {
     return string_format(new_format, args...);;
 }
 
-std::string html_decode(std::string path) {
-    size_t pos = 0;
-    while ((pos = path.find('%', pos)) != std::string::npos) {
-        // FIXME: takes 2 char encoded string into consideration
-        path.replace(pos, 3, HtmlEncodeTable.at(path.substr(pos, 3)));
-    }
-    return path;
-}
-
-std::string read_binary_to_string(const std::string unescaped_path,
+std::string read_binary_to_string(const std::string path,
                                   uintmax_t range_start=0, uintmax_t range_end=0) {
     if (range_end < range_start) return "error: range";
-    auto path = html_decode(unescaped_path);
     if (range_end == 0) range_end = std::filesystem::file_size(path);
 
     std::ifstream file(path, std::ios::binary);

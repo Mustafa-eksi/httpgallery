@@ -1,3 +1,4 @@
+#pragma once
 // https://www.w3schools.com/tags/ref_urlencode.ASP
 static const std::unordered_map<std::string, std::string> HtmlEncodeTable = {
     { "%20",  " " },
