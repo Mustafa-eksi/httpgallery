@@ -41,7 +41,67 @@ HttpMessage::HttpMessage(std::string message) {
         s = s.substr(new_line_pos+1);
     }
 }
-std::string HttpMessage::respond(std::string content, std::string contentType, int status, uintmax_t range_start, uintmax_t range_end, uintmax_t filesize) {
+
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Range
+std::optional<std::pair<uintmax_t, uintmax_t>> HttpMessage::getRange(uintmax_t full_size) {
+    if (!headers.contains("Range")) return std::nullopt;
+    // Example structure (note that there are a few more possibilities)
+    // FIXME: Make this work for multiple ranges
+    // Range: <unit>=<range-start>-<range-end>
+    std::string header_val = headers["Range"];
+    std::string units = header_val.substr(0, header_val.find('='));
+    // currently only unit type that is specified in the standards is bytes
+    if (units != "bytes") return std::nullopt;
+    std::string after_units = header_val.substr(+1);
+
+    uintmax_t range_start=0, range_end=0;
+    auto separator_pos = after_units.find('-');
+    if (separator_pos == std::string::npos) {
+        std::cout << "Error: html request not fits the standards "
+            << after_units << std::endl;
+        return std::nullopt;
+    }
+
+    if (separator_pos == 0) {
+        range_start = 0;
+        // TODO: take last <range-end> bytes.
+    } else {
+        // TODO: factor this out.
+        std::string range_start_str = after_units.substr(0, separator_pos);
+        try {
+            range_start = std::stoi(range_start_str);
+        } catch (std::invalid_argument& e) {
+            std::cout << "Error: HttpMessage::getRange() Stoi Invalid Argument: "
+                << range_start_str << std::endl;
+            return std::nullopt;
+        } catch (std::out_of_range& e) {
+            std::cout << "Error: HttpMessage::getRange() Stoi Out of Range: "
+                << range_start_str << std::endl;
+            return std::nullopt;
+        }
+    }
+    if (separator_pos == after_units.length()-1) {
+        range_end = full_size;
+    } else {
+        std::string range_end_str = after_units.substr(separator_pos+1);
+        try {
+            range_end = std::stoi(range_end_str);
+        } catch (std::invalid_argument& e) {
+            std::cout << "Error: HttpMessage::getRange() Stoi Invalid Argument: "
+                << range_end_str << std::endl;
+            return std::nullopt;
+        } catch (std::out_of_range& e) {
+            std::cout << "Error: HttpMessage::getRange() Stoi Out of Range: "
+                << range_end_str << std::endl;
+            return std::nullopt;
+        }
+    }
+    return std::make_pair(range_start, range_end);
+}
+
+std::string HttpMessage::respond(std::string content, std::string contentType,
+                                 int status, uintmax_t range_start,
+                                 uintmax_t range_end, uintmax_t filesize) {
     std::string content_range = "";
     if (range_end != 0) {
         content_range = "\nContent-Range: bytes ";
