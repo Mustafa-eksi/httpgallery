@@ -15,29 +15,33 @@ std::string html_decode(std::string path) {
     return path;
 }
 
+std::string trim_left(std::string s) {
+    while(s.length() > 0 && s.front() == ' ') s = s.substr(1);
+    return s;
+}
+
 HttpMessage::HttpMessage() {}
 
 HttpMessage::HttpMessage(std::string message) {
+    this->type = INVALID;
     std::string s = message;
     std::string line = s;
     size_t new_line = message.find('\n');
-    if (new_line != std::string::npos)
-        line = line.substr(0, new_line);
+    if (new_line == std::string::npos) return;
+    line = line.substr(0, new_line);
     
-    if (line.find(" ") != std::string::npos) {
-        std::string typestr = line.substr(0, line.find(" "));
-        this->type = to_http_message_type(typestr);
-        line = line.substr(line.find(" ")+1);        
-    }
+    if (line.find(" ") == std::string::npos) return;
+    std::string typestr = line.substr(0, line.find(" "));
+    this->type = to_http_message_type(typestr);
+    line = line.substr(line.find(" ")+1);
+    this->address = html_decode(line.substr(0, line.find(" ")));
 
-    if (line.find(" ") != std::string::npos) {
-        this->address = html_decode(line.substr(0, line.find(" ")));
-        line = line.substr(line.find(" ")+1);        
-    }
+    if (line.find(" ") == std::string::npos) return;
+    line = line.substr(line.find(" ")+1);        
     this->protocol_version = line;
     s = s.substr(new_line+1);
 
-    while (s.find('\n') != std::string::npos) {
+    while (s.length() != 0) {
         line = s;
         size_t new_line_pos = s.find('\n');
         if (new_line_pos != std::string::npos)
@@ -45,8 +49,10 @@ HttpMessage::HttpMessage(std::string message) {
         else
             new_line_pos = line.length()-1;
         size_t delim = line.find(":");
+
         if (delim != std::string::npos)
-            this->headers[line.substr(0, delim)] = line.substr(delim+1);
+            this->headers[line.substr(0, delim)] = trim_left(line.substr(delim+1));
+
         if (new_line_pos+1 > s.length()-1) break;
         //std::cout << "\"" << s <<  "\"" << std::endl;
         s = s.substr(new_line_pos+1);
