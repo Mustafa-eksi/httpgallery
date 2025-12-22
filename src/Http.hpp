@@ -6,6 +6,7 @@ typedef enum HttpMessageType {
 
 HttpMessageType to_http_message_type(std::string s);
 std::string html_decode(std::string path);
+std::string trim_left(std::string s);
 
 class HttpMessage {
 public:
