@@ -23,7 +23,7 @@
 int main(int argc, char** argv) {
     std::string path = ".";
     if (argc > 1) path = std::string(argv[1]);
-    Server *server = new Server(path); 
+    Server *server = new Server(path, 8000, 100); 
     server->start();
     return 0;
 }
