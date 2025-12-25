@@ -45,6 +45,10 @@ std::string Server::generateContent(HttpMessage msg) {
     if (path.back() == '/') path = path.substr(0, path.length()-1);
     auto filepath = path+msg.address;
     if (pt == FileDataPage) {
+        if (!std::filesystem::exists(filepath))
+            return HttpResponseBuilder()
+                .Status(404)
+                .build();
         uintmax_t filesize = std::filesystem::file_size(filepath);
         auto range_opt = msg.getRange(filesize);
         if (!range_opt.has_value()) {

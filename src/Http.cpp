@@ -1,4 +1,5 @@
 #include "Http.hpp"
+#include <stdio.h>
 
 HttpMessageType to_http_message_type(std::string s) {
     if(s == "GET") return GET;
@@ -6,11 +7,37 @@ HttpMessageType to_http_message_type(std::string s) {
     return INVALID;
 }
 
+// FIXME: write testing for it
 std::string html_decode(std::string path) {
     size_t pos = 0;
     while ((pos = path.find('%', pos)) != std::string::npos) {
-        // FIXME: takes 2 char encoded string into consideration
-        path.replace(pos, 3, HtmlEncodeTable.at(path.substr(pos, 3)));
+        if (pos > path.length()-3) {
+            pos++;
+            continue;
+        }
+        std::string key = path.substr(pos, 3);
+        if (!HtmlEncodeTable.contains(key)) {
+            // try 2
+            if (pos > path.length()-6) {
+                pos++;
+                continue;
+            }
+            key = path.substr(pos, 6);
+        }
+        if (!HtmlEncodeTable.contains(key)) {
+            // try 3
+            if (pos > path.length()-9) {
+                pos++;
+                continue;
+            }
+            key = path.substr(pos, 9);
+        }
+        if (!HtmlEncodeTable.contains(key)) {
+            // give up
+            pos++;
+            continue;
+        }
+        path.replace(pos, 3, HtmlEncodeTable.at(key));
     }
     return path;
 }
@@ -26,7 +53,7 @@ HttpMessage::HttpMessage(std::string message) {
     this->type = INVALID;
     std::string s = message;
     std::string line = s;
-    size_t new_line = message.find('\n');
+    size_t new_line = message.find('\r');
     if (new_line == std::string::npos) return;
     line = line.substr(0, new_line);
     
@@ -39,11 +66,11 @@ HttpMessage::HttpMessage(std::string message) {
     if (line.find(" ") == std::string::npos) return;
     line = line.substr(line.find(" ")+1);        
     this->protocol_version = line;
-    s = s.substr(new_line+1);
+    s = s.substr(new_line+2);
 
     while (s.length() != 0) {
         line = s;
-        size_t new_line_pos = s.find('\n');
+        size_t new_line_pos = s.find('\r');
         if (new_line_pos != std::string::npos)
             line = line.substr(0, new_line_pos);
         else
@@ -53,15 +80,15 @@ HttpMessage::HttpMessage(std::string message) {
         if (delim != std::string::npos)
             this->headers[line.substr(0, delim)] = trim_left(line.substr(delim+1));
 
-        if (new_line_pos+1 > s.length()-1) break;
+        if (new_line_pos+2 > s.length()-1) break;
         //std::cout << "\"" << s <<  "\"" << std::endl;
-        s = s.substr(new_line_pos+1);
+        s = s.substr(new_line_pos+2);
     }
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Range
 std::optional<std::pair<uintmax_t, uintmax_t>> HttpMessage::getRange(uintmax_t full_size) {
-    if (!headers.contains("Range")) return std::nullopt;
+    if (!headers.contains("Range")) return std::make_pair(0, full_size);
     // Example structure (note that there are a few more possibilities)
     // FIXME: Make this work for multiple ranges
     // Range: <unit>=<range-start>-<range-end>
@@ -92,21 +119,24 @@ std::optional<std::pair<uintmax_t, uintmax_t>> HttpMessage::getRange(uintmax_t f
         } catch (std::invalid_argument& e) {
             std::cout << "Error: HttpMessage::getRange() Stoi Invalid Argument: "
                 << range_start_str << std::endl;
+            this->print();
             return std::nullopt;
         } catch (std::out_of_range& e) {
             std::cout << "Error: HttpMessage::getRange() Stoi Out of Range: "
                 << range_start_str << std::endl;
+            this->print();
             return std::nullopt;
         }
     }
     if (separator_pos == after_units.length()-1) {
         range_end = full_size;
     } else {
+        printf("'%s'\n", after_units.c_str());
         std::string range_end_str = after_units.substr(separator_pos+1);
         try {
             range_end = std::stoi(range_end_str);
         } catch (std::invalid_argument& e) {
-            std::cout << "Error: HttpMessage::getRange() Stoi Invalid Argument: "
+            std::cout << "Error: HttpMessage::getRange() end Stoi Invalid Argument: "
                 << range_end_str << std::endl;
             return std::nullopt;
         } catch (std::out_of_range& e) {
@@ -134,5 +164,8 @@ void HttpMessage::print() {
     std::cout << "Type = " << this->type << std::endl;
     std::cout << "Address = " << this->address << std::endl;
     std::cout << "Protocol_version = " << this->protocol_version << std::endl;
+    for (auto [header, val] : this->headers) {
+        std::cout << header << ": " << val << std::endl;
+    }
 }
 
