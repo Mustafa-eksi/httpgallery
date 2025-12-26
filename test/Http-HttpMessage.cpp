@@ -83,5 +83,19 @@ int main() {
         assert(msg.type == GET && msg.address == "/hello world" && msg.protocol_version == "HTTP/1.1");
     }
     std::cout << "Test 12 passed" << std::endl;
+
+    { // Test 13
+        HttpMessage msg("GET /hello?world=42 HTTP/1.1\r\n");
+        assert(msg.type == GET && msg.address == "/hello" && msg.protocol_version == "HTTP/1.1"
+                && msg.queries["world"] == "42");
+    }
+    std::cout << "Test 13 passed" << std::endl;
+
+    { // Test 14
+        HttpMessage msg("GET /hello?world=42&half-life=3 HTTP/1.1\r\n");
+        assert(msg.type == GET && msg.address == "/hello" && msg.protocol_version == "HTTP/1.1"
+                && msg.queries["world"] == "42" && msg.queries["half-life"] == "3");
+    }
+    std::cout << "Test 14 passed" << std::endl;
     return 0;
 }
