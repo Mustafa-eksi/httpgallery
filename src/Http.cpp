@@ -53,7 +53,7 @@ HttpMessage::HttpMessage(std::string message) {
     this->type = INVALID;
     std::string s = message;
     std::string line = s;
-    size_t new_line = message.find('\r');
+    auto new_line = message.find('\r');
     if (new_line == std::string::npos) return;
     line = line.substr(0, new_line);
     
@@ -62,6 +62,24 @@ HttpMessage::HttpMessage(std::string message) {
     this->type = to_http_message_type(typestr);
     line = line.substr(line.find(" ")+1);
     this->address = html_decode(line.substr(0, line.find(" ")));
+    // FIXME: there can be question marks in the file name
+    auto query_delim = this->address.rfind('?');
+    if (query_delim != std::string::npos) {
+        std::string query_string = this->address.substr(query_delim+1);
+        this->address = this->address.substr(0, query_delim);
+
+        while (!query_string.empty()) {
+            auto and_pos = query_string.find('&');
+            auto equal_pos = query_string.find('=');
+            if (equal_pos == std::string::npos) break;
+            auto key_str = query_string.substr(0, equal_pos);
+            auto val_str = query_string.substr(equal_pos+1, and_pos-equal_pos-1);
+            this->queries[key_str] = val_str;
+            if (and_pos == std::string::npos || query_string.length()-1 < and_pos+1)
+                break;
+            query_string = query_string.substr(and_pos+1);
+        }
+    }
 
     if (line.find(" ") == std::string::npos) return;
     line = line.substr(line.find(" ")+1);        

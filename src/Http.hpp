@@ -14,6 +14,7 @@ public:
     std::string address;
     std::string protocol_version;
     std::unordered_map<std::string, std::string> headers;
+    std::unordered_map<std::string, std::string> queries;
 
     HttpMessage();
     HttpMessage(std::string message);
