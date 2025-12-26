@@ -9,7 +9,7 @@ class Server {
     socklen_t address_length;
     std::vector<std::thread> threads;
     std::string path;
-    std::string htmltemplate;
+    std::string htmltemplate_list, htmltemplate_icon;
 
 public:
     Server(std::string p=".", size_t port=8000, int backlog=3);

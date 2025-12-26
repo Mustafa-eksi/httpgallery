@@ -2,7 +2,8 @@
 #include "HttpResponseBuilder.cpp"
 
 Server::Server(std::string p, size_t port, int backlog) {
-    this->htmltemplate = read_binary_to_string("./res/html/template.html");
+    this->htmltemplate_list = read_binary_to_string("./res/html/template-list-view.html");
+    this->htmltemplate_icon = read_binary_to_string("./res/html/template-icon-view.html");
     this->path = p;
     this->socketfd = socket(AF_INET, SOCK_STREAM, 0);
     if (socketfd == -1) {
@@ -73,8 +74,9 @@ std::string Server::generateContent(HttpMessage msg) {
             .ContentLength(filesize) // Content already sets it but we override for HEAD
             .build();
     } else if (pt == DirectoryPage) {
-        std::string dir_page_contents = list_contents(msg.address, filepath, msg.queriesToString());
-        std::string final_content = string_format(this->htmltemplate,
+        bool list_view = msg.queries.contains("list-view") && msg.queries["list-view"] == "true";
+        std::string dir_page_contents = list_contents(msg.address, filepath, msg.queriesToString(), list_view);
+        std::string final_content = string_format(list_view ? this->htmltemplate_list : this->htmltemplate_icon,
                                 filepath.c_str(), dir_page_contents.c_str());
         uintmax_t content_length = final_content.length();
         if (msg.type == HEAD)
