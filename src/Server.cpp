@@ -73,7 +73,7 @@ std::string Server::generateContent(HttpMessage msg) {
             .ContentLength(filesize) // Content already sets it but we override for HEAD
             .build();
     } else if (pt == DirectoryPage) {
-        std::string dir_page_contents = list_contents(msg.address, filepath);
+        std::string dir_page_contents = list_contents(msg.address, filepath, msg.queriesToString());
         std::string final_content = string_format(this->htmltemplate,
                                 filepath.c_str(), dir_page_contents.c_str());
         uintmax_t content_length = final_content.length();

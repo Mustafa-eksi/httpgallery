@@ -19,5 +19,6 @@ public:
     HttpMessage();
     HttpMessage(std::string message);
     std::optional<std::pair<uintmax_t, uintmax_t>> getRange(uintmax_t full_size);
+    std::string queriesToString();
     void print();
 };

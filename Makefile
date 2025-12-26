@@ -12,10 +12,11 @@ clean_test:
 	rm -rf ./test/out/
 	rm -rf ./test/Http-getRange
 	rm -rf ./test/Http-HttpMessage
+	rm -rf ./test/Http-queriesToString
 	rm -f *.gcov
 	rm -f *.gcno
 
-compile_test: Http-getRange Http-HttpMessage
+compile_test: Http-getRange Http-HttpMessage Http-queriesToString
 
 Http-getRange: ./test/Http-getRange.cpp ./src/Http.cpp ./src/Http.hpp
 	g++ ./test/Http-getRange.cpp -o ./test/Http-getRange $(CFLAGS) $(TEST_FLAGS)
@@ -23,9 +24,13 @@ Http-getRange: ./test/Http-getRange.cpp ./src/Http.cpp ./src/Http.hpp
 Http-HttpMessage: ./test/Http-HttpMessage.cpp ./src/Http.cpp ./src/Http.hpp
 	g++ ./test/Http-HttpMessage.cpp -o ./test/Http-HttpMessage $(CFLAGS) $(TEST_FLAGS)
 
+Http-queriesToString: ./test/Http-queriesToString.cpp ./src/Http.cpp ./src/Http.hpp
+	g++ ./test/Http-queriesToString.cpp -o ./test/Http-queriesToString $(CFLAGS) $(TEST_FLAGS)
+
 run_test:
 	./test/Http-getRange
 	./test/Http-HttpMessage
+	./test/Http-queriesToString
 
 gcov_test:
 	lcov --capture --directory ./test/ --output-file ./test/coverage.info
