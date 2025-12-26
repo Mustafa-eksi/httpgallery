@@ -4,4 +4,6 @@ test/out/
 *.gcov
 *.gcno
 test/Http-getRange
+test/Http-HttpMessage
+test/Http-queriesToString
 *.info

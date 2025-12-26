@@ -177,6 +177,14 @@ std::optional<std::pair<uintmax_t, uintmax_t>> HttpMessage::getRange(uintmax_t f
     return std::make_pair(range_start, range_end);
 }
 
+std::string HttpMessage::queriesToString() {
+    std::string res = "?";
+    for (auto [key, val] : this->queries) {
+        res += key+"="+val+"&";
+    }
+    return res.substr(0, res.length()-1);
+}
+
 void HttpMessage::print() {
     std::cout << "Printing Message" << std::endl;
     std::cout << "Type = " << this->type << std::endl;

@@ -71,7 +71,7 @@ const auto videoTemplate =
                 "<a class=\"item-name\" href=\"{}\">{}</a>"
             "</div>";
 const auto ffmpegCommand = "ffmpeg -i {} -ss 00:00:10 -vframes 1 thumbnail-{}.jpg";
-std::string list_contents(std::string current_address, std::string path) {
+std::string list_contents(std::string current_address, std::string path, std::string queries="") {
     std::string output = "";
 	for (const auto & entry : std::filesystem::directory_iterator(path)){
 		try {
@@ -79,7 +79,7 @@ std::string list_contents(std::string current_address, std::string path) {
             if (current_address.back() != '/')
                 current_address += '/';
             auto filename = std::string(entry.path().filename());
-            auto filepath = current_address + filename;
+            auto filepath = current_address + filename + queries;
             if (get_mime_type(filename).starts_with("image")) {
                 output += string_format(imageTemplate, filepath, filepath, filename);
             } else if (get_mime_type(filename).starts_with("video") && entry.file_size() < 5e+7) {
