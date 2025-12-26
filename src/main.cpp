@@ -9,6 +9,7 @@
 #include <format>
 #include <set>
 #include <cassert>
+#include <mutex>
 
 #include <sys/socket.h>
 #include <netinet/in.h>

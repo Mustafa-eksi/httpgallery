@@ -93,7 +93,16 @@ std::string Server::generateContent(HttpMessage msg) {
     return "";
 }
 
+void Server::respondClient(int client_socket, HttpMessage msg, std::mutex* m) {
+    std::string response = generateContent(msg);
+    m->lock();
+    send(client_socket, response.c_str(), response.length(), 0);
+    m->unlock();
+}
+
 void Server::serveClient(int client_socket) {
+    std::vector<std::thread> client_threads;
+    std::mutex m;
     while (true) {
         intmax_t msg_length = recv(client_socket, NULL, INT_MAX, (MSG_PEEK | MSG_TRUNC));
         if (msg_length < 1) {
@@ -110,11 +119,10 @@ void Server::serveClient(int client_socket) {
         std::string message(message_buffer);
         // parse message
         HttpMessage httpmsg(message);
+        if (httpmsg.type == INVALID) continue;
         // FIXME: ignores favicon requests
-        if (httpmsg.address.ends_with("favicon.ico")) return;
-        
-        std::string response = generateContent(httpmsg);
-        send(client_socket, response.c_str(), response.length(), 0);
+        if (httpmsg.address.ends_with("favicon.ico")) continue;
+        client_threads.push_back(std::thread(&Server::respondClient, this, client_socket, httpmsg, &m));
     }
 }
 
