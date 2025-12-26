@@ -16,6 +16,7 @@ public:
     ~Server();
     PageType choosePageType(HttpMessage httpmsg);
     std::string generateContent(HttpMessage msg);
+    void respondClient(int client_socket, HttpMessage msg, std::mutex* m);
     void serveClient(int client_socket);
     void start();
 };
