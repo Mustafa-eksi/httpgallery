@@ -16,6 +16,13 @@ Server::Server(std::string p, size_t port, int backlog) {
         std::cout << "Error: setsockopt" << std::endl;
         return;
     }
+
+    int status = fcntl(socketfd, F_SETFL, fcntl(socketfd, F_GETFL, 0) | O_NONBLOCK);
+    if (status == -1){
+        std::cout << "Error: fcntl failed" << std::endl;
+        return;
+    }
+
     server_address = {
         .sin_family = AF_INET,
         .sin_port = htons(port),
@@ -62,10 +69,12 @@ std::string Server::generateContent(HttpMessage msg) {
         int status = range_end-range_start == filesize ? 200 : 206;
         std::string mimetype = get_mime_type(msg.address);
         std::string file_content;
+
         if (msg.type == GET)
             file_content = read_binary_to_string(filepath, range_start, range_end);
         else if (msg.type == HEAD)
             file_content = "";
+
         return HttpResponseBuilder()
             .Status(status)
             .ContentType(mimetype)
@@ -98,18 +107,25 @@ void Server::respondClient(int client_socket, HttpMessage msg, std::mutex* m) {
     m->lock();
     send(client_socket, response.c_str(), response.length(), 0);
     m->unlock();
+    response.clear();
+    response.shrink_to_fit();
 }
 
 void Server::serveClient(int client_socket) {
     std::vector<std::thread> client_threads;
     std::mutex m;
-    while (true) {
+    int timeout = 0;
+    while (!this->chouldClose) {
         intmax_t msg_length = recv(client_socket, NULL, INT_MAX, (MSG_PEEK | MSG_TRUNC));
         if (msg_length < 1) {
+            if (timeout > 5) break;
             std::this_thread::sleep_for(std::chrono::milliseconds(300));
+            timeout++;
             continue;
         }
-        char *message_buffer = (char*)malloc(msg_length*sizeof(char));
+        timeout = 0;
+        char *message_buffer = (char*)malloc(msg_length*sizeof(char)+1);
+        memset(message_buffer, '\0', msg_length*sizeof(char)+1);
         if (!message_buffer) {
             std::cout << "Error: failed to allocate " << msg_length << " bytes" << std::endl;
             return;
@@ -117,27 +133,41 @@ void Server::serveClient(int client_socket) {
         // receive message
         recv(client_socket, message_buffer, msg_length, 0);
         std::string message(message_buffer);
+        free(message_buffer);
         // parse message
-        HttpMessage httpmsg(message);
+        HttpMessage httpmsg = HttpMessage(message);
+        message = "";
+        message.shrink_to_fit();
         if (httpmsg.type == INVALID) continue;
         // FIXME: ignores favicon requests
         if (httpmsg.address.ends_with("favicon.ico")) continue;
         client_threads.push_back(std::thread(&Server::respondClient, this, client_socket, httpmsg, &m));
     }
+    for (auto &t : client_threads)
+        t.join();
+    client_threads.clear();
+    client_threads.shrink_to_fit();
+    close(client_socket);
+    return;
 }
 
 void Server::start() {
-    while (true) {
+    while (!this->shouldClose) {
         struct sockaddr_in clientAddr;
         socklen_t clientLen = sizeof(clientAddr);
         int client_socket = accept(socketfd, (struct sockaddr*)&clientAddr, &clientLen);
+        if (client_socket < 0) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(300));
+            continue;
+        }
         char clientIp[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &clientAddr.sin_addr, clientIp, INET_ADDRSTRLEN);
 
         // Simple check: Does the IP start with "192.168."?
-        std::string ipStr(clientIp);
+        std::string ipStr = clientIp;
         if (!ipStr.starts_with("10.42.") && ipStr != "127.0.0.1") {
             close(client_socket); // Reject connection
+            continue;
         }
         if (client_socket < 0) {
             std::cout << "Error: serveClient->accept" << std::endl;

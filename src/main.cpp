@@ -10,12 +10,14 @@
 #include <set>
 #include <cassert>
 #include <mutex>
+#include <cstring>
 
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <arpa/inet.h>
+#include <fcntl.h>
 
 #include "Http.cpp"
 #include "FileSystemInterface.cpp"
