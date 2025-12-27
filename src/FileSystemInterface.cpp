@@ -33,8 +33,11 @@ std::string read_binary_to_string(const std::string path,
     }
     file.seekg(range_start);
     std::string strbuff(range_end-range_start, '\0');
-    if (!file.read(&strbuff[0], range_end-range_start))
+    if (!file.read(&strbuff[0], range_end-range_start)) {
+        strbuff.clear();
+        strbuff.shrink_to_fit();
         return "error: read";
+    }
     return strbuff;
 }
 

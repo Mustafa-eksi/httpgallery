@@ -1,14 +1,9 @@
 #include "HttpResponseBuilder.hpp"
 
-/*
- * 
-    HttpResponseBuilder status(int s);
-    HttpResponseBuilder ContentRange(uintmax_t range_start, uintmax_t range_end);
-    HttpResponseBuilder ContentLength(uintmax_t content_length);
-    HttpResponseBuilder ContentType(std::string mime_type);
-    HttpResponseBuilder Content(std::string content);
-    std::string build();
- * */
+HttpResponseBuilder::~HttpResponseBuilder() {
+    content = "";
+    content.shrink_to_fit();
+}
 
 HttpResponseBuilder HttpResponseBuilder::Status(int s) {
     status = s;
@@ -30,9 +25,9 @@ HttpResponseBuilder HttpResponseBuilder::ContentType(std::string mime_type) {
     return *this;
 }
 
-HttpResponseBuilder HttpResponseBuilder::Content(std::string new_content) {
-    this->content = new_content;
-    headers["Content-Length"] = std::to_string(content.length());
+HttpResponseBuilder HttpResponseBuilder::Content(std::string& new_content) {
+    this->content = std::move(new_content);
+    headers["Content-Length"] = std::to_string(this->content.length());
     return *this;
 }
 
@@ -49,5 +44,7 @@ std::string HttpResponseBuilder::build() {
     }
     response += "\n";
     response += content;
+    content.clear();
+    content.shrink_to_fit();
     return response;
 }

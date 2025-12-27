@@ -10,6 +10,7 @@ class Server {
     std::vector<std::thread> threads;
     std::string path;
     std::string htmltemplate_list, htmltemplate_icon;
+    bool shouldClose = false;
 
 public:
     Server(std::string p=".", size_t port=8000, int backlog=3);

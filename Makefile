@@ -1,5 +1,6 @@
-CFLAGS=-Wall -Werror -Wextra -Wshadow -ggdb -std=c++23
-TEST_FLAGS=-fPIC -fprofile-arcs -ftest-coverage --coverage -g
+CFLAGS=-Wall -Werror -Wextra -Wshadow -ggdb -std=c++23 -g
+ASAN_FLAGS=-fsanitize=address -fno-omit-frame-pointer -O0
+TEST_FLAGS=-fPIC -fprofile-arcs -ftest-coverage --coverage
 all: main
 
 test: clean_test compile_test run_test gcov_test
@@ -39,3 +40,6 @@ gcov_test:
 
 main: ./src/*
 	g++ ./src/main.cpp -o main $(CFLAGS)
+
+asan: ./src/*
+	g++ ./src/main.cpp -o main_asan $(CFLAGS) $(ASAN_FLAGS)

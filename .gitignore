@@ -7,3 +7,5 @@ test/Http-getRange
 test/Http-HttpMessage
 test/Http-queriesToString
 *.info
+main_asan
+vgcore.*
