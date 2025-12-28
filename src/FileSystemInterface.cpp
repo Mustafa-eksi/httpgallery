@@ -61,6 +61,7 @@ std::string read_entire_file(std::string path) {
 
 const auto buttonTemplate = 
             "<div class=\"item\">"
+                "<img class=\"item-icon\" src=\"{}?icon=1\">"
                 "<a class=\"item-name\" href=\"{}\">{}</a>"
             "</div>";
 const auto imageTemplate =
@@ -70,7 +71,7 @@ const auto imageTemplate =
             "</div>";
 const auto videoTemplate =
             "<div class=\"item\">"
-                "<video width=\"100%\" height=\"95%\" class=\"item-thumbnail\" src=\"{}\" controls loop>brrp</video>"
+                "<img class=\"item-icon\" src=\"{}?icon=1\">"
                 "<a class=\"item-name\" href=\"{}\">{}</a>"
             "</div>";
 const auto ffmpegCommand = "ffmpeg -i {} -ss 00:00:10 -vframes 1 thumbnail-{}.jpg";
@@ -88,7 +89,7 @@ std::string list_contents(std::string current_address, std::string path, std::st
             } else if (get_mime_type(filename).starts_with("video") && entry.file_size() < 5e+7 && !list_view) {
                 output += string_format(videoTemplate, filepath, filepath, filename);
             } else {
-                output += string_format(buttonTemplate, filepath, filename);
+                output += string_format(buttonTemplate, filepath, filepath, filename);
             }
 		} catch (std::exception& e) {
             std::cout << "Error: " << entry.path().c_str() << e.what() << std::endl;
