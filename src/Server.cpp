@@ -1,5 +1,4 @@
 #include "Server.hpp"
-#include "HttpResponseBuilder.cpp"
 
 Server::Server(std::string p, size_t port, int backlog) {
     this->htmltemplate_list = read_binary_to_string("./res/html/template-list-view.html");
@@ -43,6 +42,7 @@ Server::Server(std::string p, size_t port, int backlog) {
 }
 
 PageType Server::choosePageType(HttpMessage msg) {
+    if (msg.queries.contains("icon")) return IconData;
     std::string decoded_path = path + msg.address;
     bool is_dir = std::filesystem::is_directory(decoded_path);
     return is_dir ? DirectoryPage : FileDataPage;
@@ -85,8 +85,14 @@ std::string Server::generateContent(HttpMessage msg) {
     } else if (pt == DirectoryPage) {
         bool list_view = msg.queries.contains("list-view") && msg.queries["list-view"] == "true";
         std::string dir_page_contents = list_contents(msg.address, filepath, msg.queriesToString(), list_view);
+        std::string current_path = msg.address.substr(0, msg.address.length()-1); // exclude last char
+        
+        auto slash_pos = current_path.rfind('/');
+        std::string up = "/";
+        if (slash_pos != std::string::npos)
+            up = current_path.substr(0, slash_pos+1);
         std::string final_content = string_format(list_view ? this->htmltemplate_list : this->htmltemplate_icon,
-                                filepath.c_str(), dir_page_contents.c_str());
+                                filepath.c_str(), up, dir_page_contents.c_str());
         uintmax_t content_length = final_content.length();
         if (msg.type == HEAD)
             final_content = "";
@@ -96,6 +102,31 @@ std::string Server::generateContent(HttpMessage msg) {
             .Content(final_content)
             .ContentLength(content_length) // Same as one in above
             .build();
+    } else if (pt == IconData) {
+        std::string mimetype = get_mime_type(msg.address);
+        bool is_dir = std::filesystem::is_directory(path + msg.address);
+        if (mimetype.starts_with("video")) {
+            std::string image_data(video_icon_data.begin(), video_icon_data.end());
+            return HttpResponseBuilder()
+                .Status(200)
+                .ContentType("image/png")
+                .Content(image_data)
+                .build();
+        } else if (is_dir) {
+            std::string image_data(directory_icon_data.begin(), directory_icon_data.end());
+            return HttpResponseBuilder()
+                .Status(200)
+                .ContentType("image/png")
+                .Content(image_data)
+                .build();
+        } else {
+            std::string image_data(text_icon_data.begin(), text_icon_data.end());
+            return HttpResponseBuilder()
+                .Status(200)
+                .ContentType("image/png")
+                .Content(image_data)
+                .build();
+        }
     } else {
         std::cout << "Error: Invalid page type" << std::endl;
     }
@@ -115,7 +146,7 @@ void Server::serveClient(int client_socket) {
     std::vector<std::thread> client_threads;
     std::mutex m;
     int timeout = 0;
-    while (!this->chouldClose) {
+    while (!this->shouldClose) {
         intmax_t msg_length = recv(client_socket, NULL, INT_MAX, (MSG_PEEK | MSG_TRUNC));
         if (msg_length < 1) {
             if (timeout > 5) break;

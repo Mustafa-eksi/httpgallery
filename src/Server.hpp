@@ -1,6 +1,10 @@
+#include "HttpResponseBuilder.cpp"
+#include "EmbeddedResources.hpp"
+
 typedef enum PageType {
     DirectoryPage,
     FileDataPage,
+    IconData,
 } PageType;
 
 class Server {
