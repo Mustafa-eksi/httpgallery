@@ -134,7 +134,17 @@ std::string Server::generateContent(HttpMessage msg) {
 }
 
 void Server::respondClient(int client_socket, HttpMessage msg, std::mutex* m) {
-    std::string response = generateContent(msg);
+    std::string response;
+    if (msg.address.ends_with("favicon.ico")) {
+        std::string image_data(directory_icon_data.begin(), directory_icon_data.end());
+        response = HttpResponseBuilder()
+            .Status(200)
+            .ContentType("image/png")
+            .Content(image_data)
+            .build();
+    } else {
+        response = generateContent(msg);
+    }
     m->lock();
     send(client_socket, response.c_str(), response.length(), 0);
     m->unlock();
@@ -170,8 +180,7 @@ void Server::serveClient(int client_socket) {
         message = "";
         message.shrink_to_fit();
         if (httpmsg.type == INVALID) continue;
-        // FIXME: ignores favicon requests
-        if (httpmsg.address.ends_with("favicon.ico")) continue;
+
         client_threads.push_back(std::thread(&Server::respondClient, this, client_socket, httpmsg, &m));
     }
     for (auto &t : client_threads)
