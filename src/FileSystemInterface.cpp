@@ -59,6 +59,10 @@ std::string read_entire_file(std::string path) {
     return result;
 }
 
+const auto dir_icon_link = "/?icon=directory";
+const auto video_icon_link = "/?icon=video";
+const auto text_icon_link = "/?icon=text";
+
 const auto buttonTemplate = 
             "<div class=\"item\">"
                 "<img class=\"item-icon\" src=\"{}\">"
@@ -85,9 +89,6 @@ std::string list_contents(std::string current_address, std::string path, std::st
             auto filename = entry.path().filename().string();
             auto filepath = current_address + filename + queries;
             auto iconpath = filepath;
-            for (char c : filename) {
-                std::cout << c << " ";
-            }
             if (!queries.empty()) {
                 iconpath += "&icon=1";
             } else {
@@ -96,9 +97,9 @@ std::string list_contents(std::string current_address, std::string path, std::st
             if (get_mime_type(filename).starts_with("image") && !list_view) {
                 output += string_format(imageTemplate, filepath, filepath, filename);
             } else if (get_mime_type(filename).starts_with("video") && entry.file_size() < 5e+7 && !list_view) {
-                output += string_format(videoTemplate, iconpath, filepath, filename);
+                output += string_format(videoTemplate, video_icon_link, filepath, filename);
             } else {
-                output += string_format(buttonTemplate, iconpath, filepath, filename);
+                output += string_format(buttonTemplate, entry.is_directory() ? dir_icon_link : text_icon_link, filepath, filename);
             }
 		} catch (std::exception& e) {
             std::cout << "Error: " << entry.path().c_str() << e.what() << std::endl;

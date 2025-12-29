@@ -103,16 +103,14 @@ std::string Server::generateContent(HttpMessage msg) {
             .ContentLength(content_length) // Same as one in above
             .build();
     } else if (pt == IconData) {
-        std::string mimetype = get_mime_type(msg.address);
-        bool is_dir = std::filesystem::is_directory(path + msg.address);
-        if (mimetype.starts_with("video")) {
+        if (msg.queries["icon"] == "video") {
             std::string image_data(video_icon_data.begin(), video_icon_data.end());
             return HttpResponseBuilder()
                 .Status(200)
                 .ContentType("image/png")
                 .Content(image_data)
                 .build();
-        } else if (is_dir) {
+        } else if (msg.queries["icon"] == "directory") {
             std::string image_data(directory_icon_data.begin(), directory_icon_data.end());
             return HttpResponseBuilder()
                 .Status(200)
