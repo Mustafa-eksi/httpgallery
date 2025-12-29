@@ -61,7 +61,7 @@ std::string read_entire_file(std::string path) {
 
 const auto buttonTemplate = 
             "<div class=\"item\">"
-                "<img class=\"item-icon\" src=\"{}?icon=1\">"
+                "<img class=\"item-icon\" src=\"{}\">"
                 "<a class=\"item-name\" href=\"{}\">{}</a>"
             "</div>";
 const auto imageTemplate =
@@ -71,7 +71,7 @@ const auto imageTemplate =
             "</div>";
 const auto videoTemplate =
             "<div class=\"item\">"
-                "<img class=\"item-icon\" src=\"{}?icon=1\">"
+                "<img class=\"item-icon\" src=\"{}\">"
                 "<a class=\"item-name\" href=\"{}\">{}</a>"
             "</div>";
 const auto ffmpegCommand = "ffmpeg -i {} -ss 00:00:10 -vframes 1 thumbnail-{}.jpg";
@@ -82,14 +82,23 @@ std::string list_contents(std::string current_address, std::string path, std::st
 			if (!entry.is_regular_file() && !entry.is_directory()) continue;
             if (current_address.back() != '/')
                 current_address += '/';
-            auto filename = std::string(entry.path().filename());
+            auto filename = entry.path().filename().string();
             auto filepath = current_address + filename + queries;
+            auto iconpath = filepath;
+            for (char c : filename) {
+                std::cout << c << " ";
+            }
+            if (!queries.empty()) {
+                iconpath += "&icon=1";
+            } else {
+                iconpath += "?icon=1";
+            }
             if (get_mime_type(filename).starts_with("image") && !list_view) {
                 output += string_format(imageTemplate, filepath, filepath, filename);
             } else if (get_mime_type(filename).starts_with("video") && entry.file_size() < 5e+7 && !list_view) {
-                output += string_format(videoTemplate, filepath, filepath, filename);
+                output += string_format(videoTemplate, iconpath, filepath, filename);
             } else {
-                output += string_format(buttonTemplate, filepath, filepath, filename);
+                output += string_format(buttonTemplate, iconpath, filepath, filename);
             }
 		} catch (std::exception& e) {
             std::cout << "Error: " << entry.path().c_str() << e.what() << std::endl;
