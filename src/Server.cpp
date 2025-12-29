@@ -98,7 +98,7 @@ std::string Server::generateContent(HttpMessage msg) {
             final_content = "";
         return HttpResponseBuilder()
             .Status(200)
-            .ContentType("text/html")
+            .ContentType("text/html; charset=utf-8")
             .Content(final_content)
             .ContentLength(content_length) // Same as one in above
             .build();

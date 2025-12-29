@@ -229,8 +229,8 @@ static const std::unordered_map<std::string, std::string> HtmlEncodeTable = {
 
 static const std::unordered_map<std::string, std::string> mime_types = {
     // Web Essentials (Updated)
-    {"html",  "text/html"},
-    {"htm",   "text/html"},
+    {"html",  "text/html; charset=utf-8"},
+    {"htm",   "text/html; charset=utf-8"},
     {"css",   "text/css"},
     {"js",    "text/javascript"},
     {"mjs",   "text/javascript"}, // JavaScript modules
