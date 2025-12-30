@@ -5,6 +5,8 @@ typedef enum HttpMessageType {
 } HttpMessageType;
 
 HttpMessageType to_http_message_type(std::string s);
+
+const char UTF8_ERROR_CHAR = '?';
 std::string html_decode(std::string path);
 std::string trim_left(std::string s);
 

@@ -11,33 +11,22 @@ HttpMessageType to_http_message_type(std::string s) {
 std::string html_decode(std::string path) {
     size_t pos = 0;
     while ((pos = path.find('%', pos)) != std::string::npos) {
-        if (pos > path.length()-3) {
+        if (pos+3 > path.length()) {
             pos++;
             continue;
         }
-        std::string key = path.substr(pos, 3);
-        if (!HtmlEncodeTable.contains(key)) {
-            // try 2
-            if (pos > path.length()-6) {
-                pos++;
-                continue;
-            }
-            key = path.substr(pos, 6);
-        }
-        if (!HtmlEncodeTable.contains(key)) {
-            // try 3
-            if (pos > path.length()-9) {
-                pos++;
-                continue;
-            }
-            key = path.substr(pos, 9);
-        }
-        if (!HtmlEncodeTable.contains(key)) {
-            // give up
+        auto before = path.substr(0, pos);
+        auto after = path.substr(pos+3);
+        char utf8_part = UTF8_ERROR_CHAR;
+        try {
+            utf8_part = (char)std::stoi(path.substr(pos+1, 2), nullptr, 16);
+        } catch (std::invalid_argument& e) {
             pos++;
             continue;
         }
-        path.replace(pos, 3, HtmlEncodeTable.at(key));
+        before += utf8_part;
+        path = before + after;
+        pos++;
     }
     return path;
 }
