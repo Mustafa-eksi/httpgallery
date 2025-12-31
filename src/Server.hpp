@@ -13,7 +13,7 @@ class Server {
     socklen_t address_length;
     std::vector<std::thread> threads;
     std::string path;
-    std::string htmltemplate_list, htmltemplate_icon;
+    std::string htmltemplate_list, htmltemplate_icon, htmltemplate_error;
     bool shouldClose = false;
 
 public:

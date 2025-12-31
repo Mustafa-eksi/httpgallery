@@ -38,7 +38,7 @@ HttpResponseBuilder HttpResponseBuilder::SetHeader(std::string header, std::stri
 
 std::string HttpResponseBuilder::build() {
     std::string response = "";
-    response += protocol_version + " " + std::to_string(status) + " OK\n";
+    response += protocol_version + " " + std::to_string(status) + " "+HTTP_STATUS_MESSAGES.at(status)+"\n";
     for (auto [header, value] : headers) {
         response += header +": "+ value + "\n";
     }

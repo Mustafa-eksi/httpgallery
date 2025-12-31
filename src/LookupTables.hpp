@@ -71,3 +71,16 @@ static const std::unordered_map<std::string, std::string> mime_types = {
     {"exe",   "application/octet-stream"},
     {"dll",   "application/octet-stream"}
 };
+
+static const std::unordered_map<int, std::string> HTTP_STATUS_MESSAGES = {
+// 1xx Informational
+// 2XX Success
+    {200, "OK"},
+    {206, "Partial Content"},
+// 3XX Redirection
+// 4XX Client Error
+    {403, "Forbidden"},
+    {404, "Not Found"},
+    {416, "Range Not Satisfiable"},
+// 5XX Server Error
+};

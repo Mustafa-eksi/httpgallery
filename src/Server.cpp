@@ -3,6 +3,7 @@
 Server::Server(std::string p, size_t port, int backlog) {
     this->htmltemplate_list = read_binary_to_string("./res/html/template-list-view.html");
     this->htmltemplate_icon = read_binary_to_string("./res/html/template-icon-view.html");
+    this->htmltemplate_error = read_binary_to_string("./res/html/template-error.html");
     this->path = p;
     this->socketfd = socket(AF_INET, SOCK_STREAM, 0);
     if (socketfd == -1) {
@@ -53,16 +54,22 @@ std::string Server::generateContent(HttpMessage msg) {
     if (path.back() == '/') path = path.substr(0, path.length()-1);
     auto filepath = path+msg.address;
     if (pt == FileDataPage) {
-        if (!std::filesystem::exists(filepath))
+        if (!std::filesystem::exists(filepath)) {
+            std::string error_page = string_format(this->htmltemplate_error, "404 Not Found");
             return HttpResponseBuilder()
                 .Status(404)
+                .ContentType("text/html; charset=utf-8")
+                .Content(error_page)
                 .build();
+        }
         uintmax_t filesize = std::filesystem::file_size(filepath);
         auto range_opt = msg.getRange(filesize);
         if (!range_opt.has_value()) {
+            std::string error_page = string_format(this->htmltemplate_error, "416 Range Not Satisfiable");
             return HttpResponseBuilder()
                 .Status(416)
                 .SetHeader("Content-Range", "bytes */"+std::to_string(filesize))
+                .Content(error_page)
                 .build();
         }
         auto [range_start, range_end] = range_opt.value();
