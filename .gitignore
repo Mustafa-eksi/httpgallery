@@ -11,3 +11,4 @@ test/Http-HtmlDecode
 main_asan
 vgcore.*
 httpgallery_logs.txt
+*.pem

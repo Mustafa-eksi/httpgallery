@@ -34,12 +34,11 @@ void Logger::warning(std::string msg) {
 
 void Logger::info(std::string msg) {
     this->log_mutex.lock();
-    auto id = std::this_thread::get_id();
     std::time_t time = std::time(nullptr);
     auto time_str = std::put_time(std::localtime(&time), "%T %F");
     if (write_to_file)
         this->output_stream << "[INFO @ " << time_str << "]: " << msg << std::endl;
     if (write_to_stdout)
-        std::cout << "[INFO @ " << time_str << " by id "<< id <<" ]: " << msg << std::endl;
+        std::cout << "[INFO @" << time_str << "]: " << msg << std::endl;
     this->log_mutex.unlock();
 }
