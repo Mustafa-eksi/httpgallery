@@ -36,7 +36,7 @@ std::string read_binary_to_string(const std::string path,
     if (!file.read(&strbuff[0], range_end-range_start)) {
         strbuff.clear();
         strbuff.shrink_to_fit();
-        return "error: read";
+        return "Error";
     }
     return strbuff;
 }
