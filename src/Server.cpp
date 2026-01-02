@@ -1,25 +1,25 @@
 #include "Server.hpp"
 
-Server::Server(std::string p, size_t port, int backlog) {
+Server::Server(Logger& logr, std::string p, size_t port, int backlog) : logger(logr) {
     this->htmltemplate_list = read_binary_to_string("./res/html/template-list-view.html");
     this->htmltemplate_icon = read_binary_to_string("./res/html/template-icon-view.html");
     this->htmltemplate_error = read_binary_to_string("./res/html/template-error.html");
     this->path = p;
     this->socketfd = socket(AF_INET, SOCK_STREAM, 0);
     if (socketfd == -1) {
-        std::cout << "Error: socket" << std::endl;
+        logger.error("Socket");
         return;
     }
     // TODO: this might cause problems
     int temp = 1;
     if (setsockopt(socketfd, SOL_SOCKET, SO_REUSEADDR, &temp, sizeof(int)) == -1) {
-        std::cout << "Error: setsockopt" << std::endl;
+        logger.error("setsockopt");
         return;
     }
 
     int status = fcntl(socketfd, F_SETFL, fcntl(socketfd, F_GETFL, 0) | O_NONBLOCK);
     if (status == -1){
-        std::cout << "Error: fcntl failed" << std::endl;
+        logger.error("fcntl failed");
         return;
     }
 
@@ -33,11 +33,11 @@ Server::Server(std::string p, size_t port, int backlog) {
     };
     address_length = sizeof(server_address);
     if (bind(socketfd, (struct sockaddr*)&server_address, sizeof(server_address)) < 0) {
-        std::cout << "Error: bind" << std::endl;
+        logger.error("bind");
         return;
     }
     if (listen(socketfd, backlog) < 0) {
-        std::cout << "Error: listen" << std::endl;
+        logger.error("listen");
         return;
     }
 }
@@ -133,7 +133,7 @@ std::string Server::generateContent(HttpMessage msg) {
                 .build();
         }
     } else {
-        std::cout << "Error: Invalid page type" << std::endl;
+        logger.error("Invalid page type");
     }
     return "";
 }
@@ -173,7 +173,8 @@ void Server::serveClient(int client_socket) {
         char *message_buffer = (char*)malloc(msg_length*sizeof(char)+1);
         memset(message_buffer, '\0', msg_length*sizeof(char)+1);
         if (!message_buffer) {
-            std::cout << "Error: failed to allocate " << msg_length << " bytes" << std::endl;
+            // FIXME: make logger variadic like string_format
+            logger.error("failed to allocate " + std::to_string(msg_length) + " bytes");
             return;
         }
         // receive message
@@ -186,6 +187,7 @@ void Server::serveClient(int client_socket) {
         message.shrink_to_fit();
         if (httpmsg.type == INVALID) continue;
 
+        //logger.info("responding client: " + httpmsg.address);
         client_threads.push_back(std::thread(&Server::respondClient, this, client_socket, httpmsg, &m));
     }
     for (auto &t : client_threads)
@@ -208,6 +210,7 @@ void Server::start() {
         char clientIp[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &clientAddr.sin_addr, clientIp, INET_ADDRSTRLEN);
 
+        // FIXME: make this optional (opt-in)
         // Simple check: Does the IP start with "192.168."?
         std::string ipStr = clientIp;
         if (!ipStr.starts_with("10.42.") && ipStr != "127.0.0.1") {
@@ -215,7 +218,7 @@ void Server::start() {
             continue;
         }
         if (client_socket < 0) {
-            std::cout << "Error: serveClient->accept" << std::endl;
+            logger.error("serveClient->accept");
             return;
         }
         threads.push_back(std::thread(&Server::serveClient, this, client_socket));

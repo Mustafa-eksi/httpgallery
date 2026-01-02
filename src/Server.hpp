@@ -15,9 +15,10 @@ class Server {
     std::string path;
     std::string htmltemplate_list, htmltemplate_icon, htmltemplate_error;
     bool shouldClose = false;
+    Logger &logger;
 
 public:
-    Server(std::string p=".", size_t port=8000, int backlog=3);
+    Server(Logger& logr, std::string p=".", size_t port=8000, int backlog=3);
     ~Server();
     PageType choosePageType(HttpMessage httpmsg);
     std::string generateContent(HttpMessage msg);

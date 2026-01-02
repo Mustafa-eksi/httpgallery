@@ -109,11 +109,8 @@ std::optional<std::pair<uintmax_t, uintmax_t>> HttpMessage::getRange(uintmax_t f
 
     uintmax_t range_start=0, range_end=0;
     auto separator_pos = after_units.find('-');
-    if (separator_pos == std::string::npos) {
-        std::cout << "Error: html request not fits the standards "
-            << after_units << std::endl;
+    if (separator_pos == std::string::npos)
         return std::nullopt;
-    }
 
     if (separator_pos == 0) {
         range_start = 0;
@@ -124,14 +121,8 @@ std::optional<std::pair<uintmax_t, uintmax_t>> HttpMessage::getRange(uintmax_t f
         try {
             range_start = std::stoi(range_start_str);
         } catch (std::invalid_argument& e) {
-            std::cout << "Error: HttpMessage::getRange() Stoi Invalid Argument: "
-                << range_start_str << std::endl;
-            this->print();
             return std::nullopt;
         } catch (std::out_of_range& e) {
-            std::cout << "Error: HttpMessage::getRange() Stoi Out of Range: "
-                << range_start_str << std::endl;
-            this->print();
             return std::nullopt;
         }
     }
@@ -143,12 +134,8 @@ std::optional<std::pair<uintmax_t, uintmax_t>> HttpMessage::getRange(uintmax_t f
         try {
             range_end = std::stoi(range_end_str);
         } catch (std::invalid_argument& e) {
-            std::cout << "Error: HttpMessage::getRange() end Stoi Invalid Argument: "
-                << range_end_str << std::endl;
             return std::nullopt;
         } catch (std::out_of_range& e) {
-            std::cout << "Error: HttpMessage::getRange() Stoi Out of Range: "
-                << range_end_str << std::endl;
             return std::nullopt;
         }
     }

@@ -10,3 +10,4 @@ test/Http-HtmlDecode
 *.info
 main_asan
 vgcore.*
+httpgallery_logs.txt
