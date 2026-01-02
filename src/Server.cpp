@@ -1,43 +1,68 @@
 #include "Server.hpp"
 
-Server::Server(Logger& logr, std::string p, size_t port, int backlog) : logger(logr) {
+Server::Server(Logger& logr, std::string p, size_t port, std::string cert_path, std::string pkey_path) : logger(logr) {
     this->htmltemplate_list = read_binary_to_string("./res/html/template-list-view.html");
     this->htmltemplate_icon = read_binary_to_string("./res/html/template-icon-view.html");
     this->htmltemplate_error = read_binary_to_string("./res/html/template-error.html");
     this->path = p;
-    this->socketfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (socketfd == -1) {
-        logger.error("Socket");
-        return;
-    }
-    // TODO: this might cause problems
-    int temp = 1;
-    if (setsockopt(socketfd, SOL_SOCKET, SO_REUSEADDR, &temp, sizeof(int)) == -1) {
-        logger.error("setsockopt");
+    
+    // Setting up OpenSSL
+    ctx = SSL_CTX_new(TLS_server_method());
+    if (!ctx) {
+        ERR_print_errors_fp(stderr);
+        logger.error("Failed to create server ssl context");
         return;
     }
 
-    int status = fcntl(socketfd, F_SETFL, fcntl(socketfd, F_GETFL, 0) | O_NONBLOCK);
-    if (status == -1){
-        logger.error("fcntl failed");
+    if (!SSL_CTX_set_min_proto_version(ctx, TLS1_2_VERSION)) {
+        SSL_CTX_free(ctx);
+        ERR_print_errors_fp(stderr);
+        logger.error("Failed to set the minimum TLS version");
+        return;
+    }
+    long opts = SSL_OP_IGNORE_UNEXPECTED_EOF | SSL_OP_NO_RENEGOTIATION |
+                SSL_OP_SERVER_PREFERENCE;
+    SSL_CTX_set_options(ctx, opts);
+
+    if (SSL_CTX_use_certificate_chain_file(ctx, cert_path.c_str()) <= 0) {
+        SSL_CTX_free(ctx);
+        ERR_print_errors_fp(stderr);
+        logger.error("Failed to load the certificate");
         return;
     }
 
-    server_address = {
-        .sin_family = AF_INET,
-        .sin_port = htons(port),
-        .sin_addr = (struct in_addr) {
-            .s_addr = INADDR_ANY,
-        },
-        .sin_zero = 0
-    };
-    address_length = sizeof(server_address);
-    if (bind(socketfd, (struct sockaddr*)&server_address, sizeof(server_address)) < 0) {
-        logger.error("bind");
+    if (SSL_CTX_use_PrivateKey_file(ctx, pkey_path.c_str(), SSL_FILETYPE_PEM) <= 0) {
+        SSL_CTX_free(ctx);
+        ERR_print_errors_fp(stderr);
+        logger.error("Failed to load the private key");
         return;
     }
-    if (listen(socketfd, backlog) < 0) {
-        logger.error("listen");
+
+    SSL_CTX_set_session_id_context(ctx, HTTPGALLERY_SSL_CACHE_ID, sizeof(HTTPGALLERY_SSL_CACHE_ID));
+    SSL_CTX_set_session_cache_mode(ctx, SSL_SESS_CACHE_SERVER);
+    SSL_CTX_sess_set_cache_size(ctx, HTTPGALLERY_SSL_CACHE_SIZE);
+    SSL_CTX_set_timeout(ctx, HTTPGALLERY_SSL_TIMEOUT);
+
+    // Disable authentication of the client
+    SSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, NULL);
+
+    // FIXME: this is a hack, change this later
+    auto portstr = std::to_string(port);
+    this->ssl_socket = BIO_new_accept(portstr.c_str());
+    if (!this->ssl_socket) {
+        SSL_CTX_free(ctx);
+        ERR_print_errors_fp(stderr);
+        logger.error("Failed to create a ssl socket");
+        return;
+    }
+
+    BIO_set_bind_mode(ssl_socket, BIO_BIND_REUSEADDR);
+    // First BIO_do_accept call doesn't accept a connection. It initiates the
+    // BIO acceptor.
+    if (BIO_do_accept(this->ssl_socket) <= 0) {
+        SSL_CTX_free(ctx);
+        ERR_print_errors_fp(stderr);
+        logger.error("Failed to set up bio acceptor socket");
         return;
     }
 }
@@ -138,7 +163,7 @@ std::string Server::generateContent(HttpMessage msg) {
     return "";
 }
 
-void Server::respondClient(int client_socket, HttpMessage msg, std::mutex* m) {
+void Server::respondClient(SSL* ssl_handle, HttpMessage msg, std::mutex* m) {
     std::string response;
     if (msg.address.ends_with("favicon.ico")) {
         std::string image_data(directory_icon_data.begin(), directory_icon_data.end());
@@ -151,36 +176,23 @@ void Server::respondClient(int client_socket, HttpMessage msg, std::mutex* m) {
         response = generateContent(msg);
     }
     m->lock();
-    send(client_socket, response.c_str(), response.length(), 0);
+    if (SSL_write(ssl_handle, response.c_str(), response.length()) <= 0) {
+        logger.error("Failed to write to ssl socket");
+    }
     m->unlock();
     response.clear();
     response.shrink_to_fit();
 }
 
-void Server::serveClient(int client_socket) {
+void Server::serveClient(SSL *ssl_handle) {
     std::vector<std::thread> client_threads;
     std::mutex m;
-    int timeout = 0;
+
     while (!this->shouldClose) {
-        intmax_t msg_length = recv(client_socket, NULL, INT_MAX, (MSG_PEEK | MSG_TRUNC));
-        if (msg_length < 1) {
-            if (timeout > 5) break;
-            std::this_thread::sleep_for(std::chrono::milliseconds(300));
-            timeout++;
-            continue;
-        }
-        timeout = 0;
-        char *message_buffer = (char*)malloc(msg_length*sizeof(char)+1);
-        memset(message_buffer, '\0', msg_length*sizeof(char)+1);
-        if (!message_buffer) {
-            // FIXME: make logger variadic like string_format
-            logger.error("failed to allocate " + std::to_string(msg_length) + " bytes");
-            return;
-        }
+        char message_buffer[8192] = {'\0'};
         // receive message
-        recv(client_socket, message_buffer, msg_length, 0);
+        SSL_read(ssl_handle, message_buffer, sizeof(message_buffer));
         std::string message(message_buffer);
-        free(message_buffer);
         // parse message
         HttpMessage httpmsg = HttpMessage(message);
         message = "";
@@ -188,43 +200,65 @@ void Server::serveClient(int client_socket) {
         if (httpmsg.type == INVALID) continue;
 
         //logger.info("responding client: " + httpmsg.address);
-        client_threads.push_back(std::thread(&Server::respondClient, this, client_socket, httpmsg, &m));
+        client_threads.push_back(std::thread(&Server::respondClient, this, ssl_handle, httpmsg, &m));
     }
     for (auto &t : client_threads)
         t.join();
     client_threads.clear();
     client_threads.shrink_to_fit();
-    close(client_socket);
+    if (ssl_handle) {
+        SSL_shutdown(ssl_handle);
+        SSL_free(ssl_handle);
+    }
     return;
 }
 
 void Server::start() {
+    if (this->ctx == NULL) {
+        logger.error("SSL context is NULL, exiting");
+        return;
+    }
     while (!this->shouldClose) {
-        struct sockaddr_in clientAddr;
-        socklen_t clientLen = sizeof(clientAddr);
-        int client_socket = accept(socketfd, (struct sockaddr*)&clientAddr, &clientLen);
-        if (client_socket < 0) {
+        // Clears ssl error stack
+        ERR_clear_error();
+
+        if (BIO_do_accept(ssl_socket) <= 0) {
             std::this_thread::sleep_for(std::chrono::milliseconds(300));
             continue;
         }
-        char clientIp[INET_ADDRSTRLEN];
-        inet_ntop(AF_INET, &clientAddr.sin_addr, clientIp, INET_ADDRSTRLEN);
 
-        // FIXME: make this optional (opt-in)
-        // Simple check: Does the IP start with "192.168."?
-        std::string ipStr = clientIp;
-        if (!ipStr.starts_with("10.42.") && ipStr != "127.0.0.1") {
-            close(client_socket); // Reject connection
+        BIO *client_socket = BIO_pop(ssl_socket); 
+        if (!client_socket) {
+            ERR_print_errors_fp(stderr);
+            logger.error("Failed to retrieve the client socket");
             continue;
         }
-        if (client_socket < 0) {
-            logger.error("serveClient->accept");
-            return;
+
+        SSL *ssl_handle = SSL_new(ctx);
+        if (!ssl_handle) {
+            BIO_free(client_socket);
+            ERR_print_errors_fp(stderr);
+            logger.error("Failed to create new ssl handle");
+            continue;
         }
-        threads.push_back(std::thread(&Server::serveClient, this, client_socket));
+        
+        // We write client_socket twice since it is both where we will read
+        // from and write to.
+        SSL_set_bio(ssl_handle, client_socket, client_socket);
+
+        if (SSL_accept(ssl_handle) <= 0) {
+            BIO_free(client_socket);
+            ERR_print_errors_fp(stderr);
+            logger.error("Failed to make a TLS handshake");
+            continue;
+        }
+
+        logger.info("Successfull handshake");
+
+        threads.push_back(std::thread(&Server::serveClient, this, ssl_handle));
     }
 }
 
 Server::~Server() {
-    close(socketfd);
+    SSL_CTX_free(ctx);
 }

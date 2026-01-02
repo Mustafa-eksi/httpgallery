@@ -1,4 +1,7 @@
-CFLAGS=-Wall -Werror -Wextra -Wshadow -ggdb -std=c++23 -g
+.PHONY: chain main
+LIBS=libssl
+CFLAGS=-Wall -Werror -Wextra -Wshadow -ggdb -std=c++23 -g ${shell pkg-config --cflags $(LIBS)}
+LDFLAGS=$(shell pkg-config --libs $(LIBS)) -lcrypto
 ASAN_FLAGS=-fsanitize=address -fno-omit-frame-pointer -O0
 TEST_FLAGS=-fPIC -fprofile-arcs -ftest-coverage --coverage
 all: main
@@ -31,8 +34,14 @@ gcov_test:
 	lcov --remove ./test/coverage.info '/usr/*' --output-file ./test/coverage_filtered.info
 	genhtml ./test/coverage_filtered.info --output-directory ./test/out
 
+chain: chain.pem
+pkey.pem:
+	openssl genpkey -algorithm rsa -out pkey.pem -pkeyopt rsa_keygen_bits:2048
+chain.pem: pkey.pem
+	openssl req -x509 -new -key pkey.pem -days 36500 -subj '/CN=localhost' -out chain.pem
+
 main: ./src/*
-	g++ ./src/main.cpp -o main $(CFLAGS)
+	g++ ./src/main.cpp -o main $(CFLAGS) $(LDFLAGS)
 
 asan: ./src/*
-	g++ ./src/main.cpp -o main_asan $(CFLAGS) $(ASAN_FLAGS)
+	g++ ./src/main.cpp -o main_asan $(CFLAGS) $(ASAN_FLAGS) $(LDFLAGS)
