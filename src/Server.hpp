@@ -13,12 +13,13 @@ typedef enum PageType {
 
 class Server {
     BIO *ssl_socket;
+    int socketfd;
     struct sockaddr_in server_address;
     socklen_t address_length;
     std::vector<std::thread> threads;
     std::string path;
     std::string htmltemplate_list, htmltemplate_icon, htmltemplate_error;
-    bool shouldClose = false;
+    bool shouldClose = false, https;
     Logger &logger;
 
 // OpenSSL
@@ -26,11 +27,17 @@ class Server {
     BIO *acceptor_bio;
 
 public:
-    Server(Logger& logr, std::string p=".", size_t port=8000, std::string cert_path="chain.pem", std::string pkey_path="pkey.pem");
+    Server(Logger& logr, std::string p, size_t port, std::string cert_path, std::string pkey_path);
+    Server(Logger& logr, std::string p=".", size_t port=8000, int backlog=100);
     ~Server();
     PageType choosePageType(HttpMessage httpmsg);
     std::string generateContent(HttpMessage msg);
-    void respondClient(SSL* ssl_handle, HttpMessage msg, std::mutex* m);
-    void serveClient(SSL *ssl_handle);
+
+    void respondClientHttps(SSL* ssl_handle, HttpMessage msg, std::mutex* m);
+    void serveClientHttps(SSL *ssl_handle);
+    void startHttps();
+
+    void respondClient(int client_socket, HttpMessage msg, std::mutex* m);
+    void serveClient(int client_socket);
     void start();
 };

@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
     if (argc > 2) path = std::string(argv[2]);
     Logger logger = Logger(logs_path+"httpgallery_logs.txt", argc > 2, true);
     logger.info("Starting Server");
-    Server *server = new Server(logger, path, 8000); 
+    Server *server = new Server(logger, path, 8000);
     server->start();
     return 0;
 }
