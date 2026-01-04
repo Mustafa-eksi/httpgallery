@@ -41,7 +41,7 @@ chain.pem: pkey.pem
 	openssl req -x509 -new -key pkey.pem -days 36500 -subj '/CN=localhost' -out chain.pem
 
 main: ./src/*
-	g++ ./src/main.cpp -o main $(CFLAGS) $(LDFLAGS)
+	g++ ./src/main.cpp -o httpgallery $(CFLAGS) $(LDFLAGS)
 
 asan: ./src/*
 	g++ ./src/main.cpp -o main_asan $(CFLAGS) $(ASAN_FLAGS) $(LDFLAGS)
