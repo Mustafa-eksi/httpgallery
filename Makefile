@@ -45,3 +45,7 @@ main: ./src/*
 
 asan: ./src/*
 	g++ ./src/main.cpp -o main_asan $(CFLAGS) $(ASAN_FLAGS) $(LDFLAGS)
+
+clean:
+	rm -f ./main_asan
+	rm -f ./httpgallery
