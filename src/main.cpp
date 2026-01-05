@@ -35,8 +35,10 @@ const char HELP_MESSAGE[] =
 "Options:\n"
 "   -h | --help\n"
 "       Shows this message\n"
+#ifndef HTTPGALLERY_NO_OPENSSL
 "   -s | --secure <path-to-certificate> <path-to-PrivateKey>\n"
 "       Enable HTTPS support (using openssl).\n"
+#endif
 "   -l | --log-file <path-to-logs-file>\n"
 "       Specify log file path to write to. Default is current working\n"
 "       directory.\n"
@@ -58,6 +60,7 @@ int main(int argc, char** argv) {
             std::cout << HELP_MESSAGE;
             return 0;
         } else if (current_arg == "-s" || current_arg == "--secure") {
+#ifndef HTTPGALLERY_NO_OPENSSL
             if (i+2 > argc) {
                 std::cout << "\033[1;31mError: Wrong flag usage\033[1;0m" << std::endl;
                 std::cout << HELP_MESSAGE;
@@ -66,6 +69,10 @@ int main(int argc, char** argv) {
             cert_path = argv[i+1];
             pkey_path = argv[i+2];
             secure = true;
+#else
+            std::cout << "\033[1;31mError: HTTPS feature is not available.\033[1;0m" << std::endl;
+            return -1;
+#endif
         } else if (current_arg == "-l" || current_arg == "--log-file") {
             if (i+1 > argc) {
                 std::cout << "\033[1;31mError: Wrong flag usage\033[1;0m" << std::endl;
@@ -99,8 +106,10 @@ int main(int argc, char** argv) {
     logger.info("Starting Server");
 
     if (secure) {
+#ifndef HTTPGALLERY_NO_OPENSSL
         Server *server = new Server(logger, path, port, cert_path, pkey_path);
         server->startHttps();
+#endif
     } else {
         Server *server = new Server(logger, path, port);
         server->start();

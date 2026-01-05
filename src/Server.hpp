@@ -12,7 +12,9 @@ typedef enum PageType {
 } PageType;
 
 class Server {
+#ifndef HTTPGALLERY_NO_OPENSSL
     BIO *ssl_socket;
+#endif
     int socketfd;
     struct sockaddr_in server_address;
     socklen_t address_length;
@@ -33,9 +35,11 @@ public:
     PageType choosePageType(HttpMessage httpmsg);
     std::string generateContent(HttpMessage msg);
 
+#ifndef HTTPGALLERY_NO_OPENSSL
     void respondClientHttps(SSL* ssl_handle, HttpMessage msg, std::mutex* m);
     void serveClientHttps(SSL *ssl_handle);
     void startHttps();
+#endif
 
     void respondClient(int client_socket, HttpMessage msg, std::mutex* m);
     void serveClient(int client_socket);
