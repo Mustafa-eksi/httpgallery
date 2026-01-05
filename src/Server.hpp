@@ -1,5 +1,6 @@
 #include "HttpResponseBuilder.cpp"
 #include "EmbeddedResources.hpp"
+#include <sys/resource.h>
 
 static const unsigned char HTTPGALLERY_SSL_CACHE_ID[] = "HttpGallery";
 const int HTTPGALLERY_SSL_CACHE_SIZE = 1024;

@@ -12,14 +12,14 @@ Server::Server(Logger& logr, std::string p, size_t port, std::string cert_path, 
     ctx = SSL_CTX_new(TLS_server_method());
     if (!ctx) {
         ERR_print_errors_fp(stderr);
-        logger.error("Failed to create server ssl context");
+        logger.report("ERROR", "Failed to create server ssl context");
         return;
     }
 
     if (!SSL_CTX_set_min_proto_version(ctx, TLS1_2_VERSION)) {
         SSL_CTX_free(ctx);
         ERR_print_errors_fp(stderr);
-        logger.error("Failed to set the minimum TLS version");
+        logger.report("ERROR", "Failed to set the minimum TLS version");
         return;
     }
     long opts = SSL_OP_IGNORE_UNEXPECTED_EOF | SSL_OP_NO_RENEGOTIATION |
@@ -29,14 +29,14 @@ Server::Server(Logger& logr, std::string p, size_t port, std::string cert_path, 
     if (SSL_CTX_use_certificate_chain_file(ctx, cert_path.c_str()) <= 0) {
         SSL_CTX_free(ctx);
         ERR_print_errors_fp(stderr);
-        logger.error("Failed to load the certificate");
+        logger.report("ERROR", "Failed to load the certificate");
         return;
     }
 
     if (SSL_CTX_use_PrivateKey_file(ctx, pkey_path.c_str(), SSL_FILETYPE_PEM) <= 0) {
         SSL_CTX_free(ctx);
         ERR_print_errors_fp(stderr);
-        logger.error("Failed to load the private key");
+        logger.report("ERROR", "Failed to load the private key");
         return;
     }
 
@@ -54,7 +54,7 @@ Server::Server(Logger& logr, std::string p, size_t port, std::string cert_path, 
     if (!this->ssl_socket) {
         SSL_CTX_free(ctx);
         ERR_print_errors_fp(stderr);
-        logger.error("Failed to create a ssl socket");
+        logger.report("ERROR", "Failed to create a ssl socket");
         return;
     }
 
@@ -64,7 +64,7 @@ Server::Server(Logger& logr, std::string p, size_t port, std::string cert_path, 
     if (BIO_do_accept(this->ssl_socket) <= 0) {
         SSL_CTX_free(ctx);
         ERR_print_errors_fp(stderr);
-        logger.error("Failed to set up bio acceptor socket");
+        logger.report("ERROR", "Failed to set up bio acceptor socket");
         return;
     }
 }
@@ -83,7 +83,7 @@ void Server::respondClientHttps(SSL* ssl_handle, HttpMessage msg, std::mutex* m)
     }
     m->lock();
     if (SSL_write(ssl_handle, response.c_str(), response.length()) <= 0) {
-        logger.error("Failed to write to ssl socket");
+        logger.report("ERROR", "Failed to write to ssl socket");
     }
     m->unlock();
     response.clear();
@@ -121,7 +121,7 @@ void Server::serveClientHttps(SSL *ssl_handle) {
 
 void Server::startHttps() {
     if (this->ctx == NULL) {
-        logger.error("SSL context is NULL, exiting");
+        logger.report("ERROR", "SSL context is NULL, exiting");
         return;
     }
     while (!this->shouldClose) {
@@ -136,7 +136,7 @@ void Server::startHttps() {
         BIO *client_socket = BIO_pop(ssl_socket); 
         if (!client_socket) {
             ERR_print_errors_fp(stderr);
-            logger.error("Failed to retrieve the client socket");
+            logger.report("ERROR", "Failed to retrieve the client socket");
             continue;
         }
 
@@ -144,7 +144,7 @@ void Server::startHttps() {
         if (!ssl_handle) {
             BIO_free(client_socket);
             ERR_print_errors_fp(stderr);
-            logger.error("Failed to create new ssl handle");
+            logger.report("ERROR", "Failed to create new ssl handle");
             continue;
         }
         
@@ -155,11 +155,11 @@ void Server::startHttps() {
         if (SSL_accept(ssl_handle) <= 0) {
             BIO_free(client_socket);
             ERR_print_errors_fp(stderr);
-            logger.error("Failed to make a TLS handshake");
+            logger.report("ERROR", "Failed to make a TLS handshake");
             continue;
         }
 
-        logger.info("Successfull handshake");
+        logger.report("INFO", "Successfull handshake");
 
         threads.push_back(std::thread(&Server::serveClientHttps, this, ssl_handle));
     }
@@ -201,6 +201,7 @@ std::string Server::generateContent(HttpMessage msg) {
         std::string mimetype = get_mime_type(msg.address);
         std::string file_content;
 
+        logger.changeMetric("File Data Sent", filesize);
         if (msg.type == GET)
             file_content = read_binary_to_string(filepath, range_start, range_end);
         else if (msg.type == HEAD)
@@ -257,7 +258,7 @@ std::string Server::generateContent(HttpMessage msg) {
                 .build();
         }
     } else {
-        logger.error("Invalid page type");
+        logger.report("ERROR", "Invalid page type");
     }
     return "";
 }
@@ -270,19 +271,19 @@ Server::Server(Logger& logr, std::string p, size_t port, int backlog) : logger(l
     this->path = p;
     this->socketfd = socket(AF_INET, SOCK_STREAM, 0);
     if (socketfd == -1) {
-        logger.error("Socket");
+        logger.report("ERROR", "Socket");
         return;
     }
     // TODO: this might cause problems
     int temp = 1;
     if (setsockopt(socketfd, SOL_SOCKET, SO_REUSEADDR, &temp, sizeof(int)) == -1) {
-        logger.error("setsockopt");
+        logger.report("ERROR", "setsockopt");
         return;
     }
 
     int status = fcntl(socketfd, F_SETFL, fcntl(socketfd, F_GETFL, 0) | O_NONBLOCK);
     if (status == -1){
-        logger.error("fcntl failed");
+        logger.report("ERROR", "fcntl failed");
         return;
     }
 
@@ -296,11 +297,11 @@ Server::Server(Logger& logr, std::string p, size_t port, int backlog) : logger(l
     };
     address_length = sizeof(server_address);
     if (bind(socketfd, (struct sockaddr*)&server_address, sizeof(server_address)) < 0) {
-        logger.error("bind");
+        logger.report("ERROR", "bind");
         return;
     }
     if (listen(socketfd, backlog) < 0) {
-        logger.error("listen");
+        logger.report("ERROR", "listen");
         return;
     }
 }
@@ -319,6 +320,7 @@ void Server::respondClient(int client_socket, HttpMessage msg, std::mutex* m) {
     }
     m->lock();
     send(client_socket, response.c_str(), response.length(), 0);
+    logger.changeMetric("HTTP Responses", 1);
     m->unlock();
     response.clear();
     response.shrink_to_fit();
@@ -341,7 +343,7 @@ void Server::serveClient(int client_socket) {
         memset(message_buffer, '\0', msg_length*sizeof(char)+1);
         if (!message_buffer) {
             // FIXME: make logger variadic like string_format
-            logger.error("failed to allocate " + std::to_string(msg_length) + " bytes");
+            logger.report("ERROR", "failed to allocate " + std::to_string(msg_length) + " bytes");
             return;
         }
         // receive message
@@ -370,10 +372,14 @@ void Server::start() {
         struct sockaddr_in clientAddr;
         socklen_t clientLen = sizeof(clientAddr);
         int client_socket = accept(socketfd, (struct sockaddr*)&clientAddr, &clientLen);
-        if (client_socket < 0) {
+        if (client_socket <= 0) {
+            struct rusage resource_usage;
+            if (getrusage(RUSAGE_SELF, &resource_usage) == 0)
+                logger.setMetric("Total Memory Usage (KB)", resource_usage.ru_maxrss);
             std::this_thread::sleep_for(std::chrono::milliseconds(300));
             continue;
         }
+        logger.changeMetric("Connection Count", 1);
         char clientIp[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &clientAddr.sin_addr, clientIp, INET_ADDRSTRLEN);
 
@@ -385,7 +391,7 @@ void Server::start() {
             continue;
         }
         if (client_socket < 0) {
-            logger.error("serveClient->accept");
+            logger.report("ERROR", "serveClient->accept");
             return;
         }
         threads.push_back(std::thread(&Server::serveClient, this, client_socket));
