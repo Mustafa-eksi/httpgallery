@@ -43,7 +43,10 @@ const char HELP_MESSAGE[] =
 "       Specify log file path to write to. Default is current working\n"
 "       directory.\n"
 "   -p | --port <number>\n"
-"       Use <number> instead of 8000 as the port\n";
+"       Use <number> instead of 8000 as the port\n"
+"   --silent\n"
+"       Do not print the logs to stdout\n"
+;
 
 int main(int argc, char** argv) {
     std::string path = ".";
@@ -51,7 +54,7 @@ int main(int argc, char** argv) {
         path = argv[1];
 
     std::string logs_path = "./";
-    bool secure = false;
+    bool secure = false, silent = false;
     std::string cert_path, pkey_path;
     int port = 8000;
     for (int i = 1; i < argc; i++) {
@@ -95,6 +98,8 @@ int main(int argc, char** argv) {
                 std::cout << "\033[1;31mError: String to Integer conversion error:\033[1;0m" << argv[i+1] << std::endl;
                 return -1;
             }
+        } else if (current_arg == "--silent") {
+            silent = true;
         }
     }
     if (!std::filesystem::exists(path)) {
@@ -102,7 +107,7 @@ int main(int argc, char** argv) {
         std::cout << HELP_MESSAGE;
         return -2;
     }
-    Logger logger = Logger(logs_path+"httpgallery_logs.txt", argc > 2, true);
+    Logger logger = Logger(logs_path+"httpgallery_logs.txt", true, !silent);
     logger.report("INFO", "Starting Server");
 
     if (secure) {
