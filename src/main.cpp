@@ -103,7 +103,7 @@ int main(int argc, char** argv) {
         return -2;
     }
     Logger logger = Logger(logs_path+"httpgallery_logs.txt", argc > 2, true);
-    logger.info("Starting Server");
+    logger.report("INFO", "Starting Server");
 
     if (secure) {
 #ifndef HTTPGALLERY_NO_OPENSSL

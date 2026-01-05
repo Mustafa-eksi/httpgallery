@@ -7,10 +7,15 @@ class Logger {
     std::string output_filename;
     std::ofstream output_stream;
     bool write_to_file, write_to_stdout;
+    std::unordered_map<std::string, uintmax_t> metrics;
+
 public:
     Logger(std::string filename, bool wtf = true, bool wts = false);
     ~Logger();
-    void error(std::string msg);
-    void warning(std::string msg);
-    void info(std::string msg);
+    void setMetric(std::string key, uintmax_t new_value);
+    void changeMetric(std::string key, uintmax_t change_in_value);
+    uintmax_t getMetric(std::string key);
+    void serializeMetrics();
+
+    void report(std::string type, std::string msg);
 };
