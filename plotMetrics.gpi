@@ -1,0 +1,21 @@
+data = ARG1
+
+stats data using 1 nooutput
+
+set terminal pngcairo size 800, (300 * STATS_blocks) enhanced font 'Segoe UI,10'
+set output 'data_graph.png'
+
+set multiplot layout STATS_blocks, 1 title "Data Graph" font ",14"
+    set grid
+    set xrange [STATS_min : STATS_max]
+    set lmargin 10
+    set rmargin 5
+    do for [i=0:STATS_blocks-1] {
+        set xlabel "Time (seconds)"
+        set format x "%g"
+        set bmargin 3
+        plot data index i using 1:2 with line lw 2 title columnheader
+    }
+unset multiplot
+
+

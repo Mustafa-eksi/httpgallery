@@ -13,3 +13,5 @@ vgcore.*
 httpgallery_logs.txt
 *.pem
 httpgallery
+*.dat
+data_graph.png
