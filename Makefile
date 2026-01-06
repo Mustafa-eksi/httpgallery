@@ -34,6 +34,9 @@ gcov_test:
 	lcov --remove ./test/coverage.info '/usr/*' --output-file ./test/coverage_filtered.info
 	genhtml ./test/coverage_filtered.info --output-directory ./test/out
 
+plot: metrics.dat
+	gnuplot -c plotMetrics.gpi metrics.dat
+
 chain: chain.pem
 pkey.pem:
 	openssl genpkey -algorithm rsa -out pkey.pem -pkeyopt rsa_keygen_bits:2048
@@ -49,3 +52,9 @@ asan: ./src/*
 clean:
 	rm -f ./main_asan
 	rm -f ./httpgallery
+	rm -f ./data_graph.png
+	rm -f ./metrics.dat
+	rm -f ./httpgallery_logs.txt
+	rm -f chain.pem
+	rm -f pkey.pem
+

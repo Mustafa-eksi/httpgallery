@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <arpa/inet.h>
 #include <fcntl.h>
+#include <signal.h>
 
 // OpenSSL
 #include <openssl/bio.h>
@@ -46,15 +47,26 @@ const char HELP_MESSAGE[] =
 "       Use <number> instead of 8000 as the port\n"
 "   --silent\n"
 "       Do not print the logs to stdout\n"
+"   --no-metrics\n"
+"       Do not include metrics in the logs (also no .dat files)\n"
 ;
 
+std::atomic<bool> *shouldClose = NULL;
+
+void exit_handler(int s) {
+    (void) s;
+    if (shouldClose)
+        *shouldClose = true;
+}
+
 int main(int argc, char** argv) {
+    signal(SIGINT, &exit_handler);
     std::string path = ".";
     if (argc > 1  && !std::string(argv[1]).starts_with("-"))
         path = argv[1];
 
     std::string logs_path = "./";
-    bool secure = false, silent = false;
+    bool secure = false, silent = false, no_metrics = false;
     std::string cert_path, pkey_path;
     int port = 8000;
     for (int i = 1; i < argc; i++) {
@@ -100,6 +112,8 @@ int main(int argc, char** argv) {
             }
         } else if (current_arg == "--silent") {
             silent = true;
+        } else if (current_arg == "--no-metrics") {
+            no_metrics = true;
         }
     }
     if (!std::filesystem::exists(path)) {
@@ -107,17 +121,19 @@ int main(int argc, char** argv) {
         std::cout << HELP_MESSAGE;
         return -2;
     }
-    Logger logger = Logger(logs_path+"httpgallery_logs.txt", true, !silent);
+    Logger logger = Logger(logs_path+"httpgallery_logs.txt", true, !silent, no_metrics);
     logger.report("INFO", "Starting Server");
 
     if (secure) {
 #ifndef HTTPGALLERY_NO_OPENSSL
-        Server *server = new Server(logger, path, port, cert_path, pkey_path);
-        server->startHttps();
+        Server server = Server(logger, path, port, cert_path, pkey_path);
+        shouldClose = &server.shouldClose;
+        server.startHttps();
 #endif
     } else {
-        Server *server = new Server(logger, path, port);
-        server->start();
+        Server server = Server(logger, path, port);
+        shouldClose = &server.shouldClose;
+        server.start();
     }
     return 0;
 }

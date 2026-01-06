@@ -5,6 +5,8 @@ class HttpResponseBuilder {
     int status = 200;
     std::unordered_map<std::string, std::string> headers = {
         {"Accept-Ranges", "bytes"},
+        {"Keep-Alive", "timeout=5, max=200"},
+        {"Connection", "Keep-Alive"},
     };
     std::string content;
 public:

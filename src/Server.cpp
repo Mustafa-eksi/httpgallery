@@ -7,7 +7,7 @@ Server::Server(Logger& logr, std::string p, size_t port, std::string cert_path, 
     this->htmltemplate_icon = read_binary_to_string("./res/html/template-icon-view.html");
     this->htmltemplate_error = read_binary_to_string("./res/html/template-error.html");
     this->path = p;
-    
+
     // Setting up OpenSSL
     ctx = SSL_CTX_new(TLS_server_method());
     if (!ctx) {
@@ -329,16 +329,11 @@ void Server::respondClient(int client_socket, HttpMessage msg, std::mutex* m) {
 void Server::serveClient(int client_socket) {
     std::vector<std::thread> client_threads;
     std::mutex m;
-    int timeout = 0;
     while (!this->shouldClose) {
         intmax_t msg_length = recv(client_socket, NULL, INT_MAX, (MSG_PEEK | MSG_TRUNC));
         if (msg_length < 1) {
-            if (timeout > 5) break;
-            std::this_thread::sleep_for(std::chrono::milliseconds(300));
-            timeout++;
-            continue;
+            break;
         }
-        timeout = 0;
         char *message_buffer = (char*)malloc(msg_length*sizeof(char)+1);
         memset(message_buffer, '\0', msg_length*sizeof(char)+1);
         if (!message_buffer) {
@@ -356,11 +351,12 @@ void Server::serveClient(int client_socket) {
         message.shrink_to_fit();
         if (httpmsg.type == INVALID) continue;
 
-        //logger.info("responding client: " + httpmsg.address);
         client_threads.push_back(std::thread(&Server::respondClient, this, client_socket, httpmsg, &m));
     }
-    for (auto &t : client_threads)
+    for (auto &t : client_threads) {
         t.join();
+    }
+    logger.changeMetric("Connection Count", -1);
     client_threads.clear();
     client_threads.shrink_to_fit();
     close(client_socket);
@@ -396,6 +392,9 @@ void Server::start() {
         }
         threads.push_back(std::thread(&Server::serveClient, this, client_socket));
     }
+    for (auto &t : threads)
+        t.join();
+    logger.report("INFO", "Server is shutting down");
 }
 
 Server::~Server() {

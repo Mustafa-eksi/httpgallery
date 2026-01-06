@@ -1,6 +1,7 @@
 #include "HttpResponseBuilder.cpp"
 #include "EmbeddedResources.hpp"
 #include <sys/resource.h>
+#include <atomic>
 
 static const unsigned char HTTPGALLERY_SSL_CACHE_ID[] = "HttpGallery";
 const int HTTPGALLERY_SSL_CACHE_SIZE = 1024;
@@ -22,7 +23,7 @@ class Server {
     std::vector<std::thread> threads;
     std::string path;
     std::string htmltemplate_list, htmltemplate_icon, htmltemplate_error;
-    bool shouldClose = false, https;
+    bool https;
     Logger &logger;
 
 // OpenSSL
@@ -30,6 +31,7 @@ class Server {
     BIO *acceptor_bio;
 
 public:
+    std::atomic<bool> shouldClose = false;
     Server(Logger& logr, std::string p, size_t port, std::string cert_path, std::string pkey_path);
     Server(Logger& logr, std::string p=".", size_t port=8000, int backlog=100);
     ~Server();
