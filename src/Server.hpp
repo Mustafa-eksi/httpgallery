@@ -1,11 +1,11 @@
-#include "HttpResponseBuilder.cpp"
 #include "EmbeddedResources.hpp"
-#include <sys/resource.h>
+#include "HttpResponseBuilder.cpp"
 #include <atomic>
+#include <sys/resource.h>
 
 static const unsigned char HTTPGALLERY_SSL_CACHE_ID[] = "HttpGallery";
-const int HTTPGALLERY_SSL_CACHE_SIZE = 1024;
-const int HTTPGALLERY_SSL_TIMEOUT = 3600;
+const int HTTPGALLERY_SSL_CACHE_SIZE                  = 1024;
+const int HTTPGALLERY_SSL_TIMEOUT                     = 3600;
 
 typedef enum PageType {
     DirectoryPage,
@@ -32,19 +32,21 @@ class Server {
 
 public:
     std::atomic<bool> shouldClose = false;
-    Server(Logger& logr, std::string p, size_t port, std::string cert_path, std::string pkey_path);
-    Server(Logger& logr, std::string p=".", size_t port=8000, int backlog=100);
+    Server(Logger &logr, std::string p, size_t port, std::string cert_path,
+           std::string pkey_path);
+    Server(Logger &logr, std::string p = ".", size_t port = 8000,
+           int backlog = 100);
     ~Server();
     PageType choosePageType(HttpMessage httpmsg);
     std::string generateContent(HttpMessage msg);
 
 #ifndef HTTPGALLERY_NO_OPENSSL
-    void respondClientHttps(SSL* ssl_handle, HttpMessage msg, std::mutex* m);
+    void respondClientHttps(SSL *ssl_handle, HttpMessage msg, std::mutex *m);
     void serveClientHttps(SSL *ssl_handle);
     void startHttps();
 #endif
 
-    void respondClient(int client_socket, HttpMessage msg, std::mutex* m);
+    void respondClient(int client_socket, HttpMessage msg, std::mutex *m);
     void serveClient(int client_socket);
     void start();
 };

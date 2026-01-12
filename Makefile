@@ -1,4 +1,4 @@
-.PHONY: chain main
+.PHONY: format main
 CC=clang++
 LIBS=libssl
 CFLAGS=-Wall -Werror -Wextra -Wshadow -ggdb -std=c++23 -g \
@@ -6,7 +6,7 @@ CFLAGS=-Wall -Werror -Wextra -Wshadow -ggdb -std=c++23 -g \
 LDFLAGS=$(shell pkg-config --libs $(LIBS)) -lcrypto
 ASAN_FLAGS=-fsanitize=address -fno-omit-frame-pointer -O0
 TEST_FLAGS=-fPIC -fprofile-arcs -ftest-coverage --coverage
-all: main
+all: format main
 
 TESTS=Http-getRange Http-HttpMessage Http-queriesToString Http-HtmlDecode
 
@@ -54,7 +54,7 @@ asan: ./src/*
 check:
 	cppcheck . --check-level=exhaustive
 
-format:
+format: src/*
 	clang-format --style=file:./.clang-format -i src/*
 
 clean:

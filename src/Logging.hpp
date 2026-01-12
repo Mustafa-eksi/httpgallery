@@ -10,7 +10,8 @@ class Logger {
     std::unordered_map<std::string, uintmax_t> metrics;
 
 public:
-    Logger(std::string filename, bool wtf = true, bool wts = false, bool omit_metrics = false);
+    Logger(std::string filename, bool wtf = true, bool wts = false,
+           bool omit_metrics = false);
     ~Logger();
     void setMetric(std::string key, uintmax_t new_value);
     void changeMetric(std::string key, uintmax_t change_in_value);
