@@ -2,8 +2,10 @@
 
 #ifndef HTTPGALLERY_NO_OPENSSL
 Server::Server(Logger &logr, std::string p, size_t port, std::string cert_path,
-               std::string pkey_path)
-    : logger(logr)
+               std::string pkey_path, bool caching, size_t cache_size)
+    : file_storage(cache_size, logr)
+    , cache_files(caching)
+    , logger(logr)
 {
     this->https = true;
     this->htmltemplate_list
@@ -230,11 +232,16 @@ std::string Server::generateContent(HttpMessage msg)
         std::string file_content;
 
         logger.changeMetric("File Data Sent", filesize);
-        if (msg.type == GET)
-            file_content
-                = read_binary_to_string(filepath, range_start, range_end);
-        else if (msg.type == HEAD)
+        if (msg.type == GET) {
+            if (cache_files)
+                file_content
+                    = file_storage.read(filepath, range_start, range_end);
+            else
+                file_content
+                    = read_binary_to_string(filepath, range_start, range_end);
+        } else if (msg.type == HEAD) {
             file_content = "";
+        }
 
         return HttpResponseBuilder()
             .Status(status)
@@ -300,8 +307,11 @@ std::string Server::generateContent(HttpMessage msg)
     return "";
 }
 
-Server::Server(Logger &logr, std::string p, size_t port, int backlog)
-    : logger(logr)
+Server::Server(Logger &logr, std::string p, size_t port, int backlog,
+               bool caching, size_t cache_size)
+    : file_storage(cache_size, logr)
+    , cache_files(caching)
+    , logger(logr)
 {
     this->https = false;
     this->htmltemplate_list

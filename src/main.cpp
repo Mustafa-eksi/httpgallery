@@ -1,40 +1,27 @@
-#include <cassert>
-#include <cstdio>
-#include <cstring>
-#include <filesystem>
+#include <csignal>
 #include <iostream>
 
-#include <arpa/inet.h>
-#include <fcntl.h>
-#include <netinet/in.h>
-#include <signal.h>
-#include <stdio.h>
-#include <sys/socket.h>
-#include <unistd.h>
-
-// OpenSSL
-#include <openssl/bio.h>
-#include <openssl/err.h>
-#include <openssl/ssl.h>
-
-#include "FileSystemInterface.cpp"
 #include "Logging.cpp"
 #include "Server.cpp"
 
 const char HELP_MESSAGE[]
     = "Usage: httpgallery <path-to-folder> [options]\n"
       "Options:\n"
-      "   -h | --help\n"
+      "   -h, --help\n"
       "       Shows this message\n"
 #ifndef HTTPGALLERY_NO_OPENSSL
-      "   -s | --secure <path-to-certificate> <path-to-PrivateKey>\n"
+      "   -s, --secure <path-to-certificate> <path-to-PrivateKey>\n"
       "       Enable HTTPS support (using openssl).\n"
 #endif
-      "   -l | --log-file <path-to-logs-file>\n"
+      "   -l, --log-file <path-to-logs-file>\n"
       "       Specify log file path to write to. Default is current working\n"
       "       directory.\n"
-      "   -p | --port <number>\n"
+      "   -p, --port <number>\n"
       "       Use <number> instead of 8000 as the port\n"
+      "   -c, --cache-files <bool>\n"
+      "       Store visited files in a LRU cache. Default is true\n"
+      "   --cache-size <number>\n"
+      "       Maximum number of files stored in cache at once. Default is 100\n"
       "   --silent\n"
       "       Do not print the logs to stdout\n"
       "   --no-metrics\n"
@@ -57,9 +44,10 @@ int main(int argc, char **argv)
         path = argv[1];
 
     std::string logs_path = "./";
-    bool secure = false, silent = false, no_metrics = false;
+    bool secure = false, silent = false, no_metrics = false, cache = true;
     std::string cert_path, pkey_path;
-    int port = 8000;
+    int port          = 8000;
+    size_t cache_size = 100;
     for (int i = 1; i < argc; i++) {
         std::string current_arg = argv[i];
         if (current_arg == "-h" || current_arg == "--help") {
@@ -67,7 +55,7 @@ int main(int argc, char **argv)
             return 0;
         } else if (current_arg == "-s" || current_arg == "--secure") {
 #ifndef HTTPGALLERY_NO_OPENSSL
-            if (i + 2 > argc) {
+            if (i + 2 >= argc) {
                 std::cout << "\033[1;31mError: Wrong flag usage\033[1;0m"
                           << std::endl;
                 std::cout << HELP_MESSAGE;
@@ -83,7 +71,7 @@ int main(int argc, char **argv)
             return -1;
 #endif
         } else if (current_arg == "-l" || current_arg == "--log-file") {
-            if (i + 1 > argc) {
+            if (i + 1 >= argc) {
                 std::cout << "\033[1;31mError: Wrong flag usage\033[1;0m"
                           << std::endl;
                 std::cout << HELP_MESSAGE;
@@ -91,7 +79,7 @@ int main(int argc, char **argv)
             }
             logs_path = argv[i + 1];
         } else if (current_arg == "-p" || current_arg == "--port") {
-            if (i + 1 > argc) {
+            if (i + 1 >= argc) {
                 std::cout << "\033[1;31mError: Wrong flag usage\033[1;0m"
                           << std::endl;
                 std::cout << HELP_MESSAGE;
@@ -108,6 +96,43 @@ int main(int argc, char **argv)
                 std::cout << "\033[1;31mError: String to Integer conversion "
                              "error:\033[1;0m"
                           << argv[i + 1] << std::endl;
+                return -1;
+            }
+        } else if (current_arg == "--cache-size") {
+            if (i + 1 >= argc) {
+                std::cout << "\033[1;31mError: Wrong flag usage\033[1;0m"
+                          << std::endl;
+                std::cout << HELP_MESSAGE;
+                return -1;
+            }
+            try {
+                cache_size = std::stoi(argv[i + 1]);
+            } catch (std::out_of_range &e) {
+                std::cout << "\033[1;31mError: String to Integer conversion "
+                             "error:\033[1;0m"
+                          << argv[i + 1] << std::endl;
+                return -1;
+            } catch (std::invalid_argument &e) {
+                std::cout << "\033[1;31mError: String to Integer conversion "
+                             "error:\033[1;0m"
+                          << argv[i + 1] << std::endl;
+                return -1;
+            }
+        } else if (current_arg == "-c" || current_arg == "--cache-files") {
+            if (i + 1 >= argc) {
+                std::cout << "\033[1;31mError: Wrong flag usage\033[1;0m"
+                          << std::endl;
+                std::cout << HELP_MESSAGE;
+                return -1;
+            }
+            if (std::string(argv[i + 1]) == "true") {
+                cache = true;
+            } else if (std::string(argv[i + 1]) == "false") {
+                cache = false;
+            } else {
+                std::cout << "\033[1;31mError: Wrong flag usage\033[1;0m"
+                          << std::endl;
+                std::cout << HELP_MESSAGE;
                 return -1;
             }
         } else if (current_arg == "--silent") {
@@ -128,12 +153,13 @@ int main(int argc, char **argv)
 
     if (secure) {
 #ifndef HTTPGALLERY_NO_OPENSSL
-        Server server = Server(logger, path, port, cert_path, pkey_path);
+        Server server = Server(logger, path, port, cert_path, pkey_path, cache,
+                               cache_size);
         shouldClose   = &server.shouldClose;
         server.startHttps();
 #endif
     } else {
-        Server server = Server(logger, path, port);
+        Server server = Server(logger, path, port, cache, cache_size);
         shouldClose   = &server.shouldClose;
         server.start();
     }
