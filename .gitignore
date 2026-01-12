@@ -15,3 +15,5 @@ httpgallery_logs.txt
 httpgallery
 *.dat
 data_graph.png
+compile_commands.json
+.cache/

@@ -1,4 +1,7 @@
-#include "LookupTables.hpp"
+#include <cstdint>
+#include <optional>
+#include <string>
+#include <unordered_map>
 
 typedef enum HttpMessageType { INVALID, GET, POST, HEAD } HttpMessageType;
 

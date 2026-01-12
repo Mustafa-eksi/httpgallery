@@ -1,4 +1,8 @@
 #include "LookupTables.hpp"
+#pragma once
+#include <filesystem>
+#include <fstream>
+#include <iostream>
 
 std::string get_mime_type(std::string name)
 {
@@ -89,8 +93,6 @@ const auto videoTemplate  = "<div class=\"item\">"
                             "<img class=\"item-icon\" src=\"{}\">"
                             "<a class=\"item-name\" href=\"{}\">{}</a>"
                             "</div>";
-const auto ffmpegCommand
-    = "ffmpeg -i {} -ss 00:00:10 -vframes 1 thumbnail-{}.jpg";
 std::string list_contents(std::string current_address, std::string path,
                           std::string queries = "", bool list_view = false)
 {

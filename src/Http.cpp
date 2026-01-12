@@ -1,4 +1,7 @@
+#pragma once
 #include "Http.hpp"
+#include <iostream>
+#include <stdexcept>
 #include <stdio.h>
 
 HttpMessageType to_http_message_type(std::string s)

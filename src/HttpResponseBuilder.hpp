@@ -1,3 +1,6 @@
+#include <cstdint>
+#include <string>
+#include <unordered_map>
 
 class HttpResponseBuilder {
     // TODO: Maybe support other protocol versions

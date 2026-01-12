@@ -1,7 +1,30 @@
 #include "EmbeddedResources.hpp"
+#include "FileSystemInterface.cpp"
+#include "Http.cpp"
 #include "HttpResponseBuilder.cpp"
+#include "Logging.cpp"
 #include <atomic>
 #include <sys/resource.h>
+
+#include <cassert>
+#include <cstdio>
+#include <cstring>
+#include <mutex>
+#include <thread>
+#include <vector>
+
+#include <arpa/inet.h>
+#include <fcntl.h>
+#include <netinet/in.h>
+#include <stdio.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
+#ifndef HTTPGALLERY_NO_OPENSSL
+#include <openssl/bio.h>
+#include <openssl/err.h>
+#include <openssl/ssl.h>
+#endif
 
 static const unsigned char HTTPGALLERY_SSL_CACHE_ID[] = "HttpGallery";
 const int HTTPGALLERY_SSL_CACHE_SIZE                  = 1024;
