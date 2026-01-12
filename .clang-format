@@ -1,0 +1,9 @@
+BasedOnStyle: Webkit
+# IndentWidth: 4
+Language: Cpp
+# Force pointers to the type for C++.
+PointerAlignment: Right
+ColumnLimit: 80
+AlignConsecutiveAssignments: Consecutive
+AlignConsecutiveMacros: Consecutive
+AlignAfterOpenBracket: true
