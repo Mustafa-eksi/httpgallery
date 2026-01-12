@@ -103,13 +103,19 @@ void Logger::exportMetrics()
 void Logger::report(std::string type, std::string msg)
 {
     this->log_mutex.lock();
-    std::time_t time     = std::time(nullptr);
-    std::string time_str = std::to_string(time);
+    std::time_t time        = std::time(nullptr);
+    std::string time_str    = std::to_string(time);
+    std::string color_start = "", color_end = "";
+    if (type == "ERROR") {
+        color_start = "\033[1;31m";
+        color_end   = "\033[1;0m";
+    }
+
     if (write_to_file)
         this->output_stream << "[" << type << " @ " << time_str << "]: " << msg
                             << std::endl;
     if (write_to_stdout)
-        std::cout << "[" << type << " @ " << time_str << "]: " << msg
-                  << std::endl;
+        std::cout << color_start << "[" << type << " @ " << time_str
+                  << "]: " << msg << color_end << std::endl;
     this->log_mutex.unlock();
 }
