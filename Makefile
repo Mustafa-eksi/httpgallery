@@ -1,6 +1,8 @@
 .PHONY: chain main
+CC=clang++
 LIBS=libssl
-CFLAGS=-Wall -Werror -Wextra -Wshadow -ggdb -std=c++23 -g ${shell pkg-config --cflags $(LIBS)}
+CFLAGS=-Wall -Werror -Wextra -Wshadow -ggdb -std=c++23 -g \
+	   ${shell pkg-config --cflags $(LIBS)}
 LDFLAGS=$(shell pkg-config --libs $(LIBS)) -lcrypto
 ASAN_FLAGS=-fsanitize=address -fno-omit-frame-pointer -O0
 TEST_FLAGS=-fPIC -fprofile-arcs -ftest-coverage --coverage
@@ -26,7 +28,7 @@ clean_test:
 compile_test: $(TESTS)
 
 $(TESTS):
-	g++  -o ./test/$@ ./test/$@.cpp $(CFLAGS) $(TEST_FLAGS)
+	$(CC)  -o ./test/$@ ./test/$@.cpp $(CFLAGS) $(TEST_FLAGS)
 	./test/$@
 
 gcov_test:
@@ -44,10 +46,16 @@ chain.pem: pkey.pem
 	openssl req -x509 -new -key pkey.pem -days 36500 -subj '/CN=localhost' -out chain.pem
 
 main: ./src/*
-	g++ ./src/main.cpp -o httpgallery $(CFLAGS) $(LDFLAGS)
+	$(CC) ./src/main.cpp -o httpgallery $(CFLAGS) $(LDFLAGS)
 
 asan: ./src/*
-	g++ ./src/main.cpp -o main_asan $(CFLAGS) $(ASAN_FLAGS) $(LDFLAGS)
+	$(CC) ./src/main.cpp -o main_asan $(CFLAGS) $(ASAN_FLAGS) $(LDFLAGS)
+
+check:
+	cppcheck . --check-level=exhaustive
+
+format:
+	clang-format --style=file:./.clang-format -i src/*
 
 clean:
 	rm -f ./main_asan

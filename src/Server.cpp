@@ -7,6 +7,11 @@ Server::Server(Logger& logr, std::string p, size_t port, std::string cert_path, 
     this->htmltemplate_icon = read_binary_to_string("./res/html/template-icon-view.html");
     this->htmltemplate_error = read_binary_to_string("./res/html/template-error.html");
     this->path = p;
+#ifndef HTTPGALLERY_EMBED_RESOURCES
+    this->directory_icon_data = read_binary_to_string("./res/image/directory-icon.png");
+    this->video_icon_data = read_binary_to_string("./res/image/video-icon.png");
+    this->text_icon_data = read_binary_to_string("./res/image/text-icon.png");
+#endif
 
     // Setting up OpenSSL
     ctx = SSL_CTX_new(TLS_server_method());
@@ -269,6 +274,12 @@ Server::Server(Logger& logr, std::string p, size_t port, int backlog) : logger(l
     this->htmltemplate_icon = read_binary_to_string("./res/html/template-icon-view.html");
     this->htmltemplate_error = read_binary_to_string("./res/html/template-error.html");
     this->path = p;
+#ifndef HTTPGALLERY_EMBED_RESOURCES
+    this->directory_icon_data = read_binary_to_string("./res/image/directory-icon.png");
+    this->video_icon_data = read_binary_to_string("./res/image/video-icon.png");
+    this->text_icon_data = read_binary_to_string("./res/image/text-icon.png");
+#endif
+
     this->socketfd = socket(AF_INET, SOCK_STREAM, 0);
     if (socketfd == -1) {
         logger.report("ERROR", "Socket");
@@ -287,13 +298,13 @@ Server::Server(Logger& logr, std::string p, size_t port, int backlog) : logger(l
         return;
     }
 
-    server_address = {
+    server_address = (struct sockaddr_in){
         .sin_family = AF_INET,
         .sin_port = htons(port),
         .sin_addr = (struct in_addr) {
             .s_addr = INADDR_ANY,
         },
-        .sin_zero = 0
+        .sin_zero = {}
     };
     address_length = sizeof(server_address);
     if (bind(socketfd, (struct sockaddr*)&server_address, sizeof(server_address)) < 0) {
@@ -335,6 +346,10 @@ void Server::serveClient(int client_socket) {
             break;
         }
         char *message_buffer = (char*)malloc(msg_length*sizeof(char)+1);
+        if (!message_buffer) {
+            logger.report("ERROR", "Memory allocation failed");
+            return;
+        }
         memset(message_buffer, '\0', msg_length*sizeof(char)+1);
         if (!message_buffer) {
             // FIXME: make logger variadic like string_format

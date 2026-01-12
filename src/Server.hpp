@@ -16,6 +16,10 @@ typedef enum PageType {
 class Server {
 #ifndef HTTPGALLERY_NO_OPENSSL
     BIO *ssl_socket;
+    SSL_CTX *ctx = NULL;
+#endif
+#ifndef HTTPGALLERY_EMBED_RESOURCES
+    std::string directory_icon_data, video_icon_data, text_icon_data;
 #endif
     int socketfd;
     struct sockaddr_in server_address;
@@ -25,10 +29,6 @@ class Server {
     std::string htmltemplate_list, htmltemplate_icon, htmltemplate_error;
     bool https;
     Logger &logger;
-
-// OpenSSL
-    SSL_CTX *ctx = NULL;
-    BIO *acceptor_bio;
 
 public:
     std::atomic<bool> shouldClose = false;

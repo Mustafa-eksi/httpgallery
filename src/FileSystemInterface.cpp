@@ -51,6 +51,11 @@ std::string read_entire_file(std::string path) {
     long length = ftell(f);
     rewind(f);
     char *buff = (char*)malloc(length*sizeof(char)+1);
+    if (!buff) {
+        std::cout << "Error: Memory allocation failed" << std::endl;
+        fclose(f);
+        return "";
+    }
     fread(buff, sizeof(char), length, f);
     buff[length] = '\0';
     fclose(f);
