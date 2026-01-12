@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+#include <unordered_map>
 
 static const std::unordered_map<std::string, std::string> mime_types = {
     // Web Essentials (Updated)

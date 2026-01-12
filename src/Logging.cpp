@@ -1,4 +1,6 @@
+#pragma once
 #include "Logging.hpp"
+#include <iostream>
 
 Logger::Logger(std::string filename, bool wtf, bool wts, bool omit_metrics)
     : write_to_file(wtf)

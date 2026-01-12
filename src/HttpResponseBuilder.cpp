@@ -1,4 +1,5 @@
 #include "HttpResponseBuilder.hpp"
+#include "LookupTables.hpp"
 
 HttpResponseBuilder::~HttpResponseBuilder()
 {
