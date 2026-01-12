@@ -1,8 +1,6 @@
 #include "LookupTables.hpp"
 
-typedef enum HttpMessageType {
-    INVALID, GET, POST, HEAD
-} HttpMessageType;
+typedef enum HttpMessageType { INVALID, GET, POST, HEAD } HttpMessageType;
 
 HttpMessageType to_http_message_type(std::string s);
 
@@ -20,7 +18,8 @@ public:
 
     HttpMessage();
     HttpMessage(std::string message);
-    std::optional<std::pair<uintmax_t, uintmax_t>> getRange(uintmax_t full_size);
+    std::optional<std::pair<uintmax_t, uintmax_t>>
+    getRange(uintmax_t full_size);
     std::string queriesToString();
     void print();
 };
