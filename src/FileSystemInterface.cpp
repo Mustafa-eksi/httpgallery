@@ -1,6 +1,7 @@
-#include "LookupTables.hpp"
 #pragma once
 #include "FileCache.hpp"
+#include "Logging.cpp"
+#include "LookupTables.hpp"
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -29,47 +30,6 @@ std::string string_format(const std::string &format, T one_arg, Args... args)
     return string_format(new_format, args...);
 }
 
-class FileStorage {
-    FileCache<std::string, std::string> cache;
-    Logger &logger;
-
-public:
-    FileStorage(size_t cache_size, Logger &l)
-        : cache(cache_size)
-        , logger(l)
-    {
-    }
-    std::string read(const std::string path, uintmax_t range_start = 0,
-                     uintmax_t range_end = 0)
-    {
-        auto opt_val = cache.get(path);
-        if (opt_val) {
-            logger.changeMetric("Cache Hit", 1);
-            return opt_val.value();
-        }
-        logger.changeMetric("Cache Miss", 1);
-        if (range_end < range_start)
-            return "error: range";
-        if (range_end == 0)
-            range_end = std::filesystem::file_size(path);
-
-        std::ifstream file(path, std::ios::binary);
-        if (!file) {
-            std::cout << "ERROR!: " << path << std::endl;
-            return "Error";
-        }
-        file.seekg(range_start);
-        std::string strbuff(range_end - range_start, '\0');
-        if (!file.read(&strbuff[0], range_end - range_start)) {
-            strbuff.clear();
-            strbuff.shrink_to_fit();
-            return "Error";
-        }
-        cache.put(path, strbuff);
-        return strbuff;
-    }
-};
-
 std::string read_binary_to_string(const std::string path,
                                   uintmax_t range_start = 0,
                                   uintmax_t range_end   = 0)
@@ -93,6 +53,34 @@ std::string read_binary_to_string(const std::string path,
     }
     return strbuff;
 }
+
+class FileStorage {
+    FileCache<std::string, std::string> cache;
+    Logger &logger;
+
+public:
+    FileStorage(size_t cache_size, Logger &l)
+        : cache(cache_size)
+        , logger(l)
+    {
+    }
+    std::string read(const std::string path, uintmax_t range_start = 0,
+                     uintmax_t range_end = 0)
+    {
+        auto cache_entry_name = path + "/?" + std::to_string(range_start) + "-"
+            + std::to_string(range_end);
+        auto opt_val = cache.get(cache_entry_name);
+        if (opt_val) {
+            logger.changeMetric("Cache Hit", 1);
+            return opt_val.value();
+        }
+        logger.changeMetric("Cache Miss", 1);
+        std::string strbuff
+            = read_binary_to_string(path, range_start, range_end);
+        cache.put(cache_entry_name, strbuff);
+        return strbuff;
+    }
+};
 
 const auto dir_icon_link   = "/?icon=directory";
 const auto video_icon_link = "/?icon=video";

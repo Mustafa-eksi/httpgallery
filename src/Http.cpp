@@ -152,7 +152,6 @@ HttpMessage::getRange(uintmax_t full_size)
     if (separator_pos == after_units.length() - 1) {
         range_end = full_size;
     } else {
-        printf("'%s'\n", after_units.c_str());
         std::string range_end_str = after_units.substr(separator_pos + 1);
         try {
             range_end = std::stoi(range_end_str);

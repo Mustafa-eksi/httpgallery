@@ -9,9 +9,12 @@ A HTTP server designed to serve media files (and other files too).
 - [X] CLI options
 - [ ] Stress test
 - [ ] Generate thumbnails for directory views.
-- [ ] Implement caching (Maybe LRU?)
+- [X] Implement caching (Maybe LRU?)
 - [X] Support Https
 - [ ] Optional authentication
 - [ ] File management
+- [ ] Package for Arch + Debian
+- [ ] Compression
+- [ ] Docker image
 - [ ] HTTP2 support
 - [ ] HTTP3 support
