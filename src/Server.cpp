@@ -7,19 +7,21 @@ Server::Server(Logger &logr, std::string p, size_t port, std::string cert_path,
     , cache_files(caching)
     , logger(logr)
 {
-    this->https = true;
-    this->htmltemplate_list
-        = read_binary_to_string("./res/html/template-list-view.html");
-    this->htmltemplate_icon
-        = read_binary_to_string("./res/html/template-icon-view.html");
-    this->htmltemplate_error
-        = read_binary_to_string("./res/html/template-error.html");
+    this->https             = true;
+    this->htmltemplate_list = read_binary_to_string(
+        HTTPGALLERY_RES_DIR "/html/template-list-view.html");
+    this->htmltemplate_icon = read_binary_to_string(
+        HTTPGALLERY_RES_DIR "/html/template-icon-view.html");
+    this->htmltemplate_error = read_binary_to_string(
+        HTTPGALLERY_RES_DIR "/html/template-error.html");
     this->path = p;
 #ifndef HTTPGALLERY_EMBED_RESOURCES
-    this->directory_icon_data
-        = read_binary_to_string("./res/image/directory-icon.png");
-    this->video_icon_data = read_binary_to_string("./res/image/video-icon.png");
-    this->text_icon_data  = read_binary_to_string("./res/image/text-icon.png");
+    this->directory_icon_data = read_binary_to_string(
+        HTTPGALLERY_RES_DIR "/image/directory-icon.png");
+    this->video_icon_data
+        = read_binary_to_string(HTTPGALLERY_RES_DIR "/image/video-icon.png");
+    this->text_icon_data
+        = read_binary_to_string(HTTPGALLERY_RES_DIR "/image/text-icon.png");
 #endif
 
     // Setting up OpenSSL
@@ -37,7 +39,7 @@ Server::Server(Logger &logr, std::string p, size_t port, std::string cert_path,
         return;
     }
     long opts = SSL_OP_IGNORE_UNEXPECTED_EOF | SSL_OP_NO_RENEGOTIATION
-        | SSL_OP_SERVER_PREFERENCE;
+        | SSL_OP_CIPHER_SERVER_PREFERENCE;
     SSL_CTX_set_options(ctx, opts);
 
     if (SSL_CTX_use_certificate_chain_file(ctx, cert_path.c_str()) <= 0) {
@@ -311,19 +313,21 @@ Server::Server(Logger &logr, std::string p, size_t port, int backlog,
     , cache_files(caching)
     , logger(logr)
 {
-    this->https = false;
-    this->htmltemplate_list
-        = read_binary_to_string("./res/html/template-list-view.html");
-    this->htmltemplate_icon
-        = read_binary_to_string("./res/html/template-icon-view.html");
-    this->htmltemplate_error
-        = read_binary_to_string("./res/html/template-error.html");
+    this->https             = false;
+    this->htmltemplate_list = read_binary_to_string(
+        HTTPGALLERY_RES_DIR "/html/template-list-view.html");
+    this->htmltemplate_icon = read_binary_to_string(
+        HTTPGALLERY_RES_DIR "/html/template-icon-view.html");
+    this->htmltemplate_error = read_binary_to_string(
+        HTTPGALLERY_RES_DIR "/html/template-error.html");
     this->path = p;
 #ifndef HTTPGALLERY_EMBED_RESOURCES
-    this->directory_icon_data
-        = read_binary_to_string("./res/image/directory-icon.png");
-    this->video_icon_data = read_binary_to_string("./res/image/video-icon.png");
-    this->text_icon_data  = read_binary_to_string("./res/image/text-icon.png");
+    this->directory_icon_data = read_binary_to_string(
+        HTTPGALLERY_RES_DIR "/image/directory-icon.png");
+    this->video_icon_data
+        = read_binary_to_string(HTTPGALLERY_RES_DIR "/image/video-icon.png");
+    this->text_icon_data
+        = read_binary_to_string(HTTPGALLERY_RES_DIR "/image/text-icon.png");
 #endif
 
     this->socketfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -350,7 +354,7 @@ Server::Server(Logger &logr, std::string p, size_t port, int backlog,
         .sin_family = AF_INET,
         .sin_port = htons(port),
         .sin_addr = (struct in_addr) {
-            .s_addr = INADDR_ANY,
+            .s_addr = htonl(INADDR_ANY),
         },
         .sin_zero = {}
     };
@@ -457,11 +461,11 @@ void Server::start()
 
         // FIXME: make this optional (opt-in)
         // Simple check: Does the IP start with "192.168."?
-        std::string ipStr = clientIp;
-        if (!ipStr.starts_with("10.42.") && ipStr != "127.0.0.1") {
-            close(client_socket); // Reject connection
-            continue;
-        }
+       // std::string ipStr = clientIp;
+       // if (!ipStr.starts_with("10.42.") && ipStr != "127.0.0.1") {
+       //     close(client_socket); // Reject connection
+       //     continue;
+       // }
         if (client_socket < 0) {
             logger.report("ERROR", "serveClient->accept");
             return;

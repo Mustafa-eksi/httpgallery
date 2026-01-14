@@ -30,6 +30,10 @@ const int HTTPGALLERY_SSL_CACHE_SIZE                  = 1024;
 const int HTTPGALLERY_SSL_TIMEOUT                     = 3600;
 #endif
 
+#ifndef HTTPGALLERY_RES_DIR
+#define HTTPGALLERY_RES_DIR "./res"
+#endif
+
 typedef enum PageType {
     DirectoryPage,
     FileDataPage,
