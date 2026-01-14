@@ -1,6 +1,4 @@
-#include "Logging.cpp"
 #include <list>
-#include <mutex>
 #include <optional>
 #include <unordered_map>
 
@@ -11,7 +9,6 @@ template <typename T, typename U> class FileCache {
     std::unordered_map<Key, std::pair<File, typename std::list<Key>::iterator>>
         cache;
     std::list<Key> ordered_keys;
-    std::mutex m;
 
 public:
     FileCache(size_t capacity)
@@ -19,7 +16,6 @@ public:
 
     std::optional<T> get(U key)
     {
-        std::lock_guard<std::mutex> lg(m);
         if (!this->cache.contains(key))
             return std::nullopt;
         this->ordered_keys.splice(this->ordered_keys.end(), this->ordered_keys,
@@ -29,7 +25,6 @@ public:
 
     void put(U key, T value)
     {
-        std::lock_guard<std::mutex> lg(m);
         if (this->cache.contains(key)) {
             this->cache[key].first = value;
             this->ordered_keys.splice(this->ordered_keys.end(),
@@ -48,7 +43,6 @@ public:
                 = std::make_pair(value, std::prev(this->ordered_keys.end()));
         }
     }
-
     ~FileCache()
     {
         for (auto &[k, p] : cache) {

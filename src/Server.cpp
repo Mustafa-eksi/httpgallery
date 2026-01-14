@@ -227,7 +227,7 @@ std::string Server::generateContent(HttpMessage msg)
                 .build();
         }
         auto [range_start, range_end] = range_opt.value();
-        int status           = range_end - range_start == filesize ? 200 : 206;
+        int status = (range_end - range_start) == filesize ? 200 : 206;
         std::string mimetype = get_mime_type(msg.address);
         std::string file_content;
 
@@ -248,8 +248,6 @@ std::string Server::generateContent(HttpMessage msg)
             .ContentType(mimetype)
             .ContentRange(range_start, range_end)
             .Content(file_content)
-            .ContentLength(
-                filesize) // Content already sets it but we override for HEAD
             .build();
     } else if (pt == DirectoryPage) {
         bool list_view = msg.queries.contains("list-view")

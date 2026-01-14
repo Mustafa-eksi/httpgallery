@@ -100,6 +100,32 @@ void Logger::exportMetrics()
     datfile.close();
 }
 
+void Logger::reportFormat(std::string type)
+{
+    (void)type;
+    std::cout << std::endl;
+}
+
+template <typename T, typename... Rest>
+void Logger::reportFormat(std::string type, T one_arg, Rest... rest)
+{
+    if (!write_to_stdout)
+        return;
+    std::time_t time        = std::time(nullptr);
+    std::string time_str    = std::to_string(time);
+    std::string color_start = "", color_end = "";
+    if (type == "ERROR") {
+        color_start = "\033[1;31m";
+        color_end   = "\033[1;0m";
+    }
+
+    if (!type.empty())
+        std::cout << color_start << "[" << type << " @ " << time_str
+                  << "]: " << color_end;
+    std::cout << one_arg;
+    this->reportFormat("", rest...);
+}
+
 void Logger::report(std::string type, std::string msg)
 {
     this->log_mutex.lock();

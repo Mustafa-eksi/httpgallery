@@ -21,5 +21,9 @@ public:
     uintmax_t getMetric(std::string key);
     void exportMetrics();
 
+    void reportFormat(std::string type);
+    template <typename T, typename... Rest>
+    void reportFormat(std::string type, T one_arg, Rest... rest);
+
     void report(std::string type, std::string msg);
 };
