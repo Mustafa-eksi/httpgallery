@@ -1,8 +1,14 @@
 .PHONY: format main
+prefix=/usr
+BIN_DIR=$(prefix)/bin
+SHARE_DIR=$(prefix)/share
 CC=clang++
 LIBS=libssl
 CFLAGS=-Wall -Werror -Wextra -Wshadow -ggdb -std=c++23 -g \
 	   ${shell pkg-config --cflags $(LIBS)}
+RELEASE_CFLAGS=-Wall -Werror -Wextra -Wshadow -std=c++23 \
+			   ${shell pkg-config --cflags $(LIBS)} -O3 \
+			   -DHTTPGALLERY_RES_DIR="\"/usr/share/httpgallery\""
 LDFLAGS=$(shell pkg-config --libs $(LIBS)) -lcrypto
 ASAN_FLAGS=-fsanitize=address -fno-omit-frame-pointer -O0
 TEST_FLAGS=-fPIC -fprofile-arcs -ftest-coverage --coverage
@@ -48,6 +54,9 @@ chain.pem: pkey.pem
 main: ./src/*
 	$(CC) ./src/main.cpp -o httpgallery $(CFLAGS) $(LDFLAGS)
 
+main_release: ./src/*
+	$(CC) $(RELEASE_CFLAGS) ./src/main.cpp -o httpgallery $(LDFLAGS)
+
 asan: ./src/*
 	$(CC) ./src/main.cpp -o main_asan $(CFLAGS) $(ASAN_FLAGS) $(LDFLAGS)
 
@@ -66,3 +75,19 @@ clean:
 	rm -f chain.pem
 	rm -f pkey.pem
 
+install: ./src/* main_release
+	mkdir -p $(BIN_DIR)
+	mkdir -p $(SHARE_DIR)
+	install httpgallery $(BIN_DIR)/
+	install -d $(SHARE_DIR)/httpgallery
+	cp -r ./res/* $(SHARE_DIR)/httpgallery
+
+uninstall:
+	rm $(BIN_DIR)/httpgallery
+	rm -rf $(SHARE_DIR)/httpgallery
+
+docker_build:
+	docker build . -t httpgallery
+
+docker_run: docker_build
+	docker run -p 8000:8000 httpgallery
