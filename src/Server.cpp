@@ -461,11 +461,11 @@ void Server::start()
 
         // FIXME: make this optional (opt-in)
         // Simple check: Does the IP start with "192.168."?
-       // std::string ipStr = clientIp;
-       // if (!ipStr.starts_with("10.42.") && ipStr != "127.0.0.1") {
-       //     close(client_socket); // Reject connection
-       //     continue;
-       // }
+        // std::string ipStr = clientIp;
+        // if (!ipStr.starts_with("10.42.") && ipStr != "127.0.0.1") {
+        //     close(client_socket); // Reject connection
+        //     continue;
+        // }
         if (client_socket < 0) {
             logger.report("ERROR", "serveClient->accept");
             return;

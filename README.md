@@ -5,16 +5,18 @@ A HTTP server designed to serve media files (and other files too).
 - [ ] Write testing for it
 - [X] List view, icon view distinction.
 - [X] Logging system
-- [ ] Better UI
 - [X] CLI options
-- [ ] Stress test
-- [ ] Generate thumbnails for directory views.
 - [X] Implement caching (Maybe LRU?)
 - [X] Support Https
+- [ ] Compression
+- [ ] Generate thumbnails for directory views.
 - [ ] Optional authentication
+- [ ] Stress test
+- [ ] Better UI
 - [ ] File management
 - [ ] Package for Arch + Debian
-- [ ] Compression
 - [ ] Docker image
 - [ ] HTTP2 support
 - [ ] HTTP3 support
+- [ ] Introduce an auto-documentation system like doxygen
+- [ ] A more professional readme
