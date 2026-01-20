@@ -205,7 +205,11 @@ std::string Server::generateContent(HttpMessage msg)
     PageType pt = this->choosePageType(msg);
     if (path.back() == '/')
         path = path.substr(0, path.length() - 1);
-    auto filepath = path + msg.address;
+    auto filepath    = path + msg.address;
+    std::string comp = "";
+    if (msg.headers.contains("Accept-Encoding")) {
+        comp = msg.headers["Accept-Encoding"];
+    }
     if (pt == FileDataPage) {
         if (!std::filesystem::exists(filepath)) {
             std::string error_page
@@ -250,6 +254,7 @@ std::string Server::generateContent(HttpMessage msg)
             .ContentType(mimetype)
             .ContentRange(range_start, range_end)
             .Content(file_content)
+            .CompressContent(comp)
             .build();
     } else if (pt == DirectoryPage) {
         bool list_view = msg.queries.contains("list-view")
@@ -274,6 +279,7 @@ std::string Server::generateContent(HttpMessage msg)
             .ContentType("text/html; charset=utf-8")
             .Content(final_content)
             .ContentLength(content_length) // Same as one in above
+            .CompressContent(comp)
             .build();
     } else if (pt == IconData) {
         if (msg.queries["icon"] == "video") {
@@ -283,6 +289,7 @@ std::string Server::generateContent(HttpMessage msg)
                 .Status(200)
                 .ContentType("image/png")
                 .Content(image_data)
+                .CompressContent(comp)
                 .build();
         } else if (msg.queries["icon"] == "directory") {
             std::string image_data(directory_icon_data.begin(),
@@ -291,6 +298,7 @@ std::string Server::generateContent(HttpMessage msg)
                 .Status(200)
                 .ContentType("image/png")
                 .Content(image_data)
+                .CompressContent(comp)
                 .build();
         } else {
             std::string image_data(text_icon_data.begin(),
@@ -299,6 +307,7 @@ std::string Server::generateContent(HttpMessage msg)
                 .Status(200)
                 .ContentType("image/png")
                 .Content(image_data)
+                .CompressContent(comp)
                 .build();
         }
     } else {

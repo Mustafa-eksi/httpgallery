@@ -3,7 +3,7 @@ prefix=/usr
 BIN_DIR=$(prefix)/bin
 SHARE_DIR=$(prefix)/share
 CC=clang++
-LIBS=libssl
+LIBS=libssl zlib
 CFLAGS=-Wall -Werror -Wextra -Wshadow -ggdb -std=c++23 -g \
 	   ${shell pkg-config --cflags $(LIBS)}
 RELEASE_CFLAGS=-Wall -Werror -Wextra -Wshadow -std=c++23 \
