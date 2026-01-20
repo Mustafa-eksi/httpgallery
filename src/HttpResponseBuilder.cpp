@@ -40,6 +40,31 @@ HttpResponseBuilder HttpResponseBuilder::Content(std::string &new_content)
     return *this;
 }
 
+HttpResponseBuilder HttpResponseBuilder::CompressContent(std::string encoding)
+{
+    // TODO: support brotli
+    if (encoding.find("gzip") == std::string::npos
+        && encoding.find("*") == std::string::npos) {
+        return *this;
+    }
+    if (this->content.empty())
+        return *this;
+    auto destLen = compressBound(this->content.length());
+    std::string destBuffer(destLen, '\0');
+    z_stream_s zs = {};
+    zs.next_in    = (unsigned char *)this->content.data();
+    zs.avail_in   = this->content.length();
+    zs.next_out   = (unsigned char *)destBuffer.data();
+    zs.avail_out  = destLen;
+    deflateInit2(&zs, Z_DEFAULT_COMPRESSION, Z_DEFLATED, 15 + 16, 8,
+                 Z_DEFAULT_STRATEGY);
+    deflate(&zs, Z_FINISH);
+    deflateEnd(&zs);
+
+    // destBuffer might be leaking
+    return this->Content(destBuffer).SetHeader("Content-Encoding", "gzip");
+}
+
 HttpResponseBuilder HttpResponseBuilder::SetHeader(std::string header,
                                                    std::string value)
 {

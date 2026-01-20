@@ -1,6 +1,8 @@
 #include <cstdint>
+#include <string.h>
 #include <string>
 #include <unordered_map>
+#include <zlib.h>
 
 class HttpResponseBuilder {
     // TODO: Maybe support other protocol versions
@@ -21,6 +23,7 @@ public:
     HttpResponseBuilder ContentLength(uintmax_t content_length);
     HttpResponseBuilder ContentType(std::string mime_type);
     HttpResponseBuilder Content(std::string &content);
+    HttpResponseBuilder CompressContent(std::string encoding);
     HttpResponseBuilder SetHeader(std::string header, std::string value);
     std::string build();
 };
