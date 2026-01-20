@@ -67,17 +67,57 @@ public:
     std::string read(const std::string path, uintmax_t range_start = 0,
                      uintmax_t range_end = 0)
     {
-        auto cache_entry_name = path + "/?" + std::to_string(range_start) + "-"
-            + std::to_string(range_end);
-        auto opt_val = cache.get(cache_entry_name);
+        auto cache_entry_name = path;
+        auto opt_val          = cache.get(cache_entry_name);
         if (opt_val) {
-            logger.changeMetric("Cache Hit", 1);
-            return opt_val.value();
+            auto file_entry = opt_val.value();
+            auto r0         = file_entry.range.first;
+            auto r1         = file_entry.range.second;
+            logger.changeMetric("Partial Cache Hit", 1);
+            // r0 p0 p1 r1
+            // If Cached value includes the part we want:
+            if (r0 <= range_start && range_end <= r1) {
+                return file_entry.data.substr(
+                    range_start - r0, (range_end - r0) - (range_start - r0));
+            }
+            // r0 p0 r1 p1
+            if (r0 <= range_start && range_end < r1) {
+                std::string strbuff
+                    = read_binary_to_string(path, r1, range_end);
+                std::string new_data
+                    = file_entry.data.substr(range_start - r0) + strbuff;
+                cache.put(cache_entry_name, new_data,
+                          std::make_pair(r0, range_end));
+                return new_data;
+            }
+            // p0 r0 p1 r1
+            if (range_start <= r0 && range_end <= r1) {
+                std::string strbuff
+                    = read_binary_to_string(path, range_start, r0);
+                std::string new_data
+                    = strbuff + file_entry.data.substr(0, range_end - r0);
+                cache.put(cache_entry_name, new_data,
+                          std::make_pair(range_start, r1));
+                return new_data;
+            }
+            // p0 r0 r1 p1
+            if (range_start <= r0 && r1 <= range_end) {
+                std::string left_part
+                    = read_binary_to_string(path, range_start, r0);
+                std::string right_part
+                    = read_binary_to_string(path, r1, range_end);
+                std::string new_data = left_part + file_entry.data + right_part;
+                cache.put(cache_entry_name, new_data,
+                          std::make_pair(range_start, range_end));
+                return new_data;
+            }
+            // TODO: Cache non-intersecting ranges
         }
         logger.changeMetric("Cache Miss", 1);
         std::string strbuff
             = read_binary_to_string(path, range_start, range_end);
-        cache.put(cache_entry_name, strbuff);
+        cache.put(cache_entry_name, strbuff,
+                  std::make_pair(range_start, range_end));
         return strbuff;
     }
 };
