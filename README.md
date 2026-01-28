@@ -1,6 +1,10 @@
 # Httpgallery
 A HTTP server designed to serve media files (and other files too).
 
+# Documentation
+You can find the documentation in there:
+https://mustafa-eksi.github.io/httpgallery/html/
+
 # Future Plans
 - [ ] Write testing for it
 - [X] List view, icon view distinction.
