@@ -2,6 +2,9 @@
 #include <string>
 #include <unordered_map>
 
+/**
+ * @brief A map of extension to mime type.
+ */
 static const std::unordered_map<std::string, std::string> mime_types = {
     // Web Essentials (Updated)
     { "html", "text/html; charset=utf-8" },
@@ -79,6 +82,9 @@ static const std::unordered_map<std::string, std::string> mime_types = {
     { "dll", "application/octet-stream" }
 };
 
+/**
+ * @brief A map of status number to status description
+ */
 static const std::unordered_map<int, std::string> HTTP_STATUS_MESSAGES = {
     // 1xx Informational
     // 2XX Success

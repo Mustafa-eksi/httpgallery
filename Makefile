@@ -91,3 +91,6 @@ docker_build:
 
 docker_run: docker_build
 	docker run -p 8000:8000 httpgallery
+
+generate_docs:
+	doxygen Doxyfile

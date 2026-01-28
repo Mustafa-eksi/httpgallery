@@ -54,6 +54,9 @@ std::string read_binary_to_string(const std::string path,
     return strbuff;
 }
 
+/**
+ * @brief File LRU cache.
+ */
 class FileStorage {
     FileCache<std::string, std::string> cache;
     Logger &logger;
@@ -64,6 +67,15 @@ public:
         , logger(l)
     {
     }
+    /**
+     * @brief Read the file either from the cache or disk.
+     *
+     * @param path Path to the file that is requested.
+     * @param range_start Start of the content range of the file.
+     * @param range_end End of the content range of the file. 0 means read the
+     * full file.
+     * @return Raw file content
+     */
     std::string read(const std::string path, uintmax_t range_start = 0,
                      uintmax_t range_end = 0)
     {

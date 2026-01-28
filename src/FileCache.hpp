@@ -3,12 +3,18 @@
 #include <optional>
 #include <unordered_map>
 
+/**
+ * @brief Simple file entry struct for LRU caching.
+ */
 template <typename T, typename U> struct FileEntry {
     T data;
     std::list<U>::iterator pointer;
     std::pair<uintmax_t, uintmax_t> range;
 };
 
+/**
+ * @brief Simple LRU Cache
+ */
 template <typename T, typename U> class FileCache {
     using File      = T;
     using Key       = U;
