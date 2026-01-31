@@ -203,9 +203,13 @@ PageType Server::choosePageType(HttpMessage msg)
 std::string Server::generateContent(HttpMessage msg)
 {
     PageType pt = this->choosePageType(msg);
-    if (path.back() == '/')
+    if (path.back() == '/' && path.size() > 1)
         path = path.substr(0, path.length() - 1);
-    auto filepath    = path + msg.address;
+
+    auto filepath = path + msg.address;
+    if (access(filepath.c_str(), R_OK | X_OK) != 0)
+        return HttpResponseBuilder().ErrorPage(htmltemplate_error, 403).build();
+
     std::string comp = "";
     if (msg.headers.contains("Accept-Encoding")) {
         comp = msg.headers["Accept-Encoding"];
