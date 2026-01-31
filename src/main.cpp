@@ -24,8 +24,8 @@ const char HELP_MESSAGE[]
       "       Maximum number of files stored in cache at once. Default is 100\n"
       "   --silent\n"
       "       Do not print the logs to stdout\n"
-      "   --no-metrics\n"
-      "       Do not include metrics in the logs (also no .dat files)\n";
+      "   --enable-metrics\n"
+      "       Include metrics in the logs (also generates .dat file)\n";
 
 std::atomic<bool> *shouldClose = NULL;
 
@@ -44,7 +44,7 @@ int main(int argc, char **argv)
         path = argv[1];
 
     std::string logs_path = "./";
-    bool secure = false, silent = false, no_metrics = false, cache = true;
+    bool secure = false, silent = false, no_metrics = true, cache = true;
     std::string cert_path, pkey_path;
     int port          = 8000;
     size_t cache_size = 100;
@@ -137,8 +137,8 @@ int main(int argc, char **argv)
             }
         } else if (current_arg == "--silent") {
             silent = true;
-        } else if (current_arg == "--no-metrics") {
-            no_metrics = true;
+        } else if (current_arg == "--enable-metrics") {
+            no_metrics = false;
         }
     }
     if (!std::filesystem::exists(path)) {
