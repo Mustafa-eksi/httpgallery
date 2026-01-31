@@ -16,6 +16,7 @@ class Logger {
     std::unordered_map<std::string, uintmax_t> metrics;
 
     void reportFormat(std::string type);
+
 public:
     /**
      * @brief Initializes Logger class
