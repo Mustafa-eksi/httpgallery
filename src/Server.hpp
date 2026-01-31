@@ -58,7 +58,7 @@ class Server {
     std::vector<std::thread> threads;
     std::string path;
     std::string htmltemplate_list, htmltemplate_icon, htmltemplate_error;
-    bool https, cache_files;
+    bool https, cache_files, has_thumbnailer;
     Logger &logger;
 
 public:
@@ -75,9 +75,12 @@ public:
      * @param caching Enables server side file caching.
      * @param cache_size Sets file cache size (effective only when caching is
      * true).
+     * @param thumbnailer Enables video thumbnailing (requires
+     * ffmpegthumbnailer)
      */
     Server(Logger &logr, std::string p, size_t port, std::string cert_path,
-           std::string pkey_path, bool caching = true, size_t cache_size = 100);
+           std::string pkey_path, bool caching = true, size_t cache_size = 100,
+           bool thumbnailer = false);
     /**
      * @brief Initialize a http server with https support.
      * @param logr Reference to the Logger.
@@ -88,15 +91,24 @@ public:
      * @param caching Enables server side file caching.
      * @param cache_size Sets file cache size (effective only when caching is
      * true).
+     * @param thumbnailer Enables video thumbnailing (requires
+     * ffmpegthumbnailer)
      */
     Server(Logger &logr, std::string p = ".", size_t port = 8000,
-           int backlog = 100, bool caching = true, size_t cache_size = 100);
+           int backlog = 100, bool caching = true, size_t cache_size = 100,
+           bool thumbnailer = false);
     ~Server();
     /**
      * @brief Returns appropriate page type based on http request.
      * @param msg Http request.
      */
     PageType choosePageType(HttpMessage msg);
+    /**
+     * @brief Generates video thumbnail.
+     *
+     * @param filepath path to the video file.
+     */
+    std::optional<std::string> generateVideoThumbnail(std::string filepath);
     /**
      * @brief Generates http response according to msg.
      * @param msg Http request.

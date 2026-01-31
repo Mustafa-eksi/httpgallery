@@ -150,16 +150,18 @@ int main(int argc, char **argv)
     Logger logger
         = Logger(logs_path + "httpgallery_logs.txt", true, !silent, no_metrics);
     logger.report("INFO", "Starting Server");
-
+    int ret                  = system("ffmpegthumbnailer -v > /dev/null 2>&1");
+    bool thumbnailer_present = (ret == 0);
     if (secure) {
 #ifndef HTTPGALLERY_NO_OPENSSL
         Server server = Server(logger, path, port, cert_path, pkey_path, cache,
-                               cache_size);
+                               cache_size, thumbnailer_present);
         shouldClose   = &server.shouldClose;
         server.startHttps();
 #endif
     } else {
-        Server server = Server(logger, path, port, cache, cache_size);
+        Server server = Server(logger, path, port, 3, cache, cache_size,
+                               thumbnailer_present);
         shouldClose   = &server.shouldClose;
         server.start();
     }

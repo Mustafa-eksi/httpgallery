@@ -17,6 +17,17 @@ std::string get_mime_type(std::string name)
     return mime_types.at(ext);
 }
 
+const char *BASE64_ALPHABET
+    = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+std::string base64_hash(std::string data)
+{
+    std::string output;
+    for (auto c : data) {
+        output += BASE64_ALPHABET[c % 64];
+    }
+    return output;
+}
+
 std::string string_format(const std::string &format) { return format; }
 
 template <typename T, typename... Args>
@@ -175,8 +186,8 @@ std::string list_contents(std::string current_address, std::string path,
                 output += string_format(imageTemplate, filepath, filepath,
                                         filename);
             } else if (get_mime_type(filename).starts_with("video")
-                       && entry.file_size() < 5e+7 && !list_view) {
-                output += string_format(videoTemplate, video_icon_link,
+                       && !list_view) {
+                output += string_format(videoTemplate, filepath + "?icon=video",
                                         filepath, filename);
             } else {
                 output += string_format(buttonTemplate,
