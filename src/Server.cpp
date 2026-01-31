@@ -2,9 +2,11 @@
 
 #ifndef HTTPGALLERY_NO_OPENSSL
 Server::Server(Logger &logr, std::string p, size_t port, std::string cert_path,
-               std::string pkey_path, bool caching, size_t cache_size)
+               std::string pkey_path, bool caching, size_t cache_size,
+               bool thumbnailer)
     : file_storage(cache_size, logr)
     , cache_files(caching)
+    , has_thumbnailer(thumbnailer)
     , logger(logr)
 {
     this->https             = true;
@@ -200,6 +202,21 @@ PageType Server::choosePageType(HttpMessage msg)
     return is_dir ? DirectoryPage : FileDataPage;
 }
 
+std::optional<std::string> Server::generateVideoThumbnail(std::string filepath)
+{
+    std::string thumbnail_path
+        = "/tmp/httpgallery-" + base64_hash(filepath) + ".png";
+    if (access(thumbnail_path.c_str(), R_OK) == 0)
+        return read_binary_to_string(thumbnail_path);
+
+    std::string command = "ffmpegthumbnailer -i\"" + filepath + "\" -o"
+        + thumbnail_path + " -m -a";
+    system(command.c_str());
+    if (access(thumbnail_path.c_str(), R_OK) == 0)
+        return read_binary_to_string(thumbnail_path);
+    return std::nullopt;
+}
+
 std::string Server::generateContent(HttpMessage msg)
 {
     PageType pt = this->choosePageType(msg);
@@ -207,7 +224,7 @@ std::string Server::generateContent(HttpMessage msg)
         path = path.substr(0, path.length() - 1);
 
     auto filepath = path + msg.address;
-    if (access(filepath.c_str(), R_OK | X_OK) != 0)
+    if (access(filepath.c_str(), R_OK) != 0)
         return HttpResponseBuilder().ErrorPage(htmltemplate_error, 403).build();
 
     std::string comp = "";
@@ -280,8 +297,18 @@ std::string Server::generateContent(HttpMessage msg)
             .build();
     } else if (pt == IconData) {
         if (msg.queries["icon"] == "video") {
-            std::string image_data(video_icon_data.begin(),
-                                   video_icon_data.end());
+            std::string image_data;
+            if (has_thumbnailer) {
+                auto thumb_opt = generateVideoThumbnail(filepath);
+                if (thumb_opt.has_value())
+                    image_data = thumb_opt.value();
+                else
+                    logger.report("ERROR", "Thumbnailer failed");
+            }
+
+            if (image_data.empty())
+                image_data = std::string(video_icon_data.begin(),
+                                         video_icon_data.end());
             return HttpResponseBuilder()
                 .Status(200)
                 .ContentType("image/png")
@@ -314,9 +341,10 @@ std::string Server::generateContent(HttpMessage msg)
 }
 
 Server::Server(Logger &logr, std::string p, size_t port, int backlog,
-               bool caching, size_t cache_size)
+               bool caching, size_t cache_size, bool thumbnailer)
     : file_storage(cache_size, logr)
     , cache_files(caching)
+    , has_thumbnailer(thumbnailer)
     , logger(logr)
 {
     this->https             = false;

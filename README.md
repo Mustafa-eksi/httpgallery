@@ -14,7 +14,7 @@ https://mustafa-eksi.github.io/httpgallery/html/
 - [X] Support Https
 - [X] Compression
 - [X] Introduce an auto-documentation system like doxygen
-- [ ] Generate thumbnails for directory views.
+- [X] Generate thumbnails for video files.
 - [ ] Optional authentication
 - [ ] Stress test
 - [ ] Better UI
