@@ -120,6 +120,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6607167e4b9bc9c90973f9e0f2db9885" id="r_a6607167e4b9bc9c90973f9e0f2db9885"><td class="memItemLeft"><a id="a6607167e4b9bc9c90973f9e0f2db9885" name="a6607167e4b9bc9c90973f9e0f2db9885"></a>
 <a class="el" href="classHttpResponseBuilder.html">HttpResponseBuilder</a>&#160;</td><td class="memItemRight"><b>SetHeader</b> (std::string header, std::string value)</td></tr>
 <tr class="memdesc:a6607167e4b9bc9c90973f9e0f2db9885"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets custom header. <br /></td></tr>
+<tr class="memitem:a21cb96161f4edf045b07f2f458c5c5a5" id="r_a21cb96161f4edf045b07f2f458c5c5a5"><td class="memItemLeft"><a class="el" href="classHttpResponseBuilder.html">HttpResponseBuilder</a>&#160;</td><td class="memItemRight"><a class="el" href="#a21cb96161f4edf045b07f2f458c5c5a5">ErrorPage</a> (std::string page_template, int status)</td></tr>
+<tr class="memdesc:a21cb96161f4edf045b07f2f458c5c5a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a nice error page.  <br /></td></tr>
 <tr class="memitem:aba26ba40621eab1b293b166715ad238f" id="r_aba26ba40621eab1b293b166715ad238f"><td class="memItemLeft"><a id="aba26ba40621eab1b293b166715ad238f" name="aba26ba40621eab1b293b166715ad238f"></a>
 std::string&#160;</td><td class="memItemRight"><b>build</b> ()</td></tr>
 <tr class="memdesc:aba26ba40621eab1b293b166715ad238f"><td class="mdescLeft">&#160;</td><td class="mdescRight">builds the http response. <br /></td></tr>
@@ -148,6 +150,36 @@ std::string&#160;</td><td class="memItemRight"><b>build</b> ()</td></tr>
 
 <p>Sets the content range. </p>
 <p>Content ranges must be in the range of 0..file_size. </p>
+
+</div>
+</div>
+<a id="a21cb96161f4edf045b07f2f458c5c5a5" name="a21cb96161f4edf045b07f2f458c5c5a5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a21cb96161f4edf045b07f2f458c5c5a5">&#9670;&#160;</a></span>ErrorPage()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classHttpResponseBuilder.html">HttpResponseBuilder</a> HttpResponseBuilder::ErrorPage </td>
+          <td>(</td>
+          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em>page_template</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>status</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Generate a nice error page. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">page_template</td><td>Error page template, this template must include two parameters ('{}'). </td></tr>
+    <tr><td class="paramname">status</td><td>Error status code. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

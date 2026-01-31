@@ -100,12 +100,14 @@ $(function(){initNavTree('classServer.html','','classServer-members'); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0f361278f23f4f4fc8591ffab9bf7efd" id="r_a0f361278f23f4f4fc8591ffab9bf7efd"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a0f361278f23f4f4fc8591ffab9bf7efd">Server</a> (<a class="el" href="classLogger.html">Logger</a> &amp;logr, std::string p, size_t port, std::string cert_path, std::string pkey_path, bool caching=true, size_t cache_size=100)</td></tr>
-<tr class="memdesc:a0f361278f23f4f4fc8591ffab9bf7efd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a http server with https support.  <br /></td></tr>
-<tr class="memitem:a4167d7ea9bf70ecf5c4b14ff5fcc695c" id="r_a4167d7ea9bf70ecf5c4b14ff5fcc695c"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a4167d7ea9bf70ecf5c4b14ff5fcc695c">Server</a> (<a class="el" href="classLogger.html">Logger</a> &amp;logr, std::string p=&quot;.&quot;, size_t port=8000, int backlog=100, bool caching=true, size_t cache_size=100)</td></tr>
-<tr class="memdesc:a4167d7ea9bf70ecf5c4b14ff5fcc695c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a http server with https support.  <br /></td></tr>
+<tr class="memitem:ace7850ab7eb2d77b54b9277141c24264" id="r_ace7850ab7eb2d77b54b9277141c24264"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#ace7850ab7eb2d77b54b9277141c24264">Server</a> (<a class="el" href="classLogger.html">Logger</a> &amp;logr, std::string p, size_t port, std::string cert_path, std::string pkey_path, bool caching=true, size_t cache_size=100, bool thumbnailer=false)</td></tr>
+<tr class="memdesc:ace7850ab7eb2d77b54b9277141c24264"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a http server with https support.  <br /></td></tr>
+<tr class="memitem:ac8c6224703af2007cb51dc68058faaef" id="r_ac8c6224703af2007cb51dc68058faaef"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#ac8c6224703af2007cb51dc68058faaef">Server</a> (<a class="el" href="classLogger.html">Logger</a> &amp;logr, std::string p=&quot;.&quot;, size_t port=8000, int backlog=100, bool caching=true, size_t cache_size=100, bool thumbnailer=false)</td></tr>
+<tr class="memdesc:ac8c6224703af2007cb51dc68058faaef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a http server with https support.  <br /></td></tr>
 <tr class="memitem:a2531cb29d24d03e2b171f4a819e3f035" id="r_a2531cb29d24d03e2b171f4a819e3f035"><td class="memItemLeft">PageType&#160;</td><td class="memItemRight"><a class="el" href="#a2531cb29d24d03e2b171f4a819e3f035">choosePageType</a> (<a class="el" href="classHttpMessage.html">HttpMessage</a> msg)</td></tr>
 <tr class="memdesc:a2531cb29d24d03e2b171f4a819e3f035"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns appropriate page type based on http request.  <br /></td></tr>
+<tr class="memitem:a2810b3e04cdcd9f052852c52b9eddea9" id="r_a2810b3e04cdcd9f052852c52b9eddea9"><td class="memItemLeft">std::optional&lt; std::string &gt;&#160;</td><td class="memItemRight"><a class="el" href="#a2810b3e04cdcd9f052852c52b9eddea9">generateVideoThumbnail</a> (std::string filepath)</td></tr>
+<tr class="memdesc:a2810b3e04cdcd9f052852c52b9eddea9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates video thumbnail.  <br /></td></tr>
 <tr class="memitem:a0f77bc4c350e94eb8bf2fd943b41aa02" id="r_a0f77bc4c350e94eb8bf2fd943b41aa02"><td class="memItemLeft">std::string&#160;</td><td class="memItemRight"><a class="el" href="#a0f77bc4c350e94eb8bf2fd943b41aa02">generateContent</a> (<a class="el" href="classHttpMessage.html">HttpMessage</a> msg)</td></tr>
 <tr class="memdesc:a0f77bc4c350e94eb8bf2fd943b41aa02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates http response according to msg.  <br /></td></tr>
 <tr class="memitem:ab7637b81b8ed44f432a16decd881212d" id="r_ab7637b81b8ed44f432a16decd881212d"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ab7637b81b8ed44f432a16decd881212d">respondClientHttps</a> (SSL *ssl_handle, <a class="el" href="classHttpMessage.html">HttpMessage</a> msg, std::mutex *m)</td></tr>
@@ -132,8 +134,8 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight"><b>shouldClose</b> 
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Includes inner workings of the http server. </p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a0f361278f23f4f4fc8591ffab9bf7efd" name="a0f361278f23f4f4fc8591ffab9bf7efd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0f361278f23f4f4fc8591ffab9bf7efd">&#9670;&#160;</a></span>Server() <span class="overload">[1/2]</span></h2>
+<a id="ace7850ab7eb2d77b54b9277141c24264" name="ace7850ab7eb2d77b54b9277141c24264"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ace7850ab7eb2d77b54b9277141c24264">&#9670;&#160;</a></span>Server() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -171,7 +173,12 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight"><b>shouldClose</b> 
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>cache_size</em></span><span class="paramdefsep"> = </span><span class="paramdefval">100</span>&#160;)</td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>cache_size</em></span><span class="paramdefsep"> = </span><span class="paramdefval">100</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>thumbnailer</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -185,14 +192,15 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight"><b>shouldClose</b> 
     <tr><td class="paramname">pkey_path</td><td>Path to private key file. </td></tr>
     <tr><td class="paramname">caching</td><td>Enables server side file caching. </td></tr>
     <tr><td class="paramname">cache_size</td><td>Sets file cache size (effective only when caching is true). </td></tr>
+    <tr><td class="paramname">thumbnailer</td><td>Enables video thumbnailing (requires ffmpegthumbnailer) </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="a4167d7ea9bf70ecf5c4b14ff5fcc695c" name="a4167d7ea9bf70ecf5c4b14ff5fcc695c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4167d7ea9bf70ecf5c4b14ff5fcc695c">&#9670;&#160;</a></span>Server() <span class="overload">[2/2]</span></h2>
+<a id="ac8c6224703af2007cb51dc68058faaef" name="ac8c6224703af2007cb51dc68058faaef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8c6224703af2007cb51dc68058faaef">&#9670;&#160;</a></span>Server() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -225,7 +233,12 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight"><b>shouldClose</b> 
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>cache_size</em></span><span class="paramdefsep"> = </span><span class="paramdefval">100</span>&#160;)</td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>cache_size</em></span><span class="paramdefsep"> = </span><span class="paramdefval">100</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>thumbnailer</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -239,6 +252,7 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight"><b>shouldClose</b> 
     <tr><td class="paramname">backlog</td><td>sets socket's backlog (how many requests can there be in line to be processed) </td></tr>
     <tr><td class="paramname">caching</td><td>Enables server side file caching. </td></tr>
     <tr><td class="paramname">cache_size</td><td>Sets file cache size (effective only when caching is true). </td></tr>
+    <tr><td class="paramname">thumbnailer</td><td>Enables video thumbnailing (requires ffmpegthumbnailer) </td></tr>
   </table>
   </dd>
 </dl>
@@ -290,6 +304,31 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight"><b>shouldClose</b> 
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">msg</td><td>Http request. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a2810b3e04cdcd9f052852c52b9eddea9" name="a2810b3e04cdcd9f052852c52b9eddea9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2810b3e04cdcd9f052852c52b9eddea9">&#9670;&#160;</a></span>generateVideoThumbnail()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; std::string &gt; Server::generateVideoThumbnail </td>
+          <td>(</td>
+          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em>filepath</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Generates video thumbnail. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">filepath</td><td>path to the video file. </td></tr>
   </table>
   </dd>
 </dl>

@@ -108,20 +108,21 @@ $(function(){initNavTree('Logging_8hpp_source.html','',''); });
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    std::unordered_map&lt;std::string, uintmax_t&gt; metrics;</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    <span class="keywordtype">void</span> reportFormat(std::string type);</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <a class="code hl_function" href="classLogger.html#a96dda6edb2fb696dbe757b2a47fbaece">Logger</a>(std::string filename, <span class="keywordtype">bool</span> wtf = <span class="keyword">true</span>, <span class="keywordtype">bool</span> wts = <span class="keyword">false</span>,</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>           <span class="keywordtype">bool</span> omit_metrics = <span class="keyword">false</span>);</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <a class="code hl_function" href="classLogger.html#a96dda6edb2fb696dbe757b2a47fbaece">~Logger</a>();</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classLogger.html#a0e4dbd6cb4d5eab9b35263326a2afcb3">setMetric</a>(std::string key, uintmax_t new_value);</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classLogger.html#a743698b463dfc6abb53f55caab09cf4b">changeMetric</a>(std::string key, uintmax_t change_in_value);</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    uintmax_t <a class="code hl_function" href="classLogger.html#a166962c2eb85c78df6b955a45bdd40b3">getMetric</a>(std::string key);</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classLogger.html#a70cdee8f5a2105b451876e5ad87080ee">exportMetrics</a>();</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span></div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span>... Rest&gt;</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    <span class="keywordtype">void</span> reportFormat(std::string type, T one_arg, Rest... rest);</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span></div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classLogger.html#a929077f65045db21b01627d6627c35b8">report</a>(std::string type, std::string msg);</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>};</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <a class="code hl_function" href="classLogger.html#a96dda6edb2fb696dbe757b2a47fbaece">Logger</a>(std::string filename, <span class="keywordtype">bool</span> wtf = <span class="keyword">true</span>, <span class="keywordtype">bool</span> wts = <span class="keyword">false</span>,</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>           <span class="keywordtype">bool</span> omit_metrics = <span class="keyword">false</span>);</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <a class="code hl_function" href="classLogger.html#a96dda6edb2fb696dbe757b2a47fbaece">~Logger</a>();</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classLogger.html#a0e4dbd6cb4d5eab9b35263326a2afcb3">setMetric</a>(std::string key, uintmax_t new_value);</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classLogger.html#a743698b463dfc6abb53f55caab09cf4b">changeMetric</a>(std::string key, uintmax_t change_in_value);</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    uintmax_t <a class="code hl_function" href="classLogger.html#a166962c2eb85c78df6b955a45bdd40b3">getMetric</a>(std::string key);</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classLogger.html#a70cdee8f5a2105b451876e5ad87080ee">exportMetrics</a>();</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span></div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span>... Rest&gt;</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    <span class="keywordtype">void</span> reportFormat(std::string type, T one_arg, Rest... rest);</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span></div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classLogger.html#a929077f65045db21b01627d6627c35b8">report</a>(std::string type, std::string msg);</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>};</div>
 </div>
 <div class="ttc" id="aclassLogger_html_a0e4dbd6cb4d5eab9b35263326a2afcb3"><div class="ttname"><a href="classLogger.html#a0e4dbd6cb4d5eab9b35263326a2afcb3">Logger::setMetric</a></div><div class="ttdeci">void setMetric(std::string key, uintmax_t new_value)</div><div class="ttdoc">Sets a metric value.</div><div class="ttdef"><b>Definition</b> Logging.cpp:21</div></div>
 <div class="ttc" id="aclassLogger_html_a166962c2eb85c78df6b955a45bdd40b3"><div class="ttname"><a href="classLogger.html#a166962c2eb85c78df6b955a45bdd40b3">Logger::getMetric</a></div><div class="ttdeci">uintmax_t getMetric(std::string key)</div><div class="ttdef"><b>Definition</b> Logging.cpp:39</div></div>
