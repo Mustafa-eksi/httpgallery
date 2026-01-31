@@ -101,17 +101,26 @@ public:
     /**
      * @brief Returns appropriate page type based on http request.
      * @param msg Http request.
+     * @return Returns the page type.
      */
     PageType choosePageType(HttpMessage msg);
     /**
      * @brief Generates video thumbnail.
-     *
      * @param filepath path to the video file.
+     * @return Returns raw png data if succeeds, std::nullopt otherwise.
      */
     std::optional<std::string> generateVideoThumbnail(std::string filepath);
     /**
+     * @brief Sanitizes the path against path traversal exploit.
+     * @param unsanitized_path Path to sanitize.
+     * @return Returns true if the path received is canonical (in its shortest
+     * form), false otherwise.
+     */
+    bool isPathCanonical(std::string unsanitized_path);
+    /**
      * @brief Generates http response according to msg.
      * @param msg Http request.
+     * @return Html data.
      */
     std::string generateContent(HttpMessage msg);
 
