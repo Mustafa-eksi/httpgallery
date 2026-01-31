@@ -212,24 +212,17 @@ std::string Server::generateContent(HttpMessage msg)
     }
     if (pt == FileDataPage) {
         if (!std::filesystem::exists(filepath)) {
-            std::string error_page
-                = string_format(this->htmltemplate_error, "404 Not Found");
             return HttpResponseBuilder()
-                .Status(404)
-                .ContentType("text/html; charset=utf-8")
-                .Content(error_page)
+                .ErrorPage(htmltemplate_error, 404)
                 .build();
         }
         uintmax_t filesize = std::filesystem::file_size(filepath);
         auto range_opt     = msg.getRange(filesize);
         if (!range_opt.has_value()) {
-            std::string error_page = string_format(this->htmltemplate_error,
-                                                   "416 Range Not Satisfiable");
             return HttpResponseBuilder()
-                .Status(416)
+                .ErrorPage(htmltemplate_error, 416)
                 .SetHeader("Content-Range",
                            "bytes */" + std::to_string(filesize))
-                .Content(error_page)
                 .build();
         }
         auto [range_start, range_end] = range_opt.value();

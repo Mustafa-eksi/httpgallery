@@ -1,4 +1,5 @@
 #include "HttpResponseBuilder.hpp"
+#include "FileSystemInterface.cpp"
 #include "LookupTables.hpp"
 
 HttpResponseBuilder::~HttpResponseBuilder()
@@ -70,6 +71,17 @@ HttpResponseBuilder HttpResponseBuilder::SetHeader(std::string header,
 {
     this->headers[header] = value;
     return *this;
+}
+
+HttpResponseBuilder HttpResponseBuilder::ErrorPage(std::string page_template,
+                                                   int error_code)
+{
+    std::string error_page
+        = string_format(page_template, std::to_string(error_code),
+                        HTTP_STATUS_MESSAGES.at(error_code));
+    return this->Status(error_code)
+        .ContentType("text/html; charset=utf-8")
+        .Content(error_page);
 }
 
 std::string HttpResponseBuilder::build()

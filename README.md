@@ -13,6 +13,7 @@ https://mustafa-eksi.github.io/httpgallery/html/
 - [X] Implement caching (Maybe LRU?)
 - [X] Support Https
 - [X] Compression
+- [X] Introduce an auto-documentation system like doxygen
 - [ ] Generate thumbnails for directory views.
 - [ ] Optional authentication
 - [ ] Stress test
@@ -22,5 +23,4 @@ https://mustafa-eksi.github.io/httpgallery/html/
 - [X] Docker image
 - [ ] HTTP2 support
 - [ ] HTTP3 support
-- [ ] Introduce an auto-documentation system like doxygen
 - [ ] A more professional readme
