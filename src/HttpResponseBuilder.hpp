@@ -52,6 +52,14 @@ public:
      */
     HttpResponseBuilder SetHeader(std::string header, std::string value);
     /**
+     * @brief Generate a nice error page.
+     *
+     * @param page_template Error page template, this template must include two
+     * parameters ('{}').
+     * @param status Error status code.
+     */
+    HttpResponseBuilder ErrorPage(std::string page_template, int status);
+    /**
      * @brief builds the http response.
      */
     std::string build();
