@@ -5,6 +5,7 @@ var classServer =
     [ "choosePageType", "classServer.html#a2531cb29d24d03e2b171f4a819e3f035", null ],
     [ "generateContent", "classServer.html#a0f77bc4c350e94eb8bf2fd943b41aa02", null ],
     [ "generateVideoThumbnail", "classServer.html#a2810b3e04cdcd9f052852c52b9eddea9", null ],
+    [ "isPathCanonical", "classServer.html#ab435526536bb20b407cf68810f2ad9d3", null ],
     [ "respondClient", "classServer.html#a843db5c6154506193fd34d943d9e47d9", null ],
     [ "respondClientHttps", "classServer.html#ab7637b81b8ed44f432a16decd881212d", null ],
     [ "serveClient", "classServer.html#a79947c285b9bf8d20e5312be1abbed8b", null ],

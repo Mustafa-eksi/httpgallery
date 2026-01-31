@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['logger_0',['Logger',['../classLogger.html#a96dda6edb2fb696dbe757b2a47fbaece',1,'Logger']]]
+  ['ispathcanonical_0',['isPathCanonical',['../classServer.html#ab435526536bb20b407cf68810f2ad9d3',1,'Server']]]
 ];

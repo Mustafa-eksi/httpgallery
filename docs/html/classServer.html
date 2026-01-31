@@ -108,6 +108,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a2531cb29d24d03e2b171f4a819e3f035"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns appropriate page type based on http request.  <br /></td></tr>
 <tr class="memitem:a2810b3e04cdcd9f052852c52b9eddea9" id="r_a2810b3e04cdcd9f052852c52b9eddea9"><td class="memItemLeft">std::optional&lt; std::string &gt;&#160;</td><td class="memItemRight"><a class="el" href="#a2810b3e04cdcd9f052852c52b9eddea9">generateVideoThumbnail</a> (std::string filepath)</td></tr>
 <tr class="memdesc:a2810b3e04cdcd9f052852c52b9eddea9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates video thumbnail.  <br /></td></tr>
+<tr class="memitem:ab435526536bb20b407cf68810f2ad9d3" id="r_ab435526536bb20b407cf68810f2ad9d3"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ab435526536bb20b407cf68810f2ad9d3">isPathCanonical</a> (std::string unsanitized_path)</td></tr>
+<tr class="memdesc:ab435526536bb20b407cf68810f2ad9d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sanitizes the path against path traversal exploit.  <br /></td></tr>
 <tr class="memitem:a0f77bc4c350e94eb8bf2fd943b41aa02" id="r_a0f77bc4c350e94eb8bf2fd943b41aa02"><td class="memItemLeft">std::string&#160;</td><td class="memItemRight"><a class="el" href="#a0f77bc4c350e94eb8bf2fd943b41aa02">generateContent</a> (<a class="el" href="classHttpMessage.html">HttpMessage</a> msg)</td></tr>
 <tr class="memdesc:a0f77bc4c350e94eb8bf2fd943b41aa02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates http response according to msg.  <br /></td></tr>
 <tr class="memitem:ab7637b81b8ed44f432a16decd881212d" id="r_ab7637b81b8ed44f432a16decd881212d"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ab7637b81b8ed44f432a16decd881212d">respondClientHttps</a> (SSL *ssl_handle, <a class="el" href="classHttpMessage.html">HttpMessage</a> msg, std::mutex *m)</td></tr>
@@ -282,6 +284,7 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight"><b>shouldClose</b> 
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns the page type. </dd></dl>
 
 </div>
 </div>
@@ -307,6 +310,7 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight"><b>shouldClose</b> 
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>Html data. </dd></dl>
 
 </div>
 </div>
@@ -332,6 +336,33 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight"><b>shouldClose</b> 
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns raw png data if succeeds, std::nullopt otherwise. </dd></dl>
+
+</div>
+</div>
+<a id="ab435526536bb20b407cf68810f2ad9d3" name="ab435526536bb20b407cf68810f2ad9d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab435526536bb20b407cf68810f2ad9d3">&#9670;&#160;</a></span>isPathCanonical()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Server::isPathCanonical </td>
+          <td>(</td>
+          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em>unsanitized_path</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sanitizes the path against path traversal exploit. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">unsanitized_path</td><td>Path to sanitize. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns true if the path received is canonical (in its shortest form), false otherwise. </dd></dl>
 
 </div>
 </div>

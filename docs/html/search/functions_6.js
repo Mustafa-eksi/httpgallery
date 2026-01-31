@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['print_0',['print',['../classHttpMessage.html#a71ffe91af15c4fbff8f1dfa890842570',1,'HttpMessage']]]
+  ['logger_0',['Logger',['../classLogger.html#a96dda6edb2fb696dbe757b2a47fbaece',1,'Logger']]]
 ];

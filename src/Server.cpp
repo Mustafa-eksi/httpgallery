@@ -217,6 +217,21 @@ std::optional<std::string> Server::generateVideoThumbnail(std::string filepath)
     return std::nullopt;
 }
 
+bool Server::isPathCanonical(std::string unsanitized_path)
+{
+    try {
+        std::string canon = std::filesystem::canonical(unsanitized_path);
+        if (canon.back() != '/')
+            canon += "/";
+        std::string absol = std::filesystem::absolute(unsanitized_path);
+        if (absol.back() != '/')
+            absol += "/";
+        return canon == absol;
+    } catch (std::filesystem::filesystem_error &e) {
+        return false;
+    }
+}
+
 std::string Server::generateContent(HttpMessage msg)
 {
     PageType pt = this->choosePageType(msg);
@@ -224,19 +239,16 @@ std::string Server::generateContent(HttpMessage msg)
         path = path.substr(0, path.length() - 1);
 
     auto filepath = path + msg.address;
-    if (access(filepath.c_str(), R_OK) != 0)
-        return HttpResponseBuilder().ErrorPage(htmltemplate_error, 403).build();
+    // This responds with 404 rather than 403 because 403 can leak existence of
+    // some files
+    if (access(filepath.c_str(), R_OK) != 0 || !isPathCanonical(filepath))
+        return HttpResponseBuilder().ErrorPage(htmltemplate_error, 404).build();
 
     std::string comp = "";
     if (msg.headers.contains("Accept-Encoding")) {
         comp = msg.headers["Accept-Encoding"];
     }
     if (pt == FileDataPage) {
-        if (!std::filesystem::exists(filepath)) {
-            return HttpResponseBuilder()
-                .ErrorPage(htmltemplate_error, 404)
-                .build();
-        }
         uintmax_t filesize = std::filesystem::file_size(filepath);
         auto range_opt     = msg.getRange(filesize);
         if (!range_opt.has_value()) {
@@ -456,7 +468,14 @@ void Server::serveClient(int client_socket)
         free(message_buffer);
         // parse message
         HttpMessage httpmsg = HttpMessage(message);
-        message             = "";
+        if (httpmsg.address.empty()) {
+            auto response = HttpResponseBuilder()
+                                .ErrorPage(htmltemplate_error, 404)
+                                .build();
+            send(client_socket, response.c_str(), response.length(), 0);
+            continue;
+        }
+        message = "";
         message.shrink_to_fit();
         if (httpmsg.type == INVALID)
             continue;
