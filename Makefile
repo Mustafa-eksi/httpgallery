@@ -94,3 +94,7 @@ docker_run: docker_build
 
 generate_docs:
 	doxygen Doxyfile
+
+stress_test:
+	gcc -Wall -Wextra -Wshadow ./test/stress-test.c -o ./test/stress-test $(LDFLAGS)
+	./test/stress-test 256

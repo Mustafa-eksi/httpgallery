@@ -7,6 +7,7 @@ test/Http-getRange
 test/Http-HttpMessage
 test/Http-queriesToString
 test/Http-HtmlDecode
+test/stress-test
 *.info
 main_asan
 vgcore.*
