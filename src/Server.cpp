@@ -467,21 +467,23 @@ void Server::serveClient(int client_socket)
         std::string message(message_buffer);
         free(message_buffer);
         // parse message
-        HttpMessage httpmsg = HttpMessage(message);
-        if (httpmsg.address.empty()) {
-            auto response = HttpResponseBuilder()
-                                .ErrorPage(htmltemplate_error, 404)
-                                .build();
-            send(client_socket, response.c_str(), response.length(), 0);
-            continue;
-        }
-        message = "";
-        message.shrink_to_fit();
-        if (httpmsg.type == INVALID)
-            continue;
+        std::vector<HttpMessage> parsed_messages = parseMessages(message);
+        for (auto &httpmsg : parsed_messages) {
+            if (httpmsg.address.empty()) {
+                auto response = HttpResponseBuilder()
+                                    .ErrorPage(htmltemplate_error, 404)
+                                    .build();
+                send(client_socket, response.c_str(), response.length(), 0);
+                continue;
+            }
+            message = "";
+            message.shrink_to_fit();
+            if (httpmsg.type == INVALID)
+                continue;
 
-        client_threads.push_back(std::thread(&Server::respondClient, this,
-                                             client_socket, httpmsg, &m));
+            client_threads.push_back(std::thread(&Server::respondClient, this,
+                                                 client_socket, httpmsg, &m));
+        }
     }
     for (auto &t : client_threads) {
         t.join();

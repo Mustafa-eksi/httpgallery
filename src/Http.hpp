@@ -2,6 +2,7 @@
 #include <optional>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 typedef enum HttpMessageType { INVALID, GET, POST, HEAD } HttpMessageType;
 
@@ -80,3 +81,12 @@ public:
      */
     void print();
 };
+
+/*
+ * @brief Parses multiple HTTP requests that are packed into a single tcp
+ * packet.
+ * @param unparsed Unparsed string read from the socket.
+ * @return Returns a vector containing http messages. If it can't find any, it
+ * will return an empty vector.
+ */
+std::vector<HttpMessage> parseMessages(std::string unparsed);

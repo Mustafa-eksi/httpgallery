@@ -194,3 +194,16 @@ void HttpMessage::print()
         std::cout << header << ": " << val << std::endl;
     }
 }
+
+std::vector<HttpMessage> parseMessages(std::string unparsed)
+{
+    std::vector<HttpMessage> output;
+    // FIXME: This code may not work for other types than GET
+    auto end_of_req = unparsed.find("\r\n\r\n");
+    while (end_of_req != std::string::npos) {
+        output.push_back(HttpMessage(unparsed.substr(0, end_of_req + 2)));
+        unparsed   = unparsed.substr(end_of_req + 2);
+        end_of_req = unparsed.find("\r\n\r\n");
+    }
+    return output;
+}
