@@ -24,6 +24,8 @@ const char HELP_MESSAGE[]
       "       Maximum number of files stored in cache at once. Default is 100\n"
       "   --silent\n"
       "       Do not print the logs to stdout\n"
+      "   --backlog <number>\n"
+      "       Specifies backlog (default is 10). Only effective in http mode.\n"
       "   --enable-metrics\n"
       "       Include metrics in the logs (also generates .dat file)\n";
 
@@ -48,6 +50,7 @@ int main(int argc, char **argv)
     std::string cert_path, pkey_path;
     int port          = 8000;
     size_t cache_size = 100;
+    int backlog       = 10;
     for (int i = 1; i < argc; i++) {
         std::string current_arg = argv[i];
         if (current_arg == "-h" || current_arg == "--help") {
@@ -87,6 +90,26 @@ int main(int argc, char **argv)
             }
             try {
                 port = std::stoi(argv[i + 1]);
+            } catch (std::out_of_range &e) {
+                std::cout << "\033[1;31mError: String to Integer conversion "
+                             "error:\033[1;0m"
+                          << argv[i + 1] << std::endl;
+                return -1;
+            } catch (std::invalid_argument &e) {
+                std::cout << "\033[1;31mError: String to Integer conversion "
+                             "error:\033[1;0m"
+                          << argv[i + 1] << std::endl;
+                return -1;
+            }
+        } else if (current_arg == "--backlog") {
+            if (i + 1 >= argc) {
+                std::cout << "\033[1;31mError: Wrong flag usage\033[1;0m"
+                          << std::endl;
+                std::cout << HELP_MESSAGE;
+                return -1;
+            }
+            try {
+                backlog = std::stoi(argv[i + 1]);
             } catch (std::out_of_range &e) {
                 std::cout << "\033[1;31mError: String to Integer conversion "
                              "error:\033[1;0m"
@@ -160,7 +183,7 @@ int main(int argc, char **argv)
         server.startHttps();
 #endif
     } else {
-        Server server = Server(logger, path, port, 3, cache, cache_size,
+        Server server = Server(logger, path, port, backlog, cache, cache_size,
                                thumbnailer_present);
         shouldClose   = &server.shouldClose;
         server.start();
