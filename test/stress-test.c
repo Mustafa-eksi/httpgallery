@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <unistd.h>
 
 size_t stoi(char* str) {
     size_t output = 0;
@@ -41,10 +42,11 @@ int main(int argc, char *argv[]) {
     }
     size_t number_of_req = stoi(argv[1]);
     printf("Number of requests: %ld\n", number_of_req);
-    const char* req_text = "GET / HTTP/1.1\r\n";
+    const char* req_text = "GET / HTTP/1.1\r\n\r\n";
     for (size_t i = 0; i < number_of_req; i++) {
         send(socketfd, req_text, strlen(req_text), 0);
     }
+    while (true) {}
     printf("Completed!\n");
     return 0;
 }

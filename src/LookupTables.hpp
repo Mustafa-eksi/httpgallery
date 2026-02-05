@@ -94,6 +94,7 @@ static const std::unordered_map<int, std::string> HTTP_STATUS_MESSAGES = {
     // 4XX Client Error
     { 403, "Forbidden" },
     { 404, "Not Found" },
+    { 413, "Content Too Large" },
     { 416, "Range Not Satisfiable" },
     // 5XX Server Error
 };

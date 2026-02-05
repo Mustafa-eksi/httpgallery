@@ -199,11 +199,15 @@ std::vector<HttpMessage> parseMessages(std::string unparsed)
 {
     std::vector<HttpMessage> output;
     // FIXME: This code may not work for other types than GET
-    auto end_of_req = unparsed.find("\r\n\r\n");
+    std::string end_delim = "\r\n\r\n";
+    auto end_of_req       = unparsed.find(end_delim);
     while (end_of_req != std::string::npos) {
-        output.push_back(HttpMessage(unparsed.substr(0, end_of_req + 2)));
-        unparsed   = unparsed.substr(end_of_req + 2);
-        end_of_req = unparsed.find("\r\n\r\n");
+        output.push_back(
+            HttpMessage(unparsed.substr(0, end_of_req + end_delim.size())));
+        unparsed = unparsed.substr(end_of_req + end_delim.size());
+        if (unparsed.empty())
+            break;
+        end_of_req = unparsed.find(end_delim);
     }
     return output;
 }

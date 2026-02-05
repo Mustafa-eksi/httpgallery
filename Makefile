@@ -97,4 +97,5 @@ generate_docs:
 
 stress_test:
 	gcc -Wall -Wextra -Wshadow ./test/stress-test.c -o ./test/stress-test $(LDFLAGS)
-	./test/stress-test 256
+	# Current limit is 10000, we're bounded by linux thread limit
+	./test/stress-test 1000

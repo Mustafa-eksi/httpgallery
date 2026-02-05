@@ -241,7 +241,8 @@ std::string Server::generateContent(HttpMessage msg)
     auto filepath = path + msg.address;
     // This responds with 404 rather than 403 because 403 can leak existence of
     // some files
-    if (access(filepath.c_str(), R_OK) != 0 || !isPathCanonical(filepath))
+    if (access(filepath.c_str(), R_OK) != 0
+        || (path != "." && !isPathCanonical(filepath)))
         return HttpResponseBuilder().ErrorPage(htmltemplate_error, 404).build();
 
     std::string comp = "";
@@ -432,7 +433,17 @@ void Server::respondClient(int client_socket, HttpMessage msg, std::mutex *m)
         response = generateContent(msg);
     }
     m->lock();
-    send(client_socket, response.c_str(), response.length(), 0);
+    if (send(client_socket, response.c_str(), response.length(), MSG_NOSIGNAL)
+        == -1) {
+        if (errno == EMSGSIZE) {
+            auto errmsg = HttpResponseBuilder()
+                              .ErrorPage(htmltemplate_error, 413)
+                              .build();
+            send(client_socket, errmsg.c_str(), errmsg.length(), MSG_NOSIGNAL);
+        } else if (errno == EPIPE) {
+            // TODO: close connection
+        }
+    }
     logger.changeMetric("HTTP Responses", 1);
     m->unlock();
     response.clear();
@@ -473,14 +484,14 @@ void Server::serveClient(int client_socket)
                 auto response = HttpResponseBuilder()
                                     .ErrorPage(htmltemplate_error, 404)
                                     .build();
-                send(client_socket, response.c_str(), response.length(), 0);
+                send(client_socket, response.c_str(), response.length(),
+                     MSG_NOSIGNAL);
                 continue;
             }
             message = "";
             message.shrink_to_fit();
             if (httpmsg.type == INVALID)
                 continue;
-
             client_threads.push_back(std::thread(&Server::respondClient, this,
                                                  client_socket, httpmsg, &m));
         }

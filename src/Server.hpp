@@ -4,6 +4,7 @@
 #include "HttpResponseBuilder.cpp"
 #include "Logging.cpp"
 #include <atomic>
+#include <errno.h>
 #include <sys/resource.h>
 
 #include <cassert>
