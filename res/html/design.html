@@ -2,7 +2,12 @@
 <html>
     <head>
         <style>
+.body {
+    font-family: sans-serif;
+}
 .cwd-header {
+    font-family: sans-serif;
+    font-weight: normal;
 }
 .grid {
     display: flex;
@@ -16,25 +21,51 @@
     display: flex;
     flex-direction: column;
     border: solid;
-    border-color: #c0c0c0;
-    
+    border-color: #e6e6e6;
+    background-color: #e6e6e6;
+    border-radius: 10%;
+}
+.item:hover {
+    background-color: #addcff;
+    border-color: #1d537d;
 }
 .item-name {
     text-align: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-decoration: none;
+    color: #000000;
+    font-family: sans-serif;
 }
 .item-thumbnail {
     width: 100%;
     height: 95%;
+    border-radius: 10%;
+}
+.up-button {
+    background-color: #d9edfc;
+    text-decoration: none;
+    color: #181818;
+    font-family: sans-serif;
+    border-radius: 15rem;
+    padding: 10px;
+}
+.top-bar {
+    margin-left: 1%;
+    margin-bottom: 10px;
 }
         </style>
     </head>
     <body>
-        <h1 class="cwd-header">/home/mustafa/Programming/httpgallery</h1>
+
+        <div class="top-bar">
+            <h1 class="cwd-header">/Programming/httpgallery</h1>
+            <a class="toggle up-button" href="{}">↑ Up</a>
+            <a class="toggle up-button" href="?list-view=true">📜 List View</a>
+        </div>
         <div class="grid">
-            <div class="item">
+            <div class="item" onclick="google.com">
                 <img class="item-thumbnail" src="/home/mustafa.old/Pictures/IMG_20240410_000509.jpg">
                 <a class="item-name" href="./">Item Name AAAAAAAAAAAAAAAAAAAA</a>
             </div>

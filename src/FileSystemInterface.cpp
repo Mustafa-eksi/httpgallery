@@ -150,7 +150,7 @@ const auto video_icon_link = "/?icon=video";
 const auto text_icon_link  = "/?icon=text";
 
 const auto buttonTemplate = "<div class=\"item\">"
-                            "<img class=\"item-icon\" src=\"{}\">"
+                            "<img class=\"item-thumbnail\" src=\"{}\">"
                             "<a class=\"item-name\" href=\"{}\">{}</a>"
                             "</div>";
 const auto imageTemplate  = "<div class=\"item\">"
@@ -158,7 +158,7 @@ const auto imageTemplate  = "<div class=\"item\">"
                             "<a class=\"item-name\" href=\"{}\">{}</a>"
                             "</div>";
 const auto videoTemplate  = "<div class=\"item\">"
-                            "<img class=\"item-icon\" src=\"{}\">"
+                            "<img class=\"item-thumbnail\" src=\"{}\">"
                             "<a class=\"item-name\" href=\"{}\">{}</a>"
                             "</div>";
 std::string list_contents(std::string current_address, std::string path,

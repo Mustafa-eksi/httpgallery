@@ -15,9 +15,9 @@ https://mustafa-eksi.github.io/httpgallery/html/
 - [X] Compression
 - [X] Introduce an auto-documentation system like doxygen
 - [X] Generate thumbnails for video files.
-- [ ] Stress test
-- [ ] Optional authentication
+- [X] Stress test
 - [ ] Better UI
+- [ ] Optional authentication
 - [ ] File management
 - [ ] Package for Arch + Debian
 - [X] Docker image
