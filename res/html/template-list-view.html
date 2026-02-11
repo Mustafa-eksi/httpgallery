@@ -2,13 +2,33 @@
 <html>
     <head>
         <style>
+.body {
+    font-family: sans-serif;
+}
 .cwd-header {
-    margin-left: 1%;
+    font-family: sans-serif;
+    font-weight: normal;
 }
 .grid {
     margin-top: 1%;
     display: flex;
     flex-wrap: wrap;
+    flex-direction: row;
+}
+.item-list-view {
+    width: 100%;
+    padding: 5px;
+    border: solid;
+    display: flex;
+    border-color: #e6e6e6;
+    background-color: #e6e6e6;
+    border-radius: 0.5rem;
+    max-height: 95%;
+    margin: 10px;
+}
+.item-list-view:hover {
+    background-color: #addcff;
+    border-color: #1d537d;
 }
 .item {
     margin: 0.2%;
@@ -36,15 +56,26 @@
     width: 0px;
     height: 0px;
 }
-.toggle {
+.up-button {
+    background-color: #d9edfc;
+    text-decoration: none;
+    color: #181818;
+    font-family: sans-serif;
+    border-radius: 15rem;
+    padding: 10px;
+}
+.top-bar {
     margin-left: 1%;
+    margin-bottom: 10px;
 }
         </style>
     </head>
     <body>
-        <h1 class="cwd-header">{}</h1>
-        <a class="toggle" href="{}">Up</a>
-        <a class="toggle" href="?list-view=false">Icon View</a>
+        <div class="top-bar">
+            <h1 class="cwd-header">{}</h1>
+            <a class="toggle up-button" href="{}">↑ Up</a>
+            <a class="toggle up-button" href="?list-view=false">🖼️ Icon View</a>
+        </div>
         <div class="grid">
             {}
         </div>

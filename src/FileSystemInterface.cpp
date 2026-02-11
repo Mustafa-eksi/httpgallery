@@ -149,18 +149,15 @@ const auto dir_icon_link   = "/?icon=directory";
 const auto video_icon_link = "/?icon=video";
 const auto text_icon_link  = "/?icon=text";
 
-const auto buttonTemplate = "<div class=\"item\">"
-                            "<img class=\"item-thumbnail\" src=\"{}\">"
-                            "<a class=\"item-name\" href=\"{}\">{}</a>"
-                            "</div>";
-const auto imageTemplate  = "<div class=\"item\">"
-                            "<img class=\"item-thumbnail\" src=\"{}\">"
-                            "<a class=\"item-name\" href=\"{}\">{}</a>"
-                            "</div>";
-const auto videoTemplate  = "<div class=\"item\">"
-                            "<img class=\"item-thumbnail\" src=\"{}\">"
-                            "<a class=\"item-name\" href=\"{}\">{}</a>"
-                            "</div>";
+const auto buttonTemplate
+    = "<button class=\"item\" onclick=\"window.location.href='{}'\">"
+      "<img class=\"item-thumbnail\" src=\"{}\">"
+      "<span class=\"item-name\" href=\"{}\">{}</span>"
+      "</button>";
+const auto listviewButton
+    = "<button class=\"item-list-view\" onclick=\"window.location.href='{}'\">"
+      "<span class=\"item-name\" href=\"{}\">{}</span>"
+      "</button>";
 std::string list_contents(std::string current_address, std::string path,
                           std::string queries = "", bool list_view = false)
 {
@@ -182,15 +179,21 @@ std::string list_contents(std::string current_address, std::string path,
                 iconpath += "?icon=1";
             }
 
-            if (get_mime_type(filename).starts_with("image") && !list_view) {
-                output += string_format(imageTemplate, filepath, filepath,
+            if (list_view) {
+                output += string_format(listviewButton, filepath, filepath,
                                         filename);
-            } else if (get_mime_type(filename).starts_with("video")
-                       && !list_view) {
-                output += string_format(videoTemplate, filepath + "?icon=video",
+                continue;
+            }
+
+            if (get_mime_type(filename).starts_with("image")) {
+                output += string_format(buttonTemplate, filepath, filepath,
                                         filepath, filename);
+            } else if (get_mime_type(filename).starts_with("video")) {
+                output += string_format(buttonTemplate, filepath,
+                                        filepath + "?icon=video", filepath,
+                                        filename);
             } else {
-                output += string_format(buttonTemplate,
+                output += string_format(buttonTemplate, filepath,
                                         entry.is_directory() ? dir_icon_link
                                                              : text_icon_link,
                                         filepath, filename);
