@@ -9,35 +9,39 @@ typedef std::variant<std::string, int, bool> ConfigVar;
 typedef std::unordered_map<std::string, ConfigVar> ConfigMap;
 typedef std::unordered_map<std::string, ConfigMap> StructuredMap;
 
+/**
+ * @brief Configuration class manages the configuration file and related
+ * operations.
+ */
 class Configuration {
     StructuredMap map;
 
 public:
     /**
-     * @breif True if the config file includes errors.
+     * @brief True if the config file includes errors.
      */
     bool faultyConfig;
 
     /**
-     * @breif Line number which the error occurred. It is set to 0 if no error
+     * @brief Line number which the error occurred. It is set to 0 if no error
      * occurred.
      */
     int faultLine;
 
     /**
-     * @breif Initializes an empty Configuration object.
+     * @brief Initializes an empty Configuration object.
      */
     Configuration();
 
     /**
-     * @breif Parses the config file specified with config_path parameter.
+     * @brief Parses the config file specified with config_path parameter.
      *
      * @param config_path Path to the config file.
      */
     Configuration(std::string config_path);
 
     /**
-     * @breif Converts s to appropriate ConfigVar.
+     * @brief Converts s to appropriate ConfigVar.
      *
      * @param s String value to be converted.
      * @return Converted ConfigVar.
@@ -53,7 +57,7 @@ public:
     ConfigMap operator[](std::string key);
 
     /**
-     * @breif Checks if key has value in [config].
+     * @brief Checks if key has value in [config].
      *
      * @return Returns true if key is accessible with config["config"][key].
      */
@@ -61,7 +65,7 @@ public:
 
     ///@{
     /**
-     * @breif These functions gets the type from variant and returns them.
+     * @brief These functions gets the type from variant and returns them.
      */
     std::string configString(std::string key);
     int configInt(std::string key);
