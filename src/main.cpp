@@ -1,6 +1,7 @@
 #include <csignal>
 #include <iostream>
 
+#include "Configuration.cpp"
 #include "Logging.cpp"
 #include "Server.cpp"
 
@@ -18,7 +19,7 @@ const char HELP_MESSAGE[]
       "       directory.\n"
       "   -p, --port <number>\n"
       "       Use <number> instead of 8000 as the port\n"
-      "   -c, --cache-files <bool>\n"
+      "   --cache-files <bool>\n"
       "       Store visited files in a LRU cache. Default is true\n"
       "   --cache-size <number>\n"
       "       Maximum number of files stored in cache at once. Default is 100\n"
@@ -26,6 +27,9 @@ const char HELP_MESSAGE[]
       "       Do not print the logs to stdout\n"
       "   --backlog <number>\n"
       "       Specifies backlog (default is 10). Only effective in http mode.\n"
+      "   -c, --config <path-to-config>\n"
+      "       Use config file specified. If this flag is present, program\n"
+      "       ignores other flags.\n"
       "   --enable-metrics\n"
       "       Include metrics in the logs (also generates .dat file)\n";
 
@@ -48,9 +52,10 @@ int main(int argc, char **argv)
     std::string logs_path = "./";
     bool secure = false, silent = false, no_metrics = true, cache = true;
     std::string cert_path, pkey_path;
-    int port          = 8000;
-    size_t cache_size = 100;
-    int backlog       = 10;
+    int port                = 8000;
+    size_t cache_size       = 100;
+    int backlog             = 10;
+    std::string config_file = "";
     for (int i = 1; i < argc; i++) {
         std::string current_arg = argv[i];
         if (current_arg == "-h" || current_arg == "--help") {
@@ -81,6 +86,14 @@ int main(int argc, char **argv)
                 return -1;
             }
             logs_path = argv[i + 1];
+        } else if (current_arg == "-c" || current_arg == "--config") {
+            if (i + 1 >= argc) {
+                std::cout << "\033[1;31mError: Wrong flag usage\033[1;0m"
+                          << std::endl;
+                std::cout << HELP_MESSAGE;
+                return -1;
+            }
+            config_file = argv[i + 1];
         } else if (current_arg == "-p" || current_arg == "--port") {
             if (i + 1 >= argc) {
                 std::cout << "\033[1;31mError: Wrong flag usage\033[1;0m"
@@ -141,7 +154,7 @@ int main(int argc, char **argv)
                           << argv[i + 1] << std::endl;
                 return -1;
             }
-        } else if (current_arg == "-c" || current_arg == "--cache-files") {
+        } else if (current_arg == "--cache-files") {
             if (i + 1 >= argc) {
                 std::cout << "\033[1;31mError: Wrong flag usage\033[1;0m"
                           << std::endl;
@@ -169,6 +182,18 @@ int main(int argc, char **argv)
                   << std::endl;
         std::cout << HELP_MESSAGE;
         return -2;
+    }
+    Configuration config;
+    if (!config_file.empty() && std::filesystem::exists(config_file)) {
+        // TODO: Initialize configuration object
+        config = Configuration(config_file);
+    }
+    if (!config.faultyConfig) {
+
+    } else {
+        std::cout << "\033[1;31mError: Error in the config file. Line: "
+                  << config.faultLine << "\033[1;0m" << std::endl;
+        return -1;
     }
     Logger logger
         = Logger(logs_path + "httpgallery_logs.txt", true, !silent, no_metrics);
