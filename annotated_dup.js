@@ -1,5 +1,6 @@
 var annotated_dup =
 [
+    [ "Configuration", "classConfiguration.html", "classConfiguration" ],
     [ "FileCache", "classFileCache.html", null ],
     [ "FileEntry", "structFileEntry.html", null ],
     [ "FileStorage", "classFileStorage.html", "classFileStorage" ],

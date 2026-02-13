@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['type_0',['type',['../classHttpMessage.html#a84cecaa73f74d4aee6fb3788e9d8ac55',1,'HttpMessage']]]
+  ['shouldclose_0',['shouldClose',['../classServer.html#a273814ce438a114c7e8a72af3ecfa3da',1,'Server']]]
 ];

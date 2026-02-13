@@ -42,7 +42,7 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"EmbeddedResources_8hpp_source.html"
+"Configuration_8hpp_source.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

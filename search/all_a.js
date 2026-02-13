@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['queries_0',['queries',['../classHttpMessage.html#abbec28aced26f3dcf7d7a3823c918fee',1,'HttpMessage']]],
-  ['queriestostring_1',['queriesToString',['../classHttpMessage.html#aff4759abccfe98395ec34550e8768d53',1,'HttpMessage']]]
+  ['print_0',['print',['../classConfiguration.html#a5c96c0cb75e5b619068b0045605844a5',1,'Configuration::print()'],['../classHttpMessage.html#a71ffe91af15c4fbff8f1dfa890842570',1,'HttpMessage::print()']]],
+  ['protocol_5fversion_1',['protocol_version',['../classHttpMessage.html#af20e15af445bb234b154fed51e79ec11',1,'HttpMessage']]]
 ];

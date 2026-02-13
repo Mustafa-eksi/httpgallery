@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['logger_0',['Logger',['../classLogger.html',1,'']]]
+  ['httpmessage_0',['HttpMessage',['../classHttpMessage.html',1,'']]],
+  ['httpresponsebuilder_1',['HttpResponseBuilder',['../classHttpResponseBuilder.html',1,'']]]
 ];

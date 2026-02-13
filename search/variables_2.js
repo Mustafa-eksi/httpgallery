@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['protocol_5fversion_0',['protocol_version',['../classHttpMessage.html#af20e15af445bb234b154fed51e79ec11',1,'HttpMessage']]]
+  ['headers_0',['headers',['../classHttpMessage.html#a4bb504dc2aa671b5dfbd0f3cc07a8a98',1,'HttpMessage']]]
 ];
