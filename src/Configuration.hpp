@@ -53,6 +53,22 @@ public:
     ConfigMap operator[](std::string key);
 
     /**
+     * @breif Checks if key has value in [config].
+     *
+     * @return Returns true if key is accessible with config["config"][key].
+     */
+    bool containsConfig(std::string key);
+
+    ///@{
+    /**
+     * @breif These functions gets the type from variant and returns them.
+     */
+    std::string configString(std::string key);
+    int configInt(std::string key);
+    bool configBool(std::string key);
+    ///@}
+
+    /**
      * @brief Prints the configuration.
      */
     void print();

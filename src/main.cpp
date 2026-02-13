@@ -183,13 +183,35 @@ int main(int argc, char **argv)
         std::cout << HELP_MESSAGE;
         return -2;
     }
+
     Configuration config;
     if (!config_file.empty() && std::filesystem::exists(config_file)) {
         // TODO: Initialize configuration object
         config = Configuration(config_file);
     }
     if (!config.faultyConfig) {
+        if (config.containsConfig("LogsFilePath"))
+            logs_path = config.configString("LogsFilePath");
+        if (config.containsConfig("CertificationPath"))
+            cert_path = config.configString("CertificationPath");
 
+        if (config.containsConfig("PkeyPath"))
+            pkey_path = config.configString("PkeyPath");
+        if (config.containsConfig("UseHttps"))
+            secure = config.configBool("UseHttps");
+        if (config.containsConfig("Silent"))
+            silent = config.configBool("Silent");
+        if (config.containsConfig("NoMetrics"))
+            no_metrics = config.configBool("NoMetrics");
+        if (config.containsConfig("CacheFiles"))
+            cache = config.configBool("CacheFiles");
+
+        if (config.containsConfig("Port"))
+            port = config.configInt("Port");
+        if (config.containsConfig("CacheSize"))
+            cache_size = config.configInt("CacheSize");
+        if (config.containsConfig("Backlog"))
+            backlog = config.configInt("Backlog");
     } else {
         std::cout << "\033[1;31mError: Error in the config file. Line: "
                   << config.faultLine << "\033[1;0m" << std::endl;

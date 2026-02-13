@@ -61,6 +61,13 @@ ConfigVar Configuration::interpretString(std::string s)
 
 ConfigMap Configuration::operator[](std::string key) { return map[key]; }
 
+bool Configuration::containsConfig(std::string key)
+{
+    if (map.find("config") == map.end())
+        return false;
+    return map["config"].find(key) != map["config"].end();
+}
+
 void Configuration::print()
 {
     for (auto &[name, keyval] : map) {
@@ -83,4 +90,19 @@ void Configuration::print()
         }
         std::cout << std::endl;
     }
+}
+
+std::string Configuration::configString(std::string key)
+{
+    return std::get<0>(map["config"][key]);
+}
+
+int Configuration::configInt(std::string key)
+{
+    return std::get<1>(map["config"][key]);
+}
+
+bool Configuration::configBool(std::string key)
+{
+    return std::get<2>(map["config"][key]);
 }

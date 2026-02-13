@@ -180,12 +180,10 @@ void Server::startHttps()
 
         if (SSL_accept(ssl_handle) <= 0) {
             BIO_free(client_socket);
-            ERR_print_errors_fp(stderr);
-            logger.report("ERROR", "Failed to make a TLS handshake");
+            // ERR_print_errors_fp(stderr);
+            // logger.report("ERROR", "Failed to make a TLS handshake");
             continue;
         }
-
-        logger.report("INFO", "Successfull handshake");
 
         threads.push_back(
             std::thread(&Server::serveClientHttps, this, ssl_handle));
