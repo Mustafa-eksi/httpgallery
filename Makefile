@@ -15,7 +15,7 @@ RELEASE_CFLAGS=-Wall -Werror -Wextra -Wshadow -std=c++23 \
 LDFLAGS=$(shell pkg-config --libs $(LIBS)) -lcrypto
 ASAN_FLAGS=-fsanitize=address -fno-omit-frame-pointer -O0
 TEST_FLAGS=-fPIC -fprofile-arcs -ftest-coverage --coverage
-COMPILE_MODE=RELEASE
+COMPILE_MODE=DEBUG
 ifeq ($(COMPILE_MODE), RELEASE)
 	CFLAGS=$(RELEASE_CFLAGS)
 else

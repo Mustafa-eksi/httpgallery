@@ -4,7 +4,7 @@ std::string get_mime_type(std::string name)
 {
     auto dotpos = name.rfind('.');
     if (dotpos == std::string::npos)
-        return "text/html";
+        return "text/plain";
     std::string ext = name.substr(dotpos + 1);
     if (mime_types.find(ext) == mime_types.end())
         return "text/plain";
