@@ -121,6 +121,13 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a557da68badb47492b74eef746a29913d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConfiguration.html#a557da68badb47492b74eef746a29913d">containsConfig</a> (std::string key)</td></tr>
 <tr class="memdesc:a557da68badb47492b74eef746a29913d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if key has value in [config].  <br /></td></tr>
 <tr class="separator:a557da68badb47492b74eef746a29913d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af1897c09b087fbf18b364529c5057a8a"><td class="memItemLeft" align="right" valign="top"><a id="af1897c09b087fbf18b364529c5057a8a" name="af1897c09b087fbf18b364529c5057a8a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>createPermissionTree</b> ()</td></tr>
+<tr class="memdesc:af1897c09b087fbf18b364529c5057a8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates permission tree with [permissions]. <br /></td></tr>
+<tr class="separator:af1897c09b087fbf18b364529c5057a8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab1a70b4b43ea62eb266f9e18129fe28b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConfiguration.html#ab1a70b4b43ea62eb266f9e18129fe28b">askPermission</a> (std::string path, enum PermissionType pt)</td></tr>
+<tr class="memdesc:ab1a70b4b43ea62eb266f9e18129fe28b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns wether the user has permission to view the path or not.  <br /></td></tr>
+<tr class="separator:ab1a70b4b43ea62eb266f9e18129fe28b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5c96c0cb75e5b619068b0045605844a5"><td class="memItemLeft" align="right" valign="top"><a id="a5c96c0cb75e5b619068b0045605844a5" name="a5c96c0cb75e5b619068b0045605844a5"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> ()</td></tr>
 <tr class="memdesc:a5c96c0cb75e5b619068b0045605844a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints the configuration. <br /></td></tr>
@@ -178,6 +185,43 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>faultLine</b></td></tr
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="ab1a70b4b43ea62eb266f9e18129fe28b" name="ab1a70b4b43ea62eb266f9e18129fe28b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab1a70b4b43ea62eb266f9e18129fe28b">&#9670;&#160;</a></span>askPermission()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Configuration::askPermission </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">enum PermissionType&#160;</td>
+          <td class="paramname"><em>pt</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns wether the user has permission to view the path or not. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">path</td><td>Path for which the permission query is made. </td></tr>
+    <tr><td class="paramname">pt</td><td>Permission type that is querying. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a557da68badb47492b74eef746a29913d" name="a557da68badb47492b74eef746a29913d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a557da68badb47492b74eef746a29913d">&#9670;&#160;</a></span>containsConfig()</h2>
 

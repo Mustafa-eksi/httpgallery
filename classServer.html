@@ -105,12 +105,12 @@ $(document).ready(function(){initNavTree('classServer.html',''); initResizable()
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ace7850ab7eb2d77b54b9277141c24264"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#ace7850ab7eb2d77b54b9277141c24264">Server</a> (<a class="el" href="classLogger.html">Logger</a> &amp;logr, std::string p, size_t port, std::string cert_path, std::string pkey_path, bool caching=true, size_t cache_size=100, bool thumbnailer=false)</td></tr>
-<tr class="memdesc:ace7850ab7eb2d77b54b9277141c24264"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a http server with https support.  <br /></td></tr>
-<tr class="separator:ace7850ab7eb2d77b54b9277141c24264"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac8c6224703af2007cb51dc68058faaef"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#ac8c6224703af2007cb51dc68058faaef">Server</a> (<a class="el" href="classLogger.html">Logger</a> &amp;logr, std::string p=&quot;.&quot;, size_t port=8000, int backlog=100, bool caching=true, size_t cache_size=100, bool thumbnailer=false)</td></tr>
-<tr class="memdesc:ac8c6224703af2007cb51dc68058faaef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a http server with https support.  <br /></td></tr>
-<tr class="separator:ac8c6224703af2007cb51dc68058faaef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2263574caa0aa003058debad6baae24a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#a2263574caa0aa003058debad6baae24a">Server</a> (<a class="el" href="classLogger.html">Logger</a> &amp;logr, <a class="el" href="classConfiguration.html">Configuration</a> conf, std::string p, size_t port, std::string cert_path, std::string pkey_path, bool caching=true, size_t cache_size=100, bool thumbnailer=false)</td></tr>
+<tr class="memdesc:a2263574caa0aa003058debad6baae24a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a http server with https support.  <br /></td></tr>
+<tr class="separator:a2263574caa0aa003058debad6baae24a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf21a817b2f5fdbe06af47e2e2392609"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#aaf21a817b2f5fdbe06af47e2e2392609">Server</a> (<a class="el" href="classLogger.html">Logger</a> &amp;logr, <a class="el" href="classConfiguration.html">Configuration</a> conf, std::string p=&quot;.&quot;, size_t port=8000, int backlog=100, bool caching=true, size_t cache_size=100, bool thumbnailer=false)</td></tr>
+<tr class="memdesc:aaf21a817b2f5fdbe06af47e2e2392609"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a http server with https support.  <br /></td></tr>
+<tr class="separator:aaf21a817b2f5fdbe06af47e2e2392609"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2531cb29d24d03e2b171f4a819e3f035"><td class="memItemLeft" align="right" valign="top">PageType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#a2531cb29d24d03e2b171f4a819e3f035">choosePageType</a> (<a class="el" href="classHttpMessage.html">HttpMessage</a> msg)</td></tr>
 <tr class="memdesc:a2531cb29d24d03e2b171f4a819e3f035"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns appropriate page type based on http request.  <br /></td></tr>
 <tr class="separator:a2531cb29d24d03e2b171f4a819e3f035"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -154,8 +154,8 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Includes inner workings of the http server. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ace7850ab7eb2d77b54b9277141c24264" name="ace7850ab7eb2d77b54b9277141c24264"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ace7850ab7eb2d77b54b9277141c24264">&#9670;&#160;</a></span>Server() <span class="overload">[1/2]</span></h2>
+<a id="a2263574caa0aa003058debad6baae24a" name="a2263574caa0aa003058debad6baae24a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2263574caa0aa003058debad6baae24a">&#9670;&#160;</a></span>Server() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -165,6 +165,12 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classLogger.html">Logger</a> &amp;&#160;</td>
           <td class="paramname"><em>logr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classConfiguration.html">Configuration</a>&#160;</td>
+          <td class="paramname"><em>conf</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -220,6 +226,7 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">logr</td><td>Reference to the <a class="el" href="classLogger.html" title="Custom logging class that also supports metrics.">Logger</a>. </td></tr>
+    <tr><td class="paramname">conf</td><td><a class="el" href="classConfiguration.html" title="Configuration class manages the configuration file and related operations.">Configuration</a> object that is used for permission system. </td></tr>
     <tr><td class="paramname">p</td><td>Path to serve. </td></tr>
     <tr><td class="paramname">cert_path</td><td>Path to certificate chain file. </td></tr>
     <tr><td class="paramname">pkey_path</td><td>Path to private key file. </td></tr>
@@ -232,8 +239,8 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>
 
 </div>
 </div>
-<a id="ac8c6224703af2007cb51dc68058faaef" name="ac8c6224703af2007cb51dc68058faaef"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac8c6224703af2007cb51dc68058faaef">&#9670;&#160;</a></span>Server() <span class="overload">[2/2]</span></h2>
+<a id="aaf21a817b2f5fdbe06af47e2e2392609" name="aaf21a817b2f5fdbe06af47e2e2392609"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf21a817b2f5fdbe06af47e2e2392609">&#9670;&#160;</a></span>Server() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -243,6 +250,12 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classLogger.html">Logger</a> &amp;&#160;</td>
           <td class="paramname"><em>logr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classConfiguration.html">Configuration</a>&#160;</td>
+          <td class="paramname"><em>conf</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -292,6 +305,7 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">logr</td><td>Reference to the <a class="el" href="classLogger.html" title="Custom logging class that also supports metrics.">Logger</a>. </td></tr>
+    <tr><td class="paramname">conf</td><td><a class="el" href="classConfiguration.html" title="Configuration class manages the configuration file and related operations.">Configuration</a> object that is used for permission system. </td></tr>
     <tr><td class="paramname">p</td><td>Path to serve. </td></tr>
     <tr><td class="paramname">port</td><td>port number </td></tr>
     <tr><td class="paramname">backlog</td><td>sets socket's backlog (how many requests can there be in line to be processed) </td></tr>

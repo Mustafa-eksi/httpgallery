@@ -7,5 +7,6 @@ var annotated_dup =
     [ "HttpMessage", "classHttpMessage.html", "classHttpMessage" ],
     [ "HttpResponseBuilder", "classHttpResponseBuilder.html", "classHttpResponseBuilder" ],
     [ "Logger", "classLogger.html", "classLogger" ],
+    [ "PermissionNode", "classPermissionNode.html", "classPermissionNode" ],
     [ "Server", "classServer.html", "classServer" ]
 ];

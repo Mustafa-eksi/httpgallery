@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['server_0',['Server',['../classServer.html',1,'']]]
+  ['permissionnode_0',['PermissionNode',['../classPermissionNode.html',1,'']]]
 ];

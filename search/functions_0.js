@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['build_0',['build',['../classHttpResponseBuilder.html#aba26ba40621eab1b293b166715ad238f',1,'HttpResponseBuilder']]]
+  ['addchild_0',['addChild',['../classPermissionNode.html#abbaa0b17ae6878301020411822bcbd7f',1,'PermissionNode']]],
+  ['askpermission_1',['askPermission',['../classConfiguration.html#ab1a70b4b43ea62eb266f9e18129fe28b',1,'Configuration']]]
 ];
