@@ -1,4 +1,3 @@
-#pragma once
 #include "Http.hpp"
 #include <iostream>
 #include <stdexcept>

@@ -1,9 +1,10 @@
+#pragma once
 #include <fstream>
 #include <string>
 #include <unordered_map>
 #include <variant>
 
-#include "FileSystemInterface.cpp"
+#include "FileSystemInterface.hpp"
 
 typedef std::variant<std::string, int, bool> ConfigVar;
 typedef std::unordered_map<std::string, ConfigVar> ConfigMap;

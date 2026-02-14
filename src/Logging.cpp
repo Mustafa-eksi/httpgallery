@@ -1,4 +1,3 @@
-#pragma once
 #include "Logging.hpp"
 #include <iostream>
 

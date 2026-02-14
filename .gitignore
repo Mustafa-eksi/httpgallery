@@ -20,3 +20,4 @@ compile_commands.json
 .cache/
 docs
 sample_config.ini
+build/

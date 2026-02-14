@@ -1,3 +1,4 @@
+#pragma once
 #include <cstdint>
 #include <list>
 #include <optional>
@@ -6,7 +7,7 @@
 /**
  * @brief Simple file entry struct for LRU caching.
  */
-template <typename T, typename U> struct FileEntry {
+template <typename T, typename U> struct FileEntryT {
     T data;
     std::list<U>::iterator pointer;
     std::pair<uintmax_t, uintmax_t> range;
@@ -19,7 +20,7 @@ template <typename T, typename U> class FileCache {
     using File      = T;
     using Key       = U;
     using Range     = std::pair<uintmax_t, uintmax_t>;
-    using FileEntry = FileEntry<File, Key>;
+    using FileEntry = FileEntryT<File, Key>;
     size_t cap;
     std::unordered_map<Key, FileEntry> cache;
     std::list<Key> ordered_keys;

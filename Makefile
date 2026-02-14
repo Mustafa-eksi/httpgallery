@@ -2,16 +2,26 @@
 prefix=/usr
 BIN_DIR=$(prefix)/bin
 SHARE_DIR=$(prefix)/share
-CC=clang++
+CC=g++
 LIBS=libssl zlib
-CFLAGS=-Wall -Werror -Wextra -Wshadow -ggdb -std=c++23 -g \
+DEBUG_CFLAGS=-Wall -Werror -Wextra -Wshadow -ggdb -std=c++23 -g \
 	   ${shell pkg-config --cflags $(LIBS)}
+UNOPTIMIZED_CFLAGS=-Wall -Werror -Wextra -Wshadow -std=c++23 \
+			   ${shell pkg-config --cflags $(LIBS)} \
+			   -DHTTPGALLERY_RES_DIR="\"/usr/share/httpgallery\""
 RELEASE_CFLAGS=-Wall -Werror -Wextra -Wshadow -std=c++23 \
 			   ${shell pkg-config --cflags $(LIBS)} -O3 \
 			   -DHTTPGALLERY_RES_DIR="\"/usr/share/httpgallery\""
 LDFLAGS=$(shell pkg-config --libs $(LIBS)) -lcrypto
 ASAN_FLAGS=-fsanitize=address -fno-omit-frame-pointer -O0
 TEST_FLAGS=-fPIC -fprofile-arcs -ftest-coverage --coverage
+COMPILE_MODE=RELEASE
+ifeq ($(COMPILE_MODE), RELEASE)
+	CFLAGS=$(RELEASE_CFLAGS)
+else
+	CFLAGS=$(DEBUG_CFLAGS)
+	UNOPTIMIZED_CFLAGS=$(DEBUG_CFLAGS)
+endif
 all: format main
 
 TESTS=Http-getRange Http-HttpMessage Http-queriesToString Http-HtmlDecode
@@ -51,11 +61,20 @@ pkey.pem:
 chain.pem: pkey.pem
 	openssl req -x509 -new -key pkey.pem -days 36500 -subj '/CN=localhost' -out chain.pem
 
-main: ./src/*
-	$(CC) ./src/main.cpp -o httpgallery $(CFLAGS) $(LDFLAGS)
+SRCS=Configuration Http HttpResponseBuilder Logging Server main FileSystemInterface
+OBJS = $(SRCS:%=./build/%.oxx)
+
+build:
+	mkdir -p build
+
+./build/%.oxx: ./src/%.cpp
+	$(CC) $(UNOPTIMIZED_CFLAGS) -c $< -o $@
+
+main: build $(OBJS)
+	$(CC) -o httpgallery $(CFLAGS) $(LDFLAGS) $(OBJS)
 
 main_release: ./src/*
-	$(CC) $(RELEASE_CFLAGS) ./src/main.cpp -o httpgallery $(LDFLAGS)
+	$(CC) $(RELEASE_CFLAGS) -o httpgallery $(LDFLAGS) $(OBJS)
 
 asan: ./src/*
 	$(CC) ./src/main.cpp -o main_asan $(CFLAGS) $(ASAN_FLAGS) $(LDFLAGS)
@@ -66,7 +85,7 @@ check:
 format: src/*
 	clang-format --style=file:./.clang-format -i src/*
 
-clean:
+clean: clean_test
 	rm -f ./main_asan
 	rm -f ./httpgallery
 	rm -f ./data_graph.png
@@ -74,6 +93,7 @@ clean:
 	rm -f ./httpgallery_logs.txt
 	rm -f chain.pem
 	rm -f pkey.pem
+	rm -f build/*
 
 install: ./src/* main_release
 	mkdir -p $(BIN_DIR)

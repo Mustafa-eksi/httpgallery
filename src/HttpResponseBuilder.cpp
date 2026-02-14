@@ -1,6 +1,4 @@
 #include "HttpResponseBuilder.hpp"
-#include "FileSystemInterface.cpp"
-#include "LookupTables.hpp"
 
 HttpResponseBuilder::~HttpResponseBuilder()
 {

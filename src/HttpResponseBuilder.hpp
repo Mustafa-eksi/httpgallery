@@ -4,6 +4,9 @@
 #include <unordered_map>
 #include <zlib.h>
 
+#include "FileSystemInterface.hpp"
+#include "LookupTables.hpp"
+
 /**
  * @brief Builds Http responses with chainable methods.
  */

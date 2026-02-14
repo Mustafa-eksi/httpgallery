@@ -1,9 +1,9 @@
 #include <csignal>
 #include <iostream>
 
-#include "Configuration.cpp"
-#include "Logging.cpp"
-#include "Server.cpp"
+#include "Configuration.hpp"
+#include "Logging.hpp"
+#include "Server.hpp"
 
 const char HELP_MESSAGE[]
     = "Usage: httpgallery <path-to-folder> [options]\n"

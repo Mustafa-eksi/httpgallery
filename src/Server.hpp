@@ -1,8 +1,8 @@
 #include "EmbeddedResources.hpp"
-#include "FileSystemInterface.cpp"
-#include "Http.cpp"
-#include "HttpResponseBuilder.cpp"
-#include "Logging.cpp"
+#include "FileSystemInterface.hpp"
+#include "Http.hpp"
+#include "HttpResponseBuilder.hpp"
+// #include "Logging.hpp"
 #include <atomic>
 #include <errno.h>
 #include <sys/resource.h>

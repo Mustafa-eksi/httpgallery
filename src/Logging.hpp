@@ -1,3 +1,5 @@
+#ifndef HTTPGALLERY_LOGGING
+#define HTTPGALLERY_LOGGING
 #include <ctime>
 #include <fstream>
 #include <iomanip>
@@ -84,3 +86,4 @@ public:
      */
     void report(std::string type, std::string msg);
 };
+#endif // HTTPGALLERY_LOGGING

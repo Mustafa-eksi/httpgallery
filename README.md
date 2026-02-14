@@ -18,10 +18,7 @@ https://mustafa-eksi.github.io/httpgallery/
 - [X] Stress test
 - [X] Better UI
 - [ ] Optional authentication
-    - [ ] Create a configuration file
-        - [ ] Move Command line argument parsing to Configuration.
-        - [ ] Make server class use Configuration instead of lots of variables.
-        - [ ] Create a function to require config variables easily.
+    - [X] Create a configuration file
     - [ ] Path regex matching for rules
     - [ ] Users should be able to have different permissions
 - [ ] File management
@@ -30,3 +27,4 @@ https://mustafa-eksi.github.io/httpgallery/
 - [ ] HTTP2 support
 - [ ] HTTP3 support
 - [ ] A more professional readme
+- [ ] Move from Makefiles to CMake
