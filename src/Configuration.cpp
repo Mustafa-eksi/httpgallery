@@ -1,6 +1,32 @@
 #include "Configuration.hpp"
 
-Configuration::Configuration() { }
+PermissionNode::PermissionNode()
+{
+    permissions = std::set<enum PermissionType>();
+}
+
+PermissionNode::PermissionNode(std::string n)
+    : name(n)
+{
+    permissions = std::set<enum PermissionType>();
+}
+
+void PermissionNode::addChild(std::string child_name)
+{
+    if (children.contains(child_name))
+        return;
+    children[child_name]         = new PermissionNode(child_name);
+    children[child_name]->parent = this;
+}
+
+void PermissionNode::addChildWithPerm(std::string child_name,
+                                      std::vector<enum PermissionType> ps)
+{
+    this->addChild(child_name);
+    this->children[child_name]->permissions.insert_range(ps);
+}
+
+Configuration::Configuration() { permission_root = PermissionNode(); }
 
 Configuration::Configuration(std::string config_path)
 {
@@ -11,6 +37,7 @@ Configuration::Configuration(std::string config_path)
     std::string current_name;
     for (auto line_end = config_file.find("\n"); line_end != std::string::npos;
          line_end      = config_file.find("\n", prev)) {
+
         std::string line = config_file.substr(prev, line_end - prev);
         if (line.starts_with("[")) {
             auto name_end = line.find("]");
@@ -32,6 +59,7 @@ Configuration::Configuration(std::string config_path)
         prev = line_end + 1;
         line_index++;
     }
+    this->createPermissionTree();
     return;
 fault:
     faultLine    = line_index + 1;
@@ -105,4 +133,61 @@ int Configuration::configInt(std::string key)
 bool Configuration::configBool(std::string key)
 {
     return std::get<2>(map["config"][key]);
+}
+
+void Configuration::createPermissionTree()
+{
+    if (map.find("permissions") == map.end())
+        return;
+    permission_root.name = "/";
+    for (auto [file_key, perm] : map["permissions"]) {
+        PermissionNode *cursor = &permission_root;
+        auto file              = std::filesystem::canonical(file_key).string();
+        // canonical path is also an absolute path so it must start with '/'
+        file = file.substr(1);
+        std::string current_name;
+        while (!file.empty()) {
+            auto slash   = file.find("/");
+            current_name = file.substr(0, slash);
+            cursor->addChild(current_name);
+            cursor = cursor->children[current_name];
+            if (slash == std::string::npos || slash == file.size() - 1)
+                break;
+            file = file.substr(slash + 1);
+        }
+        std::vector<enum PermissionType> perms;
+        std::string fperm = std::get<0>(perm);
+        while (!fperm.empty()) {
+            auto delim   = fperm.find(",");
+            auto permstr = fperm.substr(0, delim);
+            if (PERMISSION_STR.contains(permstr))
+                perms.push_back(PERMISSION_STR.at(permstr));
+            if (delim + 1 >= fperm.size() || delim == std::string::npos)
+                break;
+            fperm = fperm.substr(delim + 1);
+        }
+        cursor->permissions.insert_range(perms);
+    }
+}
+
+bool Configuration::askPermission(std::string path, enum PermissionType pt)
+{
+    if (permission_root.name.empty())
+        return true;
+    PermissionNode *cursor = &permission_root;
+    auto file              = std::filesystem::canonical(path).string();
+    file                   = file.substr(1);
+    while (cursor) {
+        if (file.empty())
+            return cursor->permissions.count(pt) > 0;
+        auto slash        = file.find("/");
+        auto current_name = file.substr(0, slash);
+        if (cursor->name == current_name)
+            return cursor->permissions.count(pt) > 0;
+        if (!cursor->children.contains(current_name))
+            return true;
+        file   = file.substr(slash + 1);
+        cursor = cursor->children[current_name];
+    }
+    return true;
 }

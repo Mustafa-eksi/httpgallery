@@ -1,14 +1,54 @@
 #pragma once
+#include <filesystem>
 #include <fstream>
+#include <iostream>
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <variant>
+#include <vector>
 
 #include "FileSystemInterface.hpp"
 
-typedef std::variant<std::string, int, bool> ConfigVar;
+enum PermissionType {
+    P_VIEW,
+    P_READ,
+    P_WRITE,
+    P_UPDATE,
+    P_DELETE,
+};
+
+const std::unordered_map<std::string, enum PermissionType> PERMISSION_STR = {
+    { "R", P_READ },
+    { "W", P_WRITE },
+    { "U", P_UPDATE },
+    { "D", P_DELETE },
+};
+
+typedef std::variant<std::string, int, bool, enum PermissionType> ConfigVar;
 typedef std::unordered_map<std::string, ConfigVar> ConfigMap;
 typedef std::unordered_map<std::string, ConfigMap> StructuredMap;
+
+/**
+ * @brief PermissionNode is a tree structure for managing permission system.
+ */
+class PermissionNode {
+public:
+    std::string name;
+    std::unordered_map<std::string, PermissionNode *> children;
+    PermissionNode *parent;
+    std::set<enum PermissionType> permissions;
+
+    PermissionNode();
+    PermissionNode(std::string n);
+
+    /**
+     * @brief Creates a child in this node with the name n.
+     */
+    void addChild(std::string child_name);
+    void addChildWithPerm(std::string child_name,
+                          std::vector<enum PermissionType> ps);
+};
 
 /**
  * @brief Configuration class manages the configuration file and related
@@ -16,6 +56,7 @@ typedef std::unordered_map<std::string, ConfigMap> StructuredMap;
  */
 class Configuration {
     StructuredMap map;
+    PermissionNode permission_root;
 
 public:
     /**
@@ -72,6 +113,19 @@ public:
     int configInt(std::string key);
     bool configBool(std::string key);
     ///@}
+
+    /**
+     * @brief Creates permission tree with [permissions].
+     */
+    void createPermissionTree();
+
+    /**
+     * @brief Returns wether the user has permission to view the path or not.
+     *
+     * @param path Path for which the permission query is made.
+     * @param pt Permission type that is querying.
+     */
+    bool askPermission(std::string path, enum PermissionType pt);
 
     /**
      * @brief Prints the configuration.

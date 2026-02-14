@@ -224,14 +224,14 @@ int main(int argc, char **argv)
     bool thumbnailer_present = (ret == 0);
     if (secure) {
 #ifndef HTTPGALLERY_NO_OPENSSL
-        Server server = Server(logger, path, port, cert_path, pkey_path, cache,
-                               cache_size, thumbnailer_present);
+        Server server = Server(logger, config, path, port, cert_path, pkey_path,
+                               cache, cache_size, thumbnailer_present);
         shouldClose   = &server.shouldClose;
         server.startHttps();
 #endif
     } else {
-        Server server = Server(logger, path, port, backlog, cache, cache_size,
-                               thumbnailer_present);
+        Server server = Server(logger, config, path, port, backlog, cache,
+                               cache_size, thumbnailer_present);
         shouldClose   = &server.shouldClose;
         server.start();
     }

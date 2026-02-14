@@ -1,8 +1,9 @@
+#include "Configuration.hpp"
 #include "EmbeddedResources.hpp"
 #include "FileSystemInterface.hpp"
 #include "Http.hpp"
 #include "HttpResponseBuilder.hpp"
-// #include "Logging.hpp"
+#include "Logging.hpp"
 #include <atomic>
 #include <errno.h>
 #include <sys/resource.h>
@@ -61,6 +62,7 @@ class Server {
     std::string htmltemplate_list, htmltemplate_icon, htmltemplate_error;
     bool https, cache_files, has_thumbnailer;
     Logger &logger;
+    Configuration config;
 
 public:
     /**
@@ -70,6 +72,7 @@ public:
     /**
      * @brief Initialize a http server with https support.
      * @param logr Reference to the Logger.
+     * @param conf Configuration object that is used for permission system.
      * @param p Path to serve.
      * @param cert_path Path to certificate chain file.
      * @param pkey_path Path to private key file.
@@ -79,12 +82,13 @@ public:
      * @param thumbnailer Enables video thumbnailing (requires
      * ffmpegthumbnailer)
      */
-    Server(Logger &logr, std::string p, size_t port, std::string cert_path,
-           std::string pkey_path, bool caching = true, size_t cache_size = 100,
-           bool thumbnailer = false);
+    Server(Logger &logr, Configuration conf, std::string p, size_t port,
+           std::string cert_path, std::string pkey_path, bool caching = true,
+           size_t cache_size = 100, bool thumbnailer = false);
     /**
      * @brief Initialize a http server with https support.
      * @param logr Reference to the Logger.
+     * @param conf Configuration object that is used for permission system.
      * @param p Path to serve.
      * @param port port number
      * @param backlog sets socket's backlog (how many requests can there be in
@@ -95,9 +99,9 @@ public:
      * @param thumbnailer Enables video thumbnailing (requires
      * ffmpegthumbnailer)
      */
-    Server(Logger &logr, std::string p = ".", size_t port = 8000,
-           int backlog = 100, bool caching = true, size_t cache_size = 100,
-           bool thumbnailer = false);
+    Server(Logger &logr, Configuration conf, std::string p = ".",
+           size_t port = 8000, int backlog = 100, bool caching = true,
+           size_t cache_size = 100, bool thumbnailer = false);
     ~Server();
     /**
      * @brief Returns appropriate page type based on http request.

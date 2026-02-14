@@ -2,7 +2,7 @@
 prefix=/usr
 BIN_DIR=$(prefix)/bin
 SHARE_DIR=$(prefix)/share
-CC=g++
+CC=clang++
 LIBS=libssl zlib
 DEBUG_CFLAGS=-Wall -Werror -Wextra -Wshadow -ggdb -std=c++23 -g \
 	   ${shell pkg-config --cflags $(LIBS)}
@@ -67,7 +67,7 @@ OBJS = $(SRCS:%=./build/%.oxx)
 build:
 	mkdir -p build
 
-./build/%.oxx: ./src/%.cpp
+./build/%.oxx: ./src/%.cpp ./src/%.hpp
 	$(CC) $(UNOPTIMIZED_CFLAGS) -c $< -o $@
 
 main: build $(OBJS)
