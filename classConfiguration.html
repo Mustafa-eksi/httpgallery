@@ -97,26 +97,38 @@ $(document).ready(function(){initNavTree('classConfiguration.html',''); initResi
   <div class="headertitle"><div class="title">Configuration Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p><a class="el" href="classConfiguration.html" title="Configuration class manages the configuration file and related operations.">Configuration</a> class manages the configuration file and related operations.  
+ <a href="classConfiguration.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Configuration_8hpp_source.html">Configuration.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a779947337bf652f0e773cb29f37f14ba"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConfiguration.html#a779947337bf652f0e773cb29f37f14ba">Configuration</a> ()</td></tr>
+<tr class="memitem:a779947337bf652f0e773cb29f37f14ba"><td class="memItemLeft" align="right" valign="top"><a id="a779947337bf652f0e773cb29f37f14ba" name="a779947337bf652f0e773cb29f37f14ba"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Configuration</b> ()</td></tr>
+<tr class="memdesc:a779947337bf652f0e773cb29f37f14ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes an empty <a class="el" href="classConfiguration.html" title="Configuration class manages the configuration file and related operations.">Configuration</a> object. <br /></td></tr>
 <tr class="separator:a779947337bf652f0e773cb29f37f14ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5e464dc3698f19eac745bad5dca0ad2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConfiguration.html#ad5e464dc3698f19eac745bad5dca0ad2">Configuration</a> (std::string config_path)</td></tr>
+<tr class="memdesc:ad5e464dc3698f19eac745bad5dca0ad2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parses the config file specified with config_path parameter.  <br /></td></tr>
 <tr class="separator:ad5e464dc3698f19eac745bad5dca0ad2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f61224981e8be4fa0ac8054b7fa2dc8"><td class="memItemLeft" align="right" valign="top">ConfigVar&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConfiguration.html#a3f61224981e8be4fa0ac8054b7fa2dc8">interpretString</a> (std::string s)</td></tr>
+<tr class="memdesc:a3f61224981e8be4fa0ac8054b7fa2dc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts s to appropriate ConfigVar.  <br /></td></tr>
 <tr class="separator:a3f61224981e8be4fa0ac8054b7fa2dc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5138b93093617241a97fee52e6aaa61a"><td class="memItemLeft" align="right" valign="top">ConfigMap&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConfiguration.html#a5138b93093617241a97fee52e6aaa61a">operator[]</a> (std::string key)</td></tr>
 <tr class="memdesc:a5138b93093617241a97fee52e6aaa61a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Operator overloading for accessing configuration elements.  <br /></td></tr>
 <tr class="separator:a5138b93093617241a97fee52e6aaa61a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a557da68badb47492b74eef746a29913d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConfiguration.html#a557da68badb47492b74eef746a29913d">containsConfig</a> (std::string key)</td></tr>
+<tr class="memdesc:a557da68badb47492b74eef746a29913d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if key has value in [config].  <br /></td></tr>
 <tr class="separator:a557da68badb47492b74eef746a29913d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5c96c0cb75e5b619068b0045605844a5"><td class="memItemLeft" align="right" valign="top"><a id="a5c96c0cb75e5b619068b0045605844a5" name="a5c96c0cb75e5b619068b0045605844a5"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> ()</td></tr>
 <tr class="memdesc:a5c96c0cb75e5b619068b0045605844a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints the configuration. <br /></td></tr>
 <tr class="separator:a5c96c0cb75e5b619068b0045605844a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader"></div></td></tr>
-<tr class="memitem:a0335fda5e1eb81fa1d319175e00318f4"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConfiguration.html#a0335fda5e1eb81fa1d319175e00318f4">configString</a> (std::string key)</td></tr>
+<tr class="memitem:a0335fda5e1eb81fa1d319175e00318f4"><td class="memItemLeft" align="right" valign="top"><a id="a0335fda5e1eb81fa1d319175e00318f4" name="a0335fda5e1eb81fa1d319175e00318f4"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>configString</b> (std::string key)</td></tr>
+<tr class="memdesc:a0335fda5e1eb81fa1d319175e00318f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">These functions gets the type from variant and returns them. <br /></td></tr>
 <tr class="separator:a0335fda5e1eb81fa1d319175e00318f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac37a1508e2c6adeb390a1033a0a2a32f"><td class="memItemLeft" align="right" valign="top"><a id="ac37a1508e2c6adeb390a1033a0a2a32f" name="ac37a1508e2c6adeb390a1033a0a2a32f"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>configInt</b> (std::string key)</td></tr>
@@ -127,32 +139,20 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>configBool</b> (std::
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a3cf09a48b1a1735d7f71f147c4ead299"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConfiguration.html#a3cf09a48b1a1735d7f71f147c4ead299">faultyConfig</a></td></tr>
+<tr class="memitem:a3cf09a48b1a1735d7f71f147c4ead299"><td class="memItemLeft" align="right" valign="top"><a id="a3cf09a48b1a1735d7f71f147c4ead299" name="a3cf09a48b1a1735d7f71f147c4ead299"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>faultyConfig</b></td></tr>
+<tr class="memdesc:a3cf09a48b1a1735d7f71f147c4ead299"><td class="mdescLeft">&#160;</td><td class="mdescRight">True if the config file includes errors. <br /></td></tr>
 <tr class="separator:a3cf09a48b1a1735d7f71f147c4ead299"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac3f984f07ad7d12bb21db40b3bf985c1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConfiguration.html#ac3f984f07ad7d12bb21db40b3bf985c1">faultLine</a></td></tr>
+<tr class="memitem:ac3f984f07ad7d12bb21db40b3bf985c1"><td class="memItemLeft" align="right" valign="top"><a id="ac3f984f07ad7d12bb21db40b3bf985c1" name="ac3f984f07ad7d12bb21db40b3bf985c1"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>faultLine</b></td></tr>
+<tr class="memdesc:ac3f984f07ad7d12bb21db40b3bf985c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Line number which the error occurred. It is set to 0 if no error occurred. <br /></td></tr>
 <tr class="separator:ac3f984f07ad7d12bb21db40b3bf985c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a779947337bf652f0e773cb29f37f14ba" name="a779947337bf652f0e773cb29f37f14ba"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a779947337bf652f0e773cb29f37f14ba">&#9670;&#160;</a></span>Configuration() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Configuration::Configuration </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>@breif Initializes an empty <a class="el" href="classConfiguration.html">Configuration</a> object. </p>
-
-</div>
-</div>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p><a class="el" href="classConfiguration.html" title="Configuration class manages the configuration file and related operations.">Configuration</a> class manages the configuration file and related operations. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ad5e464dc3698f19eac745bad5dca0ad2" name="ad5e464dc3698f19eac745bad5dca0ad2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad5e464dc3698f19eac745bad5dca0ad2">&#9670;&#160;</a></span>Configuration() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5e464dc3698f19eac745bad5dca0ad2">&#9670;&#160;</a></span>Configuration()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -166,7 +166,8 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>@breif Parses the config file specified with config_path parameter.</p>
+
+<p>Parses the config file specified with config_path parameter. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">config_path</td><td>Path to the config file. </td></tr>
@@ -177,25 +178,6 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a0335fda5e1eb81fa1d319175e00318f4" name="a0335fda5e1eb81fa1d319175e00318f4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0335fda5e1eb81fa1d319175e00318f4">&#9670;&#160;</a></span>configString()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string Configuration::configString </td>
-          <td>(</td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>key</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>@breif These functions gets the type from variant and returns them. </p>
-
-</div>
-</div>
 <a id="a557da68badb47492b74eef746a29913d" name="a557da68badb47492b74eef746a29913d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a557da68badb47492b74eef746a29913d">&#9670;&#160;</a></span>containsConfig()</h2>
 
@@ -211,7 +193,8 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>@breif Checks if key has value in [config].</p>
+
+<p>Checks if key has value in [config]. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if key is accessible with config["config"][key]. </dd></dl>
 
 </div>
@@ -231,7 +214,8 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>@breif Converts s to appropriate ConfigVar.</p>
+
+<p>Converts s to appropriate ConfigVar. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">s</td><td>String value to be converted. </td></tr>
@@ -266,37 +250,6 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns the ConfigVar of the element. </dd></dl>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="ac3f984f07ad7d12bb21db40b3bf985c1" name="ac3f984f07ad7d12bb21db40b3bf985c1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac3f984f07ad7d12bb21db40b3bf985c1">&#9670;&#160;</a></span>faultLine</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int Configuration::faultLine</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>@breif Line number which the error occurred. It is set to 0 if no error occurred. </p>
-
-</div>
-</div>
-<a id="a3cf09a48b1a1735d7f71f147c4ead299" name="a3cf09a48b1a1735d7f71f147c4ead299"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3cf09a48b1a1735d7f71f147c4ead299">&#9670;&#160;</a></span>faultyConfig</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Configuration::faultyConfig</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>@breif True if the config file includes errors. </p>
 
 </div>
 </div>

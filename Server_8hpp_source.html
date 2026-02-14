@@ -94,10 +94,10 @@ $(document).ready(function(){initNavTree('Server_8hpp_source.html',''); initResi
 </div><!--header-->
 <div class="contents">
 <div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#include &quot;EmbeddedResources.hpp&quot;</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &quot;FileSystemInterface.cpp&quot;</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;Http.cpp&quot;</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;HttpResponseBuilder.cpp&quot;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;Logging.cpp&quot;</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &quot;FileSystemInterface.hpp&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;Http.hpp&quot;</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;HttpResponseBuilder.hpp&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// #include &quot;Logging.hpp&quot;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;atomic&gt;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;errno.h&gt;</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;sys/resource.h&gt;</span></div>
@@ -178,9 +178,9 @@ $(document).ready(function(){initNavTree('Server_8hpp_source.html',''); initResi
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classServer.html#a79947c285b9bf8d20e5312be1abbed8b">serveClient</a>(<span class="keywordtype">int</span> client_socket);</div>
 <div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classServer.html#a7eac07d2582fa01c2671362efa955b31">start</a>();</div>
 <div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>};</div>
-<div class="ttc" id="aclassFileStorage_html"><div class="ttname"><a href="classFileStorage.html">FileStorage</a></div><div class="ttdoc">File LRU cache.</div><div class="ttdef"><b>Definition:</b> FileSystemInterface.cpp:71</div></div>
+<div class="ttc" id="aclassFileStorage_html"><div class="ttname"><a href="classFileStorage.html">FileStorage</a></div><div class="ttdoc">File LRU cache.</div><div class="ttdef"><b>Definition:</b> FileSystemInterface.hpp:37</div></div>
 <div class="ttc" id="aclassHttpMessage_html"><div class="ttname"><a href="classHttpMessage.html">HttpMessage</a></div><div class="ttdoc">Http message class for parsing http requests.</div><div class="ttdef"><b>Definition:</b> Http.hpp:18</div></div>
-<div class="ttc" id="aclassLogger_html"><div class="ttname"><a href="classLogger.html">Logger</a></div><div class="ttdoc">Custom logging class that also supports metrics.</div><div class="ttdef"><b>Definition:</b> Logging.hpp:11</div></div>
+<div class="ttc" id="aclassLogger_html"><div class="ttname"><a href="classLogger.html">Logger</a></div><div class="ttdoc">Custom logging class that also supports metrics.</div><div class="ttdef"><b>Definition:</b> Logging.hpp:13</div></div>
 <div class="ttc" id="aclassServer_html"><div class="ttname"><a href="classServer.html">Server</a></div><div class="ttdoc">Includes inner workings of the http server.</div><div class="ttdef"><b>Definition:</b> Server.hpp:47</div></div>
 <div class="ttc" id="aclassServer_html_a0f77bc4c350e94eb8bf2fd943b41aa02"><div class="ttname"><a href="classServer.html#a0f77bc4c350e94eb8bf2fd943b41aa02">Server::generateContent</a></div><div class="ttdeci">std::string generateContent(HttpMessage msg)</div><div class="ttdoc">Generates http response according to msg.</div><div class="ttdef"><b>Definition:</b> Server.cpp:233</div></div>
 <div class="ttc" id="aclassServer_html_a2531cb29d24d03e2b171f4a819e3f035"><div class="ttname"><a href="classServer.html#a2531cb29d24d03e2b171f4a819e3f035">Server::choosePageType</a></div><div class="ttdeci">PageType choosePageType(HttpMessage msg)</div><div class="ttdoc">Returns appropriate page type based on http request.</div><div class="ttdef"><b>Definition:</b> Server.cpp:194</div></div>

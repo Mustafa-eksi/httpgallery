@@ -3,6 +3,7 @@ var dir_68267d1309a1af8e8297ef4c3efbcdba =
     [ "Configuration.hpp", "Configuration_8hpp_source.html", null ],
     [ "EmbeddedResources.hpp", "EmbeddedResources_8hpp_source.html", null ],
     [ "FileCache.hpp", "FileCache_8hpp_source.html", null ],
+    [ "FileSystemInterface.hpp", "FileSystemInterface_8hpp_source.html", null ],
     [ "Http.hpp", "Http_8hpp_source.html", null ],
     [ "HttpResponseBuilder.hpp", "HttpResponseBuilder_8hpp_source.html", null ],
     [ "Logging.hpp", "Logging_8hpp_source.html", null ],
