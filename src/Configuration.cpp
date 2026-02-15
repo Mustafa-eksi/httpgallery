@@ -184,8 +184,9 @@ bool Configuration::askPermission(std::string path, enum PermissionType pt)
         auto current_name = file.substr(0, slash);
         if (cursor->name == current_name)
             return cursor->permissions.count(pt) > 0;
-        if (!cursor->children.contains(current_name))
-            return true;
+        if (!cursor->children.contains(current_name)) {
+            return cursor->permissions.count(pt) > 0;
+        }
         file   = file.substr(slash + 1);
         cursor = cursor->children[current_name];
     }
