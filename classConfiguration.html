@@ -125,9 +125,16 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>createPermissionTree</b> ()</td></tr>
 <tr class="memdesc:af1897c09b087fbf18b364529c5057a8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates permission tree with [permissions]. <br /></td></tr>
 <tr class="separator:af1897c09b087fbf18b364529c5057a8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab1a70b4b43ea62eb266f9e18129fe28b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConfiguration.html#ab1a70b4b43ea62eb266f9e18129fe28b">askPermission</a> (std::string path, enum PermissionType pt)</td></tr>
-<tr class="memdesc:ab1a70b4b43ea62eb266f9e18129fe28b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns wether the user has permission to view the path or not.  <br /></td></tr>
-<tr class="separator:ab1a70b4b43ea62eb266f9e18129fe28b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f92d8be64685974cc3c1da9833e6072"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConfiguration.html#a1f92d8be64685974cc3c1da9833e6072">askPermission</a> (std::string path, std::string username, enum PermissionType pt)</td></tr>
+<tr class="memdesc:a1f92d8be64685974cc3c1da9833e6072"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns wether the user has permission to view the path or not.  <br /></td></tr>
+<tr class="separator:a1f92d8be64685974cc3c1da9833e6072"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab55d49db3b6f52867c314115a4aa3e3a"><td class="memItemLeft" align="right" valign="top"><a id="ab55d49db3b6f52867c314115a4aa3e3a" name="ab55d49db3b6f52867c314115a4aa3e3a"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>authenticate</b> (std::string userpass)</td></tr>
+<tr class="memdesc:ab55d49db3b6f52867c314115a4aa3e3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Authenticate using base64 encoded username:password scheme. <br /></td></tr>
+<tr class="separator:ab55d49db3b6f52867c314115a4aa3e3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9184486e2c7ec1e70a2af3e4f56632bc"><td class="memItemLeft" align="right" valign="top">PermissionSet&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConfiguration.html#a9184486e2c7ec1e70a2af3e4f56632bc">parsePermissions</a> (std::string perm_list)</td></tr>
+<tr class="memdesc:a9184486e2c7ec1e70a2af3e4f56632bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parses a list of permission chars in the perm_list argument.  <br /></td></tr>
+<tr class="separator:a9184486e2c7ec1e70a2af3e4f56632bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5c96c0cb75e5b619068b0045605844a5"><td class="memItemLeft" align="right" valign="top"><a id="a5c96c0cb75e5b619068b0045605844a5" name="a5c96c0cb75e5b619068b0045605844a5"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> ()</td></tr>
 <tr class="memdesc:a5c96c0cb75e5b619068b0045605844a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints the configuration. <br /></td></tr>
@@ -185,8 +192,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>faultLine</b></td></tr
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ab1a70b4b43ea62eb266f9e18129fe28b" name="ab1a70b4b43ea62eb266f9e18129fe28b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab1a70b4b43ea62eb266f9e18129fe28b">&#9670;&#160;</a></span>askPermission()</h2>
+<a id="a1f92d8be64685974cc3c1da9833e6072" name="a1f92d8be64685974cc3c1da9833e6072"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f92d8be64685974cc3c1da9833e6072">&#9670;&#160;</a></span>askPermission()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -196,6 +203,12 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>faultLine</b></td></tr
           <td>(</td>
           <td class="paramtype">std::string&#160;</td>
           <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>username</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -215,6 +228,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>faultLine</b></td></tr
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">path</td><td>Path for which the permission query is made. </td></tr>
+    <tr><td class="paramname">username</td><td>Username of the client that is asking permission. </td></tr>
     <tr><td class="paramname">pt</td><td>Permission type that is querying. </td></tr>
   </table>
   </dd>
@@ -294,6 +308,33 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>faultLine</b></td></tr
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns the ConfigVar of the element. </dd></dl>
+
+</div>
+</div>
+<a id="a9184486e2c7ec1e70a2af3e4f56632bc" name="a9184486e2c7ec1e70a2af3e4f56632bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9184486e2c7ec1e70a2af3e4f56632bc">&#9670;&#160;</a></span>parsePermissions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PermissionSet Configuration::parsePermissions </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>perm_list</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Parses a list of permission chars in the perm_list argument. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">perm_list</td><td>A comma separated list of permission chars. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns the permission set specified in perm_list. </dd></dl>
 
 </div>
 </div>

@@ -105,12 +105,12 @@ $(document).ready(function(){initNavTree('classServer.html',''); initResizable()
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a2263574caa0aa003058debad6baae24a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#a2263574caa0aa003058debad6baae24a">Server</a> (<a class="el" href="classLogger.html">Logger</a> &amp;logr, <a class="el" href="classConfiguration.html">Configuration</a> conf, std::string p, size_t port, std::string cert_path, std::string pkey_path, bool caching=true, size_t cache_size=100, bool thumbnailer=false)</td></tr>
-<tr class="memdesc:a2263574caa0aa003058debad6baae24a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a http server with https support.  <br /></td></tr>
-<tr class="separator:a2263574caa0aa003058debad6baae24a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaf21a817b2f5fdbe06af47e2e2392609"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#aaf21a817b2f5fdbe06af47e2e2392609">Server</a> (<a class="el" href="classLogger.html">Logger</a> &amp;logr, <a class="el" href="classConfiguration.html">Configuration</a> conf, std::string p=&quot;.&quot;, size_t port=8000, int backlog=100, bool caching=true, size_t cache_size=100, bool thumbnailer=false)</td></tr>
-<tr class="memdesc:aaf21a817b2f5fdbe06af47e2e2392609"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a http server with https support.  <br /></td></tr>
-<tr class="separator:aaf21a817b2f5fdbe06af47e2e2392609"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a980b924af53e57cc30bcad759e6827aa"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#a980b924af53e57cc30bcad759e6827aa">Server</a> (<a class="el" href="classLogger.html">Logger</a> &amp;logr, <a class="el" href="classConfiguration.html">Configuration</a> &amp;&amp;conf, std::string p, size_t port, std::string cert_path, std::string pkey_path, bool caching=true, size_t cache_size=100, bool thumbnailer=false)</td></tr>
+<tr class="memdesc:a980b924af53e57cc30bcad759e6827aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a http server with https support.  <br /></td></tr>
+<tr class="separator:a980b924af53e57cc30bcad759e6827aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a993f10d448681a9ff9bab23a93d2fa3b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#a993f10d448681a9ff9bab23a93d2fa3b">Server</a> (<a class="el" href="classLogger.html">Logger</a> &amp;logr, <a class="el" href="classConfiguration.html">Configuration</a> &amp;&amp;conf, std::string p=&quot;.&quot;, size_t port=8000, int backlog=100, bool caching=true, size_t cache_size=100, bool thumbnailer=false)</td></tr>
+<tr class="memdesc:a993f10d448681a9ff9bab23a93d2fa3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a http server with https support.  <br /></td></tr>
+<tr class="separator:a993f10d448681a9ff9bab23a93d2fa3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2531cb29d24d03e2b171f4a819e3f035"><td class="memItemLeft" align="right" valign="top">PageType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#a2531cb29d24d03e2b171f4a819e3f035">choosePageType</a> (<a class="el" href="classHttpMessage.html">HttpMessage</a> msg)</td></tr>
 <tr class="memdesc:a2531cb29d24d03e2b171f4a819e3f035"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns appropriate page type based on http request.  <br /></td></tr>
 <tr class="separator:a2531cb29d24d03e2b171f4a819e3f035"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -154,8 +154,8 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Includes inner workings of the http server. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a2263574caa0aa003058debad6baae24a" name="a2263574caa0aa003058debad6baae24a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2263574caa0aa003058debad6baae24a">&#9670;&#160;</a></span>Server() <span class="overload">[1/2]</span></h2>
+<a id="a980b924af53e57cc30bcad759e6827aa" name="a980b924af53e57cc30bcad759e6827aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a980b924af53e57cc30bcad759e6827aa">&#9670;&#160;</a></span>Server() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -169,7 +169,7 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classConfiguration.html">Configuration</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classConfiguration.html">Configuration</a> &amp;&amp;&#160;</td>
           <td class="paramname"><em>conf</em>, </td>
         </tr>
         <tr>
@@ -239,8 +239,8 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>
 
 </div>
 </div>
-<a id="aaf21a817b2f5fdbe06af47e2e2392609" name="aaf21a817b2f5fdbe06af47e2e2392609"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaf21a817b2f5fdbe06af47e2e2392609">&#9670;&#160;</a></span>Server() <span class="overload">[2/2]</span></h2>
+<a id="a993f10d448681a9ff9bab23a93d2fa3b" name="a993f10d448681a9ff9bab23a93d2fa3b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a993f10d448681a9ff9bab23a93d2fa3b">&#9670;&#160;</a></span>Server() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -254,7 +254,7 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classConfiguration.html">Configuration</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classConfiguration.html">Configuration</a> &amp;&amp;&#160;</td>
           <td class="paramname"><em>conf</em>, </td>
         </tr>
         <tr>

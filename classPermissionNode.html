@@ -112,24 +112,24 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>addChild</b> (std::string child_name)</td></tr>
 <tr class="memdesc:abbaa0b17ae6878301020411822bcbd7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a child in this node with the name n. <br /></td></tr>
 <tr class="separator:abbaa0b17ae6878301020411822bcbd7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8d52c0779c2b7be82c35c2ea6b3a6d55"><td class="memItemLeft" align="right" valign="top"><a id="a8d52c0779c2b7be82c35c2ea6b3a6d55" name="a8d52c0779c2b7be82c35c2ea6b3a6d55"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>addChildWithPerm</b> (std::string child_name, std::vector&lt; enum PermissionType &gt; ps)</td></tr>
-<tr class="separator:a8d52c0779c2b7be82c35c2ea6b3a6d55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04e52f364c64264420e761ad44328e44"><td class="memItemLeft" align="right" valign="top"><a id="a04e52f364c64264420e761ad44328e44" name="a04e52f364c64264420e761ad44328e44"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>addChildWithPerm</b> (std::string child_name, std::string user, std::vector&lt; enum PermissionType &gt; ps)</td></tr>
+<tr class="separator:a04e52f364c64264420e761ad44328e44"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a2c01e68da8d7abe9033d08877c8af129"><td class="memItemLeft" align="right" valign="top"><a id="a2c01e68da8d7abe9033d08877c8af129" name="a2c01e68da8d7abe9033d08877c8af129"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>name</b></td></tr>
 <tr class="separator:a2c01e68da8d7abe9033d08877c8af129"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec03201eb175ecc2afb546ed33b66e4b"><td class="memItemLeft" align="right" valign="top"><a id="aec03201eb175ecc2afb546ed33b66e4b" name="aec03201eb175ecc2afb546ed33b66e4b"></a>
-std::unordered_map&lt; std::string, <a class="el" href="classPermissionNode.html">PermissionNode</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>children</b></td></tr>
-<tr class="separator:aec03201eb175ecc2afb546ed33b66e4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b5b5362c4e4e910303d6d15d3a49aa4"><td class="memItemLeft" align="right" valign="top"><a id="a7b5b5362c4e4e910303d6d15d3a49aa4" name="a7b5b5362c4e4e910303d6d15d3a49aa4"></a>
+std::unordered_map&lt; std::string, std::unique_ptr&lt; <a class="el" href="classPermissionNode.html">PermissionNode</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>children</b></td></tr>
+<tr class="separator:a7b5b5362c4e4e910303d6d15d3a49aa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa95abb2f3746e1b060b1339ee8bb11bc"><td class="memItemLeft" align="right" valign="top"><a id="aa95abb2f3746e1b060b1339ee8bb11bc" name="aa95abb2f3746e1b060b1339ee8bb11bc"></a>
 <a class="el" href="classPermissionNode.html">PermissionNode</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>parent</b></td></tr>
 <tr class="separator:aa95abb2f3746e1b060b1339ee8bb11bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a166302bb6fc69c03fffcefb73cce47d0"><td class="memItemLeft" align="right" valign="top"><a id="a166302bb6fc69c03fffcefb73cce47d0" name="a166302bb6fc69c03fffcefb73cce47d0"></a>
-std::set&lt; enum PermissionType &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>permissions</b></td></tr>
-<tr class="separator:a166302bb6fc69c03fffcefb73cce47d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe5f2541b8c0f24c718f307358142c75"><td class="memItemLeft" align="right" valign="top"><a id="afe5f2541b8c0f24c718f307358142c75" name="afe5f2541b8c0f24c718f307358142c75"></a>
+UserPermissionMap&#160;</td><td class="memItemRight" valign="bottom"><b>permissions</b></td></tr>
+<tr class="separator:afe5f2541b8c0f24c718f307358142c75"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classPermissionNode.html" title="PermissionNode is a tree structure for managing permission system.">PermissionNode</a> is a tree structure for managing permission system. </p>

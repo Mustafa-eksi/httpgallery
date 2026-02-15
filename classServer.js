@@ -1,7 +1,7 @@
 var classServer =
 [
-    [ "Server", "classServer.html#a2263574caa0aa003058debad6baae24a", null ],
-    [ "Server", "classServer.html#aaf21a817b2f5fdbe06af47e2e2392609", null ],
+    [ "Server", "classServer.html#a980b924af53e57cc30bcad759e6827aa", null ],
+    [ "Server", "classServer.html#a993f10d448681a9ff9bab23a93d2fa3b", null ],
     [ "choosePageType", "classServer.html#a2531cb29d24d03e2b171f4a819e3f035", null ],
     [ "generateContent", "classServer.html#a0f77bc4c350e94eb8bf2fd943b41aa02", null ],
     [ "generateVideoThumbnail", "classServer.html#a2810b3e04cdcd9f052852c52b9eddea9", null ],

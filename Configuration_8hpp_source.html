@@ -97,91 +97,103 @@ $(document).ready(function(){initNavTree('Configuration_8hpp_source.html',''); i
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &lt;filesystem&gt;</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;fstream&gt;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;iostream&gt;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;set&gt;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;unordered_map&gt;</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;variant&gt;</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &quot;FileSystemInterface.hpp&quot;</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">enum</span> PermissionType {</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    P_VIEW,</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    P_READ,</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    P_WRITE,</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    P_UPDATE,</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    P_DELETE,</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>};</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">const</span> std::unordered_map&lt;std::string, enum PermissionType&gt; PERMISSION_STR = {</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    { <span class="stringliteral">&quot;R&quot;</span>, P_READ },</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    { <span class="stringliteral">&quot;W&quot;</span>, P_WRITE },</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    { <span class="stringliteral">&quot;U&quot;</span>, P_UPDATE },</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    { <span class="stringliteral">&quot;D&quot;</span>, P_DELETE },</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>};</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="keyword">typedef</span> std::variant&lt;std::string, int, bool, enum PermissionType&gt; ConfigVar;</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">typedef</span> std::unordered_map&lt;std::string, ConfigVar&gt; ConfigMap;</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">typedef</span> std::unordered_map&lt;std::string, ConfigMap&gt; StructuredMap;</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="classPermissionNode.html">   35</a></span><span class="keyword">class </span><a class="code hl_class" href="classPermissionNode.html">PermissionNode</a> {</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    std::string name;</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    std::unordered_map&lt;std::string, PermissionNode *&gt; children;</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <a class="code hl_class" href="classPermissionNode.html">PermissionNode</a> *parent;</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    std::set&lt;enum PermissionType&gt; permissions;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <a class="code hl_class" href="classPermissionNode.html">PermissionNode</a>();</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <a class="code hl_class" href="classPermissionNode.html">PermissionNode</a>(std::string n);</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classPermissionNode.html#abbaa0b17ae6878301020411822bcbd7f">addChild</a>(std::string child_name);</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="keywordtype">void</span> addChildWithPerm(std::string child_name,</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>                          std::vector&lt;enum PermissionType&gt; ps);</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>};</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="classConfiguration.html">   57</a></span><span class="keyword">class </span><a class="code hl_class" href="classConfiguration.html">Configuration</a> {</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    StructuredMap map;</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <a class="code hl_class" href="classPermissionNode.html">PermissionNode</a> permission_root;</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="classConfiguration.html#a3cf09a48b1a1735d7f71f147c4ead299">   65</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="classConfiguration.html#a3cf09a48b1a1735d7f71f147c4ead299">faultyConfig</a>;</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="classConfiguration.html#ac3f984f07ad7d12bb21db40b3bf985c1">   71</a></span>    <span class="keywordtype">int</span> <a class="code hl_variable" href="classConfiguration.html#ac3f984f07ad7d12bb21db40b3bf985c1">faultLine</a>;</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    <a class="code hl_function" href="classConfiguration.html#a779947337bf652f0e773cb29f37f14ba">Configuration</a>();</div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;set&gt;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;unordered_map&gt;</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;variant&gt;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &quot;FileSystemInterface.hpp&quot;</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">enum</span> PermissionType {</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    P_VIEW,</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    P_READ,</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    P_WRITE,</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    P_UPDATE,</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    P_DELETE,</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>};</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keyword">inline</span> <span class="keyword">const</span> std::unordered_map&lt;std::string, enum PermissionType&gt; PERMISSION_STR</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    = {</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>          { <span class="stringliteral">&quot;R&quot;</span>, P_READ },</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>          { <span class="stringliteral">&quot;W&quot;</span>, P_WRITE },</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>          { <span class="stringliteral">&quot;U&quot;</span>, P_UPDATE },</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>          { <span class="stringliteral">&quot;D&quot;</span>, P_DELETE },</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>      };</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">typedef</span> std::variant&lt;std::string, int, bool, enum PermissionType&gt; ConfigVar;</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">typedef</span> std::unordered_map&lt;std::string, ConfigVar&gt; ConfigMap;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">typedef</span> std::unordered_map&lt;std::string, ConfigMap&gt; StructuredMap;</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="keyword">typedef</span> std::set&lt;enum PermissionType&gt; PermissionSet;</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="keyword">typedef</span> std::unordered_map&lt;std::string, PermissionSet&gt; UserPermissionMap;</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno"><a class="line" href="classPermissionNode.html">   39</a></span><span class="keyword">class </span><a class="code hl_class" href="classPermissionNode.html">PermissionNode</a> {</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    std::string name;</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    std::unordered_map&lt;std::string, std::unique_ptr&lt;PermissionNode&gt;&gt; children;</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <a class="code hl_class" href="classPermissionNode.html">PermissionNode</a> *parent;</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    UserPermissionMap permissions;</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <a class="code hl_class" href="classPermissionNode.html">PermissionNode</a>();</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <a class="code hl_class" href="classPermissionNode.html">PermissionNode</a>(std::string n);</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classPermissionNode.html#abbaa0b17ae6878301020411822bcbd7f">addChild</a>(std::string child_name);</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keywordtype">void</span> addChildWithPerm(std::string child_name, std::string user,</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>                          std::vector&lt;enum PermissionType&gt; ps);</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>};</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno"><a class="line" href="classConfiguration.html">   61</a></span><span class="keyword">class </span><a class="code hl_class" href="classConfiguration.html">Configuration</a> {</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    StructuredMap map;</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    std::unique_ptr&lt;PermissionNode&gt; permission_root;</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    std::unordered_map&lt;std::string, std::string&gt; users;</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno"><a class="line" href="classConfiguration.html#a3cf09a48b1a1735d7f71f147c4ead299">   70</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="classConfiguration.html#a3cf09a48b1a1735d7f71f147c4ead299">faultyConfig</a>;</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno"><a class="line" href="classConfiguration.html#ac3f984f07ad7d12bb21db40b3bf985c1">   76</a></span>    <span class="keywordtype">int</span> <a class="code hl_variable" href="classConfiguration.html#ac3f984f07ad7d12bb21db40b3bf985c1">faultLine</a>;</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    <a class="code hl_function" href="classConfiguration.html#a779947337bf652f0e773cb29f37f14ba">Configuration</a>(std::string config_path);</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    ConfigVar <a class="code hl_function" href="classConfiguration.html#a3f61224981e8be4fa0ac8054b7fa2dc8">interpretString</a>(std::string s);</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    ConfigMap <a class="code hl_function" href="classConfiguration.html#a5138b93093617241a97fee52e6aaa61a">operator[]</a>(std::string key);</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classConfiguration.html#a557da68badb47492b74eef746a29913d">containsConfig</a>(std::string key);</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span> </div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span> </div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>    std::string <a class="code hl_function" href="classConfiguration.html#a0335fda5e1eb81fa1d319175e00318f4">configString</a>(std::string key);</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    <span class="keywordtype">int</span> configInt(std::string key);</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    <span class="keywordtype">bool</span> configBool(std::string key);</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span> </div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classConfiguration.html#af1897c09b087fbf18b364529c5057a8a">createPermissionTree</a>();</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    <a class="code hl_function" href="classConfiguration.html#a779947337bf652f0e773cb29f37f14ba">Configuration</a>();</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span> </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    <a class="code hl_function" href="classConfiguration.html#a779947337bf652f0e773cb29f37f14ba">Configuration</a>(std::string config_path);</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    ConfigVar <a class="code hl_function" href="classConfiguration.html#a3f61224981e8be4fa0ac8054b7fa2dc8">interpretString</a>(std::string s);</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span> </div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    ConfigMap <a class="code hl_function" href="classConfiguration.html#a5138b93093617241a97fee52e6aaa61a">operator[]</a>(std::string key);</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classConfiguration.html#a557da68badb47492b74eef746a29913d">containsConfig</a>(std::string key);</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span> </div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    std::string <a class="code hl_function" href="classConfiguration.html#a0335fda5e1eb81fa1d319175e00318f4">configString</a>(std::string key);</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    <span class="keywordtype">int</span> configInt(std::string key);</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>    <span class="keywordtype">bool</span> configBool(std::string key);</div>
 <div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span> </div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classConfiguration.html#ab1a70b4b43ea62eb266f9e18129fe28b">askPermission</a>(std::string path, <span class="keyword">enum</span> PermissionType pt);</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span> </div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classConfiguration.html#a5c96c0cb75e5b619068b0045605844a5">print</a>();</div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>};</div>
-<div class="ttc" id="aclassConfiguration_html"><div class="ttname"><a href="classConfiguration.html">Configuration</a></div><div class="ttdoc">Configuration class manages the configuration file and related operations.</div><div class="ttdef"><b>Definition:</b> Configuration.hpp:57</div></div>
-<div class="ttc" id="aclassConfiguration_html_a0335fda5e1eb81fa1d319175e00318f4"><div class="ttname"><a href="classConfiguration.html#a0335fda5e1eb81fa1d319175e00318f4">Configuration::configString</a></div><div class="ttdeci">std::string configString(std::string key)</div><div class="ttdoc">These functions gets the type from variant and returns them.</div><div class="ttdef"><b>Definition:</b> Configuration.cpp:123</div></div>
-<div class="ttc" id="aclassConfiguration_html_a3cf09a48b1a1735d7f71f147c4ead299"><div class="ttname"><a href="classConfiguration.html#a3cf09a48b1a1735d7f71f147c4ead299">Configuration::faultyConfig</a></div><div class="ttdeci">bool faultyConfig</div><div class="ttdoc">True if the config file includes errors.</div><div class="ttdef"><b>Definition:</b> Configuration.hpp:65</div></div>
-<div class="ttc" id="aclassConfiguration_html_a3f61224981e8be4fa0ac8054b7fa2dc8"><div class="ttname"><a href="classConfiguration.html#a3f61224981e8be4fa0ac8054b7fa2dc8">Configuration::interpretString</a></div><div class="ttdeci">ConfigVar interpretString(std::string s)</div><div class="ttdoc">Converts s to appropriate ConfigVar.</div><div class="ttdef"><b>Definition:</b> Configuration.cpp:69</div></div>
-<div class="ttc" id="aclassConfiguration_html_a5138b93093617241a97fee52e6aaa61a"><div class="ttname"><a href="classConfiguration.html#a5138b93093617241a97fee52e6aaa61a">Configuration::operator[]</a></div><div class="ttdeci">ConfigMap operator[](std::string key)</div><div class="ttdoc">Operator overloading for accessing configuration elements.</div><div class="ttdef"><b>Definition:</b> Configuration.cpp:90</div></div>
-<div class="ttc" id="aclassConfiguration_html_a557da68badb47492b74eef746a29913d"><div class="ttname"><a href="classConfiguration.html#a557da68badb47492b74eef746a29913d">Configuration::containsConfig</a></div><div class="ttdeci">bool containsConfig(std::string key)</div><div class="ttdoc">Checks if key has value in [config].</div><div class="ttdef"><b>Definition:</b> Configuration.cpp:92</div></div>
-<div class="ttc" id="aclassConfiguration_html_a5c96c0cb75e5b619068b0045605844a5"><div class="ttname"><a href="classConfiguration.html#a5c96c0cb75e5b619068b0045605844a5">Configuration::print</a></div><div class="ttdeci">void print()</div><div class="ttdoc">Prints the configuration.</div><div class="ttdef"><b>Definition:</b> Configuration.cpp:99</div></div>
-<div class="ttc" id="aclassConfiguration_html_a779947337bf652f0e773cb29f37f14ba"><div class="ttname"><a href="classConfiguration.html#a779947337bf652f0e773cb29f37f14ba">Configuration::Configuration</a></div><div class="ttdeci">Configuration()</div><div class="ttdoc">Initializes an empty Configuration object.</div><div class="ttdef"><b>Definition:</b> Configuration.cpp:29</div></div>
-<div class="ttc" id="aclassConfiguration_html_ab1a70b4b43ea62eb266f9e18129fe28b"><div class="ttname"><a href="classConfiguration.html#ab1a70b4b43ea62eb266f9e18129fe28b">Configuration::askPermission</a></div><div class="ttdeci">bool askPermission(std::string path, enum PermissionType pt)</div><div class="ttdoc">Returns wether the user has permission to view the path or not.</div><div class="ttdef"><b>Definition:</b> Configuration.cpp:173</div></div>
-<div class="ttc" id="aclassConfiguration_html_ac3f984f07ad7d12bb21db40b3bf985c1"><div class="ttname"><a href="classConfiguration.html#ac3f984f07ad7d12bb21db40b3bf985c1">Configuration::faultLine</a></div><div class="ttdeci">int faultLine</div><div class="ttdoc">Line number which the error occurred. It is set to 0 if no error occurred.</div><div class="ttdef"><b>Definition:</b> Configuration.hpp:71</div></div>
-<div class="ttc" id="aclassConfiguration_html_af1897c09b087fbf18b364529c5057a8a"><div class="ttname"><a href="classConfiguration.html#af1897c09b087fbf18b364529c5057a8a">Configuration::createPermissionTree</a></div><div class="ttdeci">void createPermissionTree()</div><div class="ttdoc">Creates permission tree with [permissions].</div><div class="ttdef"><b>Definition:</b> Configuration.cpp:138</div></div>
-<div class="ttc" id="aclassPermissionNode_html"><div class="ttname"><a href="classPermissionNode.html">PermissionNode</a></div><div class="ttdoc">PermissionNode is a tree structure for managing permission system.</div><div class="ttdef"><b>Definition:</b> Configuration.hpp:35</div></div>
-<div class="ttc" id="aclassPermissionNode_html_abbaa0b17ae6878301020411822bcbd7f"><div class="ttname"><a href="classPermissionNode.html#abbaa0b17ae6878301020411822bcbd7f">PermissionNode::addChild</a></div><div class="ttdeci">void addChild(std::string child_name)</div><div class="ttdoc">Creates a child in this node with the name n.</div><div class="ttdef"><b>Definition:</b> Configuration.cpp:14</div></div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classConfiguration.html#af1897c09b087fbf18b364529c5057a8a">createPermissionTree</a>();</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span> </div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classConfiguration.html#a1f92d8be64685974cc3c1da9833e6072">askPermission</a>(std::string path, std::string username,</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>                       <span class="keyword">enum</span> PermissionType pt);</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span> </div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classConfiguration.html#ab55d49db3b6f52867c314115a4aa3e3a">authenticate</a>(std::string userpass);</div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span> </div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>    PermissionSet <a class="code hl_function" href="classConfiguration.html#a9184486e2c7ec1e70a2af3e4f56632bc">parsePermissions</a>(std::string perm_list);</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span> </div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classConfiguration.html#a5c96c0cb75e5b619068b0045605844a5">print</a>();</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>};</div>
+<div class="ttc" id="aclassConfiguration_html"><div class="ttname"><a href="classConfiguration.html">Configuration</a></div><div class="ttdoc">Configuration class manages the configuration file and related operations.</div><div class="ttdef"><b>Definition:</b> Configuration.hpp:61</div></div>
+<div class="ttc" id="aclassConfiguration_html_a0335fda5e1eb81fa1d319175e00318f4"><div class="ttname"><a href="classConfiguration.html#a0335fda5e1eb81fa1d319175e00318f4">Configuration::configString</a></div><div class="ttdeci">std::string configString(std::string key)</div><div class="ttdoc">These functions gets the type from variant and returns them.</div><div class="ttdef"><b>Definition:</b> Configuration.cpp:128</div></div>
+<div class="ttc" id="aclassConfiguration_html_a1f92d8be64685974cc3c1da9833e6072"><div class="ttname"><a href="classConfiguration.html#a1f92d8be64685974cc3c1da9833e6072">Configuration::askPermission</a></div><div class="ttdeci">bool askPermission(std::string path, std::string username, enum PermissionType pt)</div><div class="ttdoc">Returns wether the user has permission to view the path or not.</div><div class="ttdef"><b>Definition:</b> Configuration.cpp:198</div></div>
+<div class="ttc" id="aclassConfiguration_html_a3cf09a48b1a1735d7f71f147c4ead299"><div class="ttname"><a href="classConfiguration.html#a3cf09a48b1a1735d7f71f147c4ead299">Configuration::faultyConfig</a></div><div class="ttdeci">bool faultyConfig</div><div class="ttdoc">True if the config file includes errors.</div><div class="ttdef"><b>Definition:</b> Configuration.hpp:70</div></div>
+<div class="ttc" id="aclassConfiguration_html_a3f61224981e8be4fa0ac8054b7fa2dc8"><div class="ttname"><a href="classConfiguration.html#a3f61224981e8be4fa0ac8054b7fa2dc8">Configuration::interpretString</a></div><div class="ttdeci">ConfigVar interpretString(std::string s)</div><div class="ttdoc">Converts s to appropriate ConfigVar.</div><div class="ttdef"><b>Definition:</b> Configuration.cpp:74</div></div>
+<div class="ttc" id="aclassConfiguration_html_a5138b93093617241a97fee52e6aaa61a"><div class="ttname"><a href="classConfiguration.html#a5138b93093617241a97fee52e6aaa61a">Configuration::operator[]</a></div><div class="ttdeci">ConfigMap operator[](std::string key)</div><div class="ttdoc">Operator overloading for accessing configuration elements.</div><div class="ttdef"><b>Definition:</b> Configuration.cpp:95</div></div>
+<div class="ttc" id="aclassConfiguration_html_a557da68badb47492b74eef746a29913d"><div class="ttname"><a href="classConfiguration.html#a557da68badb47492b74eef746a29913d">Configuration::containsConfig</a></div><div class="ttdeci">bool containsConfig(std::string key)</div><div class="ttdoc">Checks if key has value in [config].</div><div class="ttdef"><b>Definition:</b> Configuration.cpp:97</div></div>
+<div class="ttc" id="aclassConfiguration_html_a5c96c0cb75e5b619068b0045605844a5"><div class="ttname"><a href="classConfiguration.html#a5c96c0cb75e5b619068b0045605844a5">Configuration::print</a></div><div class="ttdeci">void print()</div><div class="ttdoc">Prints the configuration.</div><div class="ttdef"><b>Definition:</b> Configuration.cpp:104</div></div>
+<div class="ttc" id="aclassConfiguration_html_a779947337bf652f0e773cb29f37f14ba"><div class="ttname"><a href="classConfiguration.html#a779947337bf652f0e773cb29f37f14ba">Configuration::Configuration</a></div><div class="ttdeci">Configuration()</div><div class="ttdoc">Initializes an empty Configuration object.</div><div class="ttdef"><b>Definition:</b> Configuration.cpp:30</div></div>
+<div class="ttc" id="aclassConfiguration_html_a9184486e2c7ec1e70a2af3e4f56632bc"><div class="ttname"><a href="classConfiguration.html#a9184486e2c7ec1e70a2af3e4f56632bc">Configuration::parsePermissions</a></div><div class="ttdeci">PermissionSet parsePermissions(std::string perm_list)</div><div class="ttdoc">Parses a list of permission chars in the perm_list argument.</div><div class="ttdef"><b>Definition:</b> Configuration.cpp:143</div></div>
+<div class="ttc" id="aclassConfiguration_html_ab55d49db3b6f52867c314115a4aa3e3a"><div class="ttname"><a href="classConfiguration.html#ab55d49db3b6f52867c314115a4aa3e3a">Configuration::authenticate</a></div><div class="ttdeci">bool authenticate(std::string userpass)</div><div class="ttdoc">Authenticate using base64 encoded username:password scheme.</div><div class="ttdef"><b>Definition:</b> Configuration.cpp:222</div></div>
+<div class="ttc" id="aclassConfiguration_html_ac3f984f07ad7d12bb21db40b3bf985c1"><div class="ttname"><a href="classConfiguration.html#ac3f984f07ad7d12bb21db40b3bf985c1">Configuration::faultLine</a></div><div class="ttdeci">int faultLine</div><div class="ttdoc">Line number which the error occurred. It is set to 0 if no error occurred.</div><div class="ttdef"><b>Definition:</b> Configuration.hpp:76</div></div>
+<div class="ttc" id="aclassConfiguration_html_af1897c09b087fbf18b364529c5057a8a"><div class="ttname"><a href="classConfiguration.html#af1897c09b087fbf18b364529c5057a8a">Configuration::createPermissionTree</a></div><div class="ttdeci">void createPermissionTree()</div><div class="ttdoc">Creates permission tree with [permissions].</div><div class="ttdef"><b>Definition:</b> Configuration.cpp:158</div></div>
+<div class="ttc" id="aclassPermissionNode_html"><div class="ttname"><a href="classPermissionNode.html">PermissionNode</a></div><div class="ttdoc">PermissionNode is a tree structure for managing permission system.</div><div class="ttdef"><b>Definition:</b> Configuration.hpp:39</div></div>
+<div class="ttc" id="aclassPermissionNode_html_abbaa0b17ae6878301020411822bcbd7f"><div class="ttname"><a href="classPermissionNode.html#abbaa0b17ae6878301020411822bcbd7f">PermissionNode::addChild</a></div><div class="ttdeci">void addChild(std::string child_name)</div><div class="ttdoc">Creates a child in this node with the name n.</div><div class="ttdef"><b>Definition:</b> Configuration.cpp:11</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
