@@ -11,13 +11,35 @@ std::string get_mime_type(std::string name)
     return mime_types.at(ext);
 }
 
-const char *BASE64_ALPHABET
+const char *BASE64_HASH_ALPHABET
     = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 std::string base64_hash(std::string data)
 {
     std::string output;
     for (auto c : data) {
-        output += BASE64_ALPHABET[c % 64];
+        output += BASE64_HASH_ALPHABET[c % 64];
+    }
+    return output;
+}
+
+std::string BASE64_ALPHABET
+    = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+std::string base64_decode(std::string data)
+{
+    std::string output;
+    for (size_t i = 0; i < data.size(); i += 4) {
+        uint8_t b0 = (uint8_t)BASE64_ALPHABET.find(data[i]);
+        uint8_t b1 = (uint8_t)BASE64_ALPHABET.find(data[i + 1]);
+        uint8_t b2 = (uint8_t)BASE64_ALPHABET.find(data[i + 2]);
+        uint8_t b3 = (uint8_t)BASE64_ALPHABET.find(data[i + 3]);
+
+        output += (char)((b0 << 2) | (b1 >> 4));
+        if (data[i + 2] != '=') {
+            output += (char)((b1 << 4) | (b2 >> 2));
+        }
+        if (data[i + 3] != '=') {
+            output += (char)((b2 << 6) | b3);
+        }
     }
     return output;
 }

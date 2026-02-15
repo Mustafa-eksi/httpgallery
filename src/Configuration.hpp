@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <set>
 #include <string>
 #include <unordered_map>
@@ -18,16 +19,19 @@ enum PermissionType {
     P_DELETE,
 };
 
-const std::unordered_map<std::string, enum PermissionType> PERMISSION_STR = {
-    { "R", P_READ },
-    { "W", P_WRITE },
-    { "U", P_UPDATE },
-    { "D", P_DELETE },
-};
+inline const std::unordered_map<std::string, enum PermissionType> PERMISSION_STR
+    = {
+          { "R", P_READ },
+          { "W", P_WRITE },
+          { "U", P_UPDATE },
+          { "D", P_DELETE },
+      };
 
 typedef std::variant<std::string, int, bool, enum PermissionType> ConfigVar;
 typedef std::unordered_map<std::string, ConfigVar> ConfigMap;
 typedef std::unordered_map<std::string, ConfigMap> StructuredMap;
+typedef std::set<enum PermissionType> PermissionSet;
+typedef std::unordered_map<std::string, PermissionSet> UserPermissionMap;
 
 /**
  * @brief PermissionNode is a tree structure for managing permission system.
@@ -35,9 +39,9 @@ typedef std::unordered_map<std::string, ConfigMap> StructuredMap;
 class PermissionNode {
 public:
     std::string name;
-    std::unordered_map<std::string, PermissionNode *> children;
+    std::unordered_map<std::string, std::unique_ptr<PermissionNode>> children;
     PermissionNode *parent;
-    std::set<enum PermissionType> permissions;
+    UserPermissionMap permissions;
 
     PermissionNode();
     PermissionNode(std::string n);
@@ -46,7 +50,7 @@ public:
      * @brief Creates a child in this node with the name n.
      */
     void addChild(std::string child_name);
-    void addChildWithPerm(std::string child_name,
+    void addChildWithPerm(std::string child_name, std::string user,
                           std::vector<enum PermissionType> ps);
 };
 
@@ -56,7 +60,8 @@ public:
  */
 class Configuration {
     StructuredMap map;
-    PermissionNode permission_root;
+    std::unique_ptr<PermissionNode> permission_root;
+    std::unordered_map<std::string, std::string> users;
 
 public:
     /**
@@ -123,9 +128,24 @@ public:
      * @brief Returns wether the user has permission to view the path or not.
      *
      * @param path Path for which the permission query is made.
+     * @param username Username of the client that is asking permission.
      * @param pt Permission type that is querying.
      */
-    bool askPermission(std::string path, enum PermissionType pt);
+    bool askPermission(std::string path, std::string username,
+                       enum PermissionType pt);
+
+    /**
+     * @brief Authenticate using base64 encoded username:password scheme.
+     */
+    bool authenticate(std::string userpass);
+
+    /**
+     * @brief Parses a list of permission chars in the perm_list argument.
+     *
+     * @param perm_list A comma separated list of permission chars.
+     * @return Returns the permission set specified in perm_list.
+     */
+    PermissionSet parsePermissions(std::string perm_list);
 
     /**
      * @brief Prints the configuration.

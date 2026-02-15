@@ -1,14 +1,14 @@
 #include "Server.hpp"
 
 #ifndef HTTPGALLERY_NO_OPENSSL
-Server::Server(Logger &logr, Configuration conf, std::string p, size_t port,
+Server::Server(Logger &logr, Configuration &&conf, std::string p, size_t port,
                std::string cert_path, std::string pkey_path, bool caching,
                size_t cache_size, bool thumbnailer)
     : file_storage(cache_size, logr)
     , cache_files(caching)
     , has_thumbnailer(thumbnailer)
     , logger(logr)
-    , config(conf)
+    , config(std::move(conf))
 {
     this->https             = true;
     this->htmltemplate_list = read_binary_to_string(
@@ -241,9 +241,36 @@ std::string Server::generateContent(HttpMessage msg)
     // This responds with 404 rather than 403 because 403 can leak existence of
     // some files
     if (access(filepath.c_str(), R_OK) != 0
-        || (path != "." && !isPathCanonical(filepath))
-        || !config.askPermission(filepath, P_READ))
+        || (path != "." && !isPathCanonical(filepath)))
         return HttpResponseBuilder().ErrorPage(htmltemplate_error, 404).build();
+
+    if (!config.askPermission(filepath, "guest", P_READ)) {
+        if (msg.headers.contains("Authorization")) {
+            auto auth  = msg.headers["Authorization"];
+            auto delim = auth.find(" ");
+            if (delim == std::string::npos)
+                return HttpResponseBuilder()
+                    .ErrorPage(htmltemplate_error, 401)
+                    .build();
+            // TODO: support more alternative authentication methods.
+            if (auth.substr(0, delim) != "Basic")
+                return HttpResponseBuilder()
+                    .ErrorPage(htmltemplate_error, 401)
+                    .build();
+            auto userpass = auth.substr(delim + 1);
+            if (config.authenticate(userpass))
+                goto auth_comp;
+            return HttpResponseBuilder()
+                .SetHeader("WWW-Authenticate", "Basic realm=\"Protected\"")
+                .ErrorPage(htmltemplate_error, 401)
+                .build();
+        }
+        return HttpResponseBuilder()
+            .ErrorPage(htmltemplate_error, 401)
+            .SetHeader("WWW-Authenticate", "Basic realm=\"Protected\"")
+            .build();
+    }
+auth_comp:
 
     std::string comp = "";
     if (msg.headers.contains("Accept-Encoding")) {
@@ -353,13 +380,13 @@ std::string Server::generateContent(HttpMessage msg)
     return "";
 }
 
-Server::Server(Logger &logr, Configuration conf, std::string p, size_t port,
+Server::Server(Logger &logr, Configuration &&conf, std::string p, size_t port,
                int backlog, bool caching, size_t cache_size, bool thumbnailer)
     : file_storage(cache_size, logr)
     , cache_files(caching)
     , has_thumbnailer(thumbnailer)
     , logger(logr)
-    , config(conf)
+    , config(std::move(conf))
 {
     this->https             = false;
     this->htmltemplate_list = read_binary_to_string(

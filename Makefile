@@ -70,6 +70,9 @@ build:
 ./build/%.oxx: ./src/%.cpp ./src/%.hpp
 	$(CC) $(UNOPTIMIZED_CFLAGS) -c $< -o $@
 
+./build/main.oxx: ./src/main.cpp
+	$(CC) $(UNOPTIMIZED_CFLAGS) -c $< -o $@
+
 main: build $(OBJS)
 	$(CC) -o httpgallery $(CFLAGS) $(LDFLAGS) $(OBJS)
 

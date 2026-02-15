@@ -20,8 +20,8 @@ https://mustafa-eksi.github.io/httpgallery/
 - [ ] Optional authentication
     - [X] Create a configuration file
     - [X] Permissions for different paths
+    - [X] Users should be able to have different permissions
     - [ ] Path regex matching for rules
-    - [ ] Users should be able to have different permissions
 - [ ] File management
 - [ ] Package for Arch + Debian
 - [X] Docker image

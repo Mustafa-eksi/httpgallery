@@ -1,35 +1,40 @@
 #include "Configuration.hpp"
 
-PermissionNode::PermissionNode()
-{
-    permissions = std::set<enum PermissionType>();
-}
+PermissionNode::PermissionNode() { permissions = UserPermissionMap(); }
 
 PermissionNode::PermissionNode(std::string n)
     : name(n)
 {
-    permissions = std::set<enum PermissionType>();
+    permissions = UserPermissionMap();
 }
 
 void PermissionNode::addChild(std::string child_name)
 {
     if (children.contains(child_name))
         return;
-    children[child_name]         = new PermissionNode(child_name);
+    children[child_name]
+        = std::make_unique<PermissionNode>(PermissionNode(child_name));
     children[child_name]->parent = this;
 }
 
-void PermissionNode::addChildWithPerm(std::string child_name,
+void PermissionNode::addChildWithPerm(std::string child_name, std::string user,
                                       std::vector<enum PermissionType> ps)
 {
     this->addChild(child_name);
-    this->children[child_name]->permissions.insert_range(ps);
+    if (!this->children[child_name]->permissions.contains(user))
+        this->children[child_name]->permissions[user]
+            = std::set<enum PermissionType>();
+    this->children[child_name]->permissions[user].insert_range(ps);
 }
 
-Configuration::Configuration() { permission_root = PermissionNode(); }
+Configuration::Configuration()
+{
+    permission_root = std::make_unique<PermissionNode>(PermissionNode(""));
+}
 
 Configuration::Configuration(std::string config_path)
 {
+    permission_root = std::make_unique<PermissionNode>(PermissionNode(""));
     std::string config_file = read_binary_to_string(config_path);
     size_t prev             = 0;
     faultLine               = 0;
@@ -135,13 +140,28 @@ bool Configuration::configBool(std::string key)
     return std::get<2>(map["config"][key]);
 }
 
+PermissionSet Configuration::parsePermissions(std::string perm_list)
+{
+    PermissionSet perms;
+    while (!perm_list.empty()) {
+        auto delim   = perm_list.find(",");
+        auto permstr = perm_list.substr(0, delim);
+        if (PERMISSION_STR.contains(permstr))
+            perms.insert(PERMISSION_STR.at(permstr));
+        if (delim + 1 >= perm_list.size() || delim == std::string::npos)
+            break;
+        perm_list = perm_list.substr(delim + 1);
+    }
+    return perms;
+}
+
 void Configuration::createPermissionTree()
 {
-    if (map.find("permissions") == map.end())
+    if (!map.contains("permissions"))
         return;
-    permission_root.name = "/";
-    for (auto [file_key, perm] : map["permissions"]) {
-        PermissionNode *cursor = &permission_root;
+    permission_root->name = "/";
+    for (auto &[file_key, perm] : map["permissions"]) {
+        PermissionNode *cursor = permission_root.get();
         auto file              = std::filesystem::canonical(file_key).string();
         // canonical path is also an absolute path so it must start with '/'
         file = file.substr(1);
@@ -150,45 +170,64 @@ void Configuration::createPermissionTree()
             auto slash   = file.find("/");
             current_name = file.substr(0, slash);
             cursor->addChild(current_name);
-            cursor = cursor->children[current_name];
+            cursor = cursor->children[current_name].get();
             if (slash == std::string::npos || slash == file.size() - 1)
                 break;
             file = file.substr(slash + 1);
         }
-        std::vector<enum PermissionType> perms;
+        UserPermissionMap perms;
         std::string fperm = std::get<0>(perm);
         while (!fperm.empty()) {
-            auto delim   = fperm.find(",");
-            auto permstr = fperm.substr(0, delim);
-            if (PERMISSION_STR.contains(permstr))
-                perms.push_back(PERMISSION_STR.at(permstr));
-            if (delim + 1 >= fperm.size() || delim == std::string::npos)
+            auto username_end = fperm.find("{");
+            auto perm_end     = fperm.find("}");
+            if (username_end == std::string::npos
+                || perm_end == std::string::npos)
                 break;
-            fperm = fperm.substr(delim + 1);
+            auto username = fperm.substr(0, username_end);
+            auto permstr
+                = fperm.substr(username_end + 1, perm_end - username_end - 1);
+            perms[username] = parsePermissions(permstr);
+            if (perm_end + 2 >= fperm.size())
+                break;
+            fperm = fperm.substr(perm_end + 2);
         }
-        cursor->permissions.insert_range(perms);
+        cursor->permissions = perms;
     }
 }
 
-bool Configuration::askPermission(std::string path, enum PermissionType pt)
+bool Configuration::askPermission(std::string path, std::string username,
+                                  enum PermissionType pt)
 {
-    if (permission_root.name.empty())
+    if (permission_root->name.empty())
         return true;
-    PermissionNode *cursor = &permission_root;
+    PermissionNode *cursor = permission_root.get();
     auto file              = std::filesystem::canonical(path).string();
     file                   = file.substr(1);
     while (cursor) {
         if (file.empty())
-            return cursor->permissions.count(pt) > 0;
+            return cursor->permissions[username].count(pt) > 0;
         auto slash        = file.find("/");
         auto current_name = file.substr(0, slash);
         if (cursor->name == current_name)
-            return cursor->permissions.count(pt) > 0;
+            return cursor->permissions[username].count(pt) > 0;
         if (!cursor->children.contains(current_name)) {
-            return cursor->permissions.count(pt) > 0;
+            return cursor->permissions[username].count(pt) > 0;
         }
         file   = file.substr(slash + 1);
-        cursor = cursor->children[current_name];
+        cursor = cursor->children[current_name].get();
     }
     return true;
+}
+
+bool Configuration::authenticate(std::string userpass)
+{
+    auto decoded = base64_decode(userpass);
+    auto colon   = decoded.find(":");
+    if (colon == std::string::npos)
+        return false;
+    auto username = decoded.substr(0, colon);
+    auto password = decoded.substr(colon + 1);
+    if (!map["users"].contains(username))
+        return false;
+    return std::get<0>(map["users"][username]) == password;
 }

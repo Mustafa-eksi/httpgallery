@@ -82,7 +82,7 @@ public:
      * @param thumbnailer Enables video thumbnailing (requires
      * ffmpegthumbnailer)
      */
-    Server(Logger &logr, Configuration conf, std::string p, size_t port,
+    Server(Logger &logr, Configuration &&conf, std::string p, size_t port,
            std::string cert_path, std::string pkey_path, bool caching = true,
            size_t cache_size = 100, bool thumbnailer = false);
     /**
@@ -99,7 +99,7 @@ public:
      * @param thumbnailer Enables video thumbnailing (requires
      * ffmpegthumbnailer)
      */
-    Server(Logger &logr, Configuration conf, std::string p = ".",
+    Server(Logger &logr, Configuration &&conf, std::string p = ".",
            size_t port = 8000, int backlog = 100, bool caching = true,
            size_t cache_size = 100, bool thumbnailer = false);
     ~Server();

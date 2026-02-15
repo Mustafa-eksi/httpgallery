@@ -12,6 +12,8 @@ std::string get_mime_type(std::string name);
 
 std::string base64_hash(std::string data);
 
+std::string base64_decode(std::string data);
+
 inline std::string string_format(const std::string &format);
 
 inline std::string string_format(const std::string &format) { return format; }
