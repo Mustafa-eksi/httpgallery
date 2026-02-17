@@ -52,6 +52,8 @@ public:
     void addChild(std::string child_name);
     void addChildWithPerm(std::string child_name, std::string user,
                           std::vector<enum PermissionType> ps);
+
+    void print(int level);
 };
 
 /**
@@ -136,8 +138,12 @@ public:
 
     /**
      * @brief Authenticate using base64 encoded username:password scheme.
+     *
+     * @param userpass This argument should be the payload of Authorization
+     * header.
+     * @return Returns (true, username) on success and (false, "") on failure.
      */
-    bool authenticate(std::string userpass);
+    std::pair<bool, std::string> authenticate(std::string userpass);
 
     /**
      * @brief Parses a list of permission chars in the perm_list argument.

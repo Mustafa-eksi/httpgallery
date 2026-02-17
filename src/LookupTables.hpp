@@ -89,6 +89,8 @@ static const std::unordered_map<int, std::string> HTTP_STATUS_MESSAGES = {
     // 1xx Informational
     // 2XX Success
     { 200, "OK" },
+    { 201, "Created" },
+    { 204, "No Content" },
     { 206, "Partial Content" },
     // 3XX Redirection
     // 4XX Client Error

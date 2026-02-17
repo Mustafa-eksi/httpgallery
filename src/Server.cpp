@@ -244,33 +244,9 @@ std::string Server::generateContent(HttpMessage msg)
         || (path != "." && !isPathCanonical(filepath)))
         return HttpResponseBuilder().ErrorPage(htmltemplate_error, 404).build();
 
-    if (!config.askPermission(filepath, "guest", P_READ)) {
-        if (msg.headers.contains("Authorization")) {
-            auto auth  = msg.headers["Authorization"];
-            auto delim = auth.find(" ");
-            if (delim == std::string::npos)
-                return HttpResponseBuilder()
-                    .ErrorPage(htmltemplate_error, 401)
-                    .build();
-            // TODO: support more alternative authentication methods.
-            if (auth.substr(0, delim) != "Basic")
-                return HttpResponseBuilder()
-                    .ErrorPage(htmltemplate_error, 401)
-                    .build();
-            auto userpass = auth.substr(delim + 1);
-            if (config.authenticate(userpass))
-                goto auth_comp;
-            return HttpResponseBuilder()
-                .SetHeader("WWW-Authenticate", "Basic realm=\"Protected\"")
-                .ErrorPage(htmltemplate_error, 401)
-                .build();
-        }
-        return HttpResponseBuilder()
-            .ErrorPage(htmltemplate_error, 401)
-            .SetHeader("WWW-Authenticate", "Basic realm=\"Protected\"")
-            .build();
-    }
-auth_comp:
+    auto r = negotiateAuth(msg, filepath, P_READ);
+    if (!r.empty())
+        return r;
 
     std::string comp = "";
     if (msg.headers.contains("Accept-Encoding")) {
@@ -380,6 +356,89 @@ auth_comp:
     return "";
 }
 
+std::string Server::negotiateAuth(HttpMessage msg, std::string filepath,
+                                  enum PermissionType pt)
+{
+    if (config.askPermission(filepath, "guest", pt))
+        return "";
+    if (!msg.headers.contains("Authorization"))
+        return HttpResponseBuilder()
+            .ErrorPage(htmltemplate_error, 401)
+            .SetHeader("WWW-Authenticate", "Basic realm=\"Protected\"")
+            .build();
+
+    auto auth  = msg.headers["Authorization"];
+    auto delim = auth.find(" ");
+    if (delim == std::string::npos)
+        return HttpResponseBuilder().ErrorPage(htmltemplate_error, 401).build();
+    // TODO: support more alternative authentication methods.
+    if (auth.substr(0, delim) != "Basic")
+        return HttpResponseBuilder().ErrorPage(htmltemplate_error, 401).build();
+    auto userpass = auth.substr(delim + 1);
+    // FIXME: control the permission of the user
+    auto auth_res = config.authenticate(userpass);
+    if (!auth_res.first)
+        return HttpResponseBuilder()
+            .SetHeader("WWW-Authenticate", "Basic realm=\"Protected\"")
+            .ErrorPage(htmltemplate_error, 401)
+            .build();
+    if (config.askPermission(filepath, auth_res.second, pt))
+        return "";
+    else
+        return HttpResponseBuilder()
+            .ErrorPage(htmltemplate_error, 401)
+            .SetHeader("WWW-Authenticate", "Basic realm=\"Protected\"")
+            .build();
+}
+
+std::string Server::putFile(HttpMessage msg)
+{
+    if (msg.type != PUT)
+        return HttpResponseBuilder().ErrorPage(htmltemplate_error, 404).build();
+
+    // FIXME: setting path to "." enables non-canonical paths
+    auto filepath_   = std::filesystem::path(path + msg.address);
+    auto parent_path = filepath_.parent_path().string();
+    auto filepath    = filepath_.string();
+
+    // This responds with 404 rather than 403 because 403 can leak existence of
+    // some files
+    if (access(parent_path.c_str(), R_OK) != 0)
+        return HttpResponseBuilder().ErrorPage(htmltemplate_error, 404).build();
+
+    auto r = negotiateAuth(msg, parent_path, P_WRITE);
+    if (!r.empty())
+        return r;
+
+    std::ofstream f(filepath);
+    f << msg.content;
+    f.close();
+
+    return HttpResponseBuilder().Status(204).build();
+}
+
+std::string Server::deleteFile(HttpMessage msg)
+{
+    if (msg.type != DELETE || !std::filesystem::exists(path + msg.address))
+        return HttpResponseBuilder().ErrorPage(htmltemplate_error, 404).build();
+    auto filepath_   = std::filesystem::canonical(path + msg.address);
+    auto parent_path = filepath_.parent_path().string();
+    auto filepath    = filepath_.string();
+
+    // This responds with 404 rather than 403 because 403 can leak existence of
+    // some files
+    if (access(parent_path.c_str(), R_OK) != 0)
+        return HttpResponseBuilder().ErrorPage(htmltemplate_error, 404).build();
+    auto r = negotiateAuth(msg, filepath, P_DELETE);
+    if (!r.empty())
+        return r;
+
+    if (std::remove(filepath.c_str()) != 0)
+        return HttpResponseBuilder().ErrorPage(htmltemplate_error, 404).build();
+    else
+        return HttpResponseBuilder().Status(204).build();
+}
+
 Server::Server(Logger &logr, Configuration &&conf, std::string p, size_t port,
                int backlog, bool caching, size_t cache_size, bool thumbnailer)
     : file_storage(cache_size, logr)
@@ -458,7 +517,12 @@ void Server::respondClient(int client_socket, HttpMessage msg, std::mutex *m)
                        .Content(image_data)
                        .build();
     } else {
-        response = generateContent(msg);
+        if (msg.type == GET)
+            response = generateContent(msg);
+        else if (msg.type == PUT)
+            response = putFile(msg);
+        else if (msg.type == DELETE)
+            response = deleteFile(msg);
     }
     m->lock();
     if (send(client_socket, response.c_str(), response.length(), MSG_NOSIGNAL)

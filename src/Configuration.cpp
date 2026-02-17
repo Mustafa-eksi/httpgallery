@@ -27,6 +27,16 @@ void PermissionNode::addChildWithPerm(std::string child_name, std::string user,
     this->children[child_name]->permissions[user].insert_range(ps);
 }
 
+void PermissionNode::print(int level = 1)
+{
+    std::cout << "- " << name << std::endl;
+    for (auto &[chk, ch] : children) {
+        for (int i = 0; i < level; i++)
+            std::cout << "  ";
+        ch->print(level + 1);
+    }
+}
+
 Configuration::Configuration()
 {
     permission_root = std::make_unique<PermissionNode>(PermissionNode(""));
@@ -162,7 +172,11 @@ void Configuration::createPermissionTree()
     permission_root->name = "/";
     for (auto &[file_key, perm] : map["permissions"]) {
         PermissionNode *cursor = permission_root.get();
-        auto file              = std::filesystem::canonical(file_key).string();
+        std::string file;
+        if (file_key.find("*") != std::string::npos)
+            file = file_key;
+        else
+            file = std::filesystem::canonical(file_key).string();
         // canonical path is also an absolute path so it must start with '/'
         file = file.substr(1);
         std::string current_name;
@@ -211,7 +225,19 @@ bool Configuration::askPermission(std::string path, std::string username,
         if (cursor->name == current_name)
             return cursor->permissions[username].count(pt) > 0;
         if (!cursor->children.contains(current_name)) {
-            return cursor->permissions[username].count(pt) > 0;
+            for (auto &[n, p] : cursor->children) {
+                if (n.find("*") != std::string::npos) {
+                    auto art = n.find("*");
+                    std::string pre, post;
+                    pre = n.substr(0, art);
+                    if (art + 1 < cursor->name.size())
+                        post = n.substr(art + 1);
+                    if (file.starts_with(pre) && file.ends_with(post))
+                        return p->permissions[username].count(pt) > 0;
+                    else
+                        return cursor->permissions[username].count(pt) > 0;
+                }
+            }
         }
         file   = file.substr(slash + 1);
         cursor = cursor->children[current_name].get();
@@ -219,15 +245,17 @@ bool Configuration::askPermission(std::string path, std::string username,
     return true;
 }
 
-bool Configuration::authenticate(std::string userpass)
+std::pair<bool, std::string> Configuration::authenticate(std::string userpass)
 {
     auto decoded = base64_decode(userpass);
     auto colon   = decoded.find(":");
     if (colon == std::string::npos)
-        return false;
+        return std::make_pair(false, "");
     auto username = decoded.substr(0, colon);
     auto password = decoded.substr(colon + 1);
     if (!map["users"].contains(username))
-        return false;
-    return std::get<0>(map["users"][username]) == password;
+        return std::make_pair(false, "");
+    if (std::get<0>(map["users"][username]) != password)
+        return std::make_pair(false, "");
+    return std::make_pair(true, username);
 }

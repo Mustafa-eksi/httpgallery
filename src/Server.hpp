@@ -69,6 +69,7 @@ public:
      * @brief Gracefully closes the server when it is set to true.
      */
     std::atomic<bool> shouldClose = false;
+
     /**
      * @brief Initialize a http server with https support.
      * @param logr Reference to the Logger.
@@ -85,6 +86,7 @@ public:
     Server(Logger &logr, Configuration &&conf, std::string p, size_t port,
            std::string cert_path, std::string pkey_path, bool caching = true,
            size_t cache_size = 100, bool thumbnailer = false);
+
     /**
      * @brief Initialize a http server with https support.
      * @param logr Reference to the Logger.
@@ -102,19 +104,23 @@ public:
     Server(Logger &logr, Configuration &&conf, std::string p = ".",
            size_t port = 8000, int backlog = 100, bool caching = true,
            size_t cache_size = 100, bool thumbnailer = false);
+
     ~Server();
+
     /**
      * @brief Returns appropriate page type based on http request.
      * @param msg Http request.
      * @return Returns the page type.
      */
     PageType choosePageType(HttpMessage msg);
+
     /**
      * @brief Generates video thumbnail.
      * @param filepath path to the video file.
      * @return Returns raw png data if succeeds, std::nullopt otherwise.
      */
     std::optional<std::string> generateVideoThumbnail(std::string filepath);
+
     /**
      * @brief Sanitizes the path against path traversal exploit.
      * @param unsanitized_path Path to sanitize.
@@ -122,12 +128,39 @@ public:
      * form), false otherwise.
      */
     bool isPathCanonical(std::string unsanitized_path);
+
     /**
      * @brief Generates http response according to msg.
      * @param msg Http request.
      * @return Html data.
      */
     std::string generateContent(HttpMessage msg);
+
+    /**
+     * @brief This function handles PUT requests.
+     *
+     * @return Returns the response.
+     */
+    std::string putFile(HttpMessage msg);
+
+    /**
+     * @brief This function handles DELETE requests.
+     *
+     * @return Returns the response.
+     */
+    std::string deleteFile(HttpMessage msg);
+
+    /**
+     * @brief Tries to get permission by authenticate request to browser.
+     *
+     * @param msg Http message that has the Authorization header.
+     * @param filepath path to the resource that the client is requesting
+     * access.
+     * @param pt Permission type that client requests.
+     * @return Returns empty string when successful.
+     */
+    std::string negotiateAuth(HttpMessage msg, std::string filepath,
+                              enum PermissionType pt);
 
 #ifndef HTTPGALLERY_NO_OPENSSL
     /**

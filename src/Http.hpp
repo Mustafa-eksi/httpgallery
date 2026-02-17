@@ -4,7 +4,14 @@
 #include <unordered_map>
 #include <vector>
 
-typedef enum HttpMessageType { INVALID, GET, POST, HEAD } HttpMessageType;
+typedef enum HttpMessageType {
+    INVALID,
+    GET,
+    POST,
+    HEAD,
+    PUT,
+    DELETE
+} HttpMessageType;
 
 HttpMessageType to_http_message_type(std::string s);
 
@@ -40,6 +47,11 @@ public:
      * https://example.com/?this-is-a-query=yes)
      */
     std::unordered_map<std::string, std::string> queries;
+
+    /**
+     * @brief Holds request body if it exists.
+     */
+    std::string content;
 
     /**
      * @brief Creates empty http message. (Request)

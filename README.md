@@ -21,11 +21,12 @@ https://mustafa-eksi.github.io/httpgallery/
     - [X] Create a configuration file
     - [X] Permissions for different paths
     - [X] Users should be able to have different permissions
-    - [ ] Path regex matching for rules
-- [ ] File management
+    - [~] Path regex matching for rules
+- [X] File management
 - [ ] Package for Arch + Debian
 - [X] Docker image
 - [ ] HTTP2 support
 - [ ] HTTP3 support
+- [ ] Fuzz testing
 - [ ] A more professional readme
 - [ ] Move from Makefiles to CMake

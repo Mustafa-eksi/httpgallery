@@ -3,12 +3,17 @@
 #include <stdexcept>
 #include <stdio.h>
 
+// TODO: Change this with a map
 HttpMessageType to_http_message_type(std::string s)
 {
     if (s == "GET")
         return GET;
     if (s == "POST")
         return POST;
+    if (s == "PUT")
+        return PUT;
+    if (s == "DELETE")
+        return DELETE;
     return INVALID;
 }
 
@@ -90,23 +95,20 @@ HttpMessage::HttpMessage(std::string message)
     this->protocol_version = line;
     s                      = s.substr(new_line + 2);
 
-    while (s.length() != 0) {
-        line                = s;
-        size_t new_line_pos = s.find('\r');
-        if (new_line_pos != std::string::npos)
-            line = line.substr(0, new_line_pos);
-        else
-            new_line_pos = line.length() - 1;
-        size_t delim = line.find(":");
+    while (!s.empty()) {
+        auto nl = s.find("\r\n");
+        line    = s.substr(0, nl);
 
-        if (delim != std::string::npos)
+        size_t delim = line.find(":");
+        if (delim != std::string::npos) {
             this->headers[line.substr(0, delim)]
                 = trim_left(line.substr(delim + 1));
-
-        if (new_line_pos + 2 > s.length() - 1)
+        } else if (!line.empty()) {
+            content = line;
+        }
+        if (nl == std::string::npos || nl + 2 >= s.size())
             break;
-        // std::cout << "\"" << s <<  "\"" << std::endl;
-        s = s.substr(new_line_pos + 2);
+        s = s.substr(nl + 2);
     }
 }
 
@@ -201,9 +203,17 @@ std::vector<HttpMessage> parseMessages(std::string unparsed)
     std::string end_delim = "\r\n\r\n";
     auto end_of_req       = unparsed.find(end_delim);
     while (end_of_req != std::string::npos) {
+        if (unparsed.starts_with("PUT")) {
+            end_of_req = unparsed.find(end_delim, end_of_req + 4);
+        }
+        if (end_of_req == std::string::npos)
+            end_of_req = unparsed.size();
         output.push_back(
             HttpMessage(unparsed.substr(0, end_of_req + end_delim.size())));
-        unparsed = unparsed.substr(end_of_req + end_delim.size());
+        if (end_of_req + end_delim.size() < unparsed.size())
+            unparsed = unparsed.substr(end_of_req + end_delim.size());
+        else
+            break;
         if (unparsed.empty())
             break;
         end_of_req = unparsed.find(end_delim);
