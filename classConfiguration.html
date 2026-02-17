@@ -128,10 +128,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>createPermissionTree<
 <tr class="memitem:a1f92d8be64685974cc3c1da9833e6072"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConfiguration.html#a1f92d8be64685974cc3c1da9833e6072">askPermission</a> (std::string path, std::string username, enum PermissionType pt)</td></tr>
 <tr class="memdesc:a1f92d8be64685974cc3c1da9833e6072"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns wether the user has permission to view the path or not.  <br /></td></tr>
 <tr class="separator:a1f92d8be64685974cc3c1da9833e6072"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab55d49db3b6f52867c314115a4aa3e3a"><td class="memItemLeft" align="right" valign="top"><a id="ab55d49db3b6f52867c314115a4aa3e3a" name="ab55d49db3b6f52867c314115a4aa3e3a"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>authenticate</b> (std::string userpass)</td></tr>
-<tr class="memdesc:ab55d49db3b6f52867c314115a4aa3e3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Authenticate using base64 encoded username:password scheme. <br /></td></tr>
-<tr class="separator:ab55d49db3b6f52867c314115a4aa3e3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afee49d608bdc4b90b0fd1b8f6549e7bd"><td class="memItemLeft" align="right" valign="top">std::pair&lt; bool, std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConfiguration.html#afee49d608bdc4b90b0fd1b8f6549e7bd">authenticate</a> (std::string userpass)</td></tr>
+<tr class="memdesc:afee49d608bdc4b90b0fd1b8f6549e7bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Authenticate using base64 encoded username:password scheme.  <br /></td></tr>
+<tr class="separator:afee49d608bdc4b90b0fd1b8f6549e7bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9184486e2c7ec1e70a2af3e4f56632bc"><td class="memItemLeft" align="right" valign="top">PermissionSet&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConfiguration.html#a9184486e2c7ec1e70a2af3e4f56632bc">parsePermissions</a> (std::string perm_list)</td></tr>
 <tr class="memdesc:a9184486e2c7ec1e70a2af3e4f56632bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parses a list of permission chars in the perm_list argument.  <br /></td></tr>
 <tr class="separator:a9184486e2c7ec1e70a2af3e4f56632bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -233,6 +232,33 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>faultLine</b></td></tr
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="afee49d608bdc4b90b0fd1b8f6549e7bd" name="afee49d608bdc4b90b0fd1b8f6549e7bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afee49d608bdc4b90b0fd1b8f6549e7bd">&#9670;&#160;</a></span>authenticate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::pair&lt; bool, std::string &gt; Configuration::authenticate </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>userpass</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Authenticate using base64 encoded username:password scheme. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">userpass</td><td>This argument should be the payload of Authorization header. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns (true, username) on success and (false, "") on failure. </dd></dl>
 
 </div>
 </div>

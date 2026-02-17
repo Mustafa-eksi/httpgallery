@@ -123,6 +123,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a0f77bc4c350e94eb8bf2fd943b41aa02"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#a0f77bc4c350e94eb8bf2fd943b41aa02">generateContent</a> (<a class="el" href="classHttpMessage.html">HttpMessage</a> msg)</td></tr>
 <tr class="memdesc:a0f77bc4c350e94eb8bf2fd943b41aa02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates http response according to msg.  <br /></td></tr>
 <tr class="separator:a0f77bc4c350e94eb8bf2fd943b41aa02"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d5ed2f2902a7c948f5566be10cdc03f"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#a0d5ed2f2902a7c948f5566be10cdc03f">putFile</a> (<a class="el" href="classHttpMessage.html">HttpMessage</a> msg)</td></tr>
+<tr class="memdesc:a0d5ed2f2902a7c948f5566be10cdc03f"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function handles PUT requests.  <br /></td></tr>
+<tr class="separator:a0d5ed2f2902a7c948f5566be10cdc03f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5713f4e1e2f51780fb984071e3ae02b"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#ad5713f4e1e2f51780fb984071e3ae02b">deleteFile</a> (<a class="el" href="classHttpMessage.html">HttpMessage</a> msg)</td></tr>
+<tr class="memdesc:ad5713f4e1e2f51780fb984071e3ae02b"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function handles DELETE requests.  <br /></td></tr>
+<tr class="separator:ad5713f4e1e2f51780fb984071e3ae02b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64df535ca063b2d86796e84257e5d1a6"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#a64df535ca063b2d86796e84257e5d1a6">negotiateAuth</a> (<a class="el" href="classHttpMessage.html">HttpMessage</a> msg, std::string filepath, enum PermissionType pt)</td></tr>
+<tr class="memdesc:a64df535ca063b2d86796e84257e5d1a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tries to get permission by authenticate request to browser.  <br /></td></tr>
+<tr class="separator:a64df535ca063b2d86796e84257e5d1a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab7637b81b8ed44f432a16decd881212d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#ab7637b81b8ed44f432a16decd881212d">respondClientHttps</a> (SSL *ssl_handle, <a class="el" href="classHttpMessage.html">HttpMessage</a> msg, std::mutex *m)</td></tr>
 <tr class="memdesc:ab7637b81b8ed44f432a16decd881212d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calls generateContent and sends the result to client.  <br /></td></tr>
 <tr class="separator:ab7637b81b8ed44f432a16decd881212d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -346,6 +355,27 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>
 
 </div>
 </div>
+<a id="ad5713f4e1e2f51780fb984071e3ae02b" name="ad5713f4e1e2f51780fb984071e3ae02b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5713f4e1e2f51780fb984071e3ae02b">&#9670;&#160;</a></span>deleteFile()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string Server::deleteFile </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classHttpMessage.html">HttpMessage</a>&#160;</td>
+          <td class="paramname"><em>msg</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function handles DELETE requests. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns the response. </dd></dl>
+
+</div>
+</div>
 <a id="a0f77bc4c350e94eb8bf2fd943b41aa02" name="a0f77bc4c350e94eb8bf2fd943b41aa02"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0f77bc4c350e94eb8bf2fd943b41aa02">&#9670;&#160;</a></span>generateContent()</h2>
 
@@ -424,6 +454,72 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if the path received is canonical (in its shortest form), false otherwise. </dd></dl>
+
+</div>
+</div>
+<a id="a64df535ca063b2d86796e84257e5d1a6" name="a64df535ca063b2d86796e84257e5d1a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a64df535ca063b2d86796e84257e5d1a6">&#9670;&#160;</a></span>negotiateAuth()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string Server::negotiateAuth </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classHttpMessage.html">HttpMessage</a>&#160;</td>
+          <td class="paramname"><em>msg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>filepath</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">enum PermissionType&#160;</td>
+          <td class="paramname"><em>pt</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Tries to get permission by authenticate request to browser. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">msg</td><td>Http message that has the Authorization header. </td></tr>
+    <tr><td class="paramname">filepath</td><td>path to the resource that the client is requesting access. </td></tr>
+    <tr><td class="paramname">pt</td><td>Permission type that client requests. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns empty string when successful. </dd></dl>
+
+</div>
+</div>
+<a id="a0d5ed2f2902a7c948f5566be10cdc03f" name="a0d5ed2f2902a7c948f5566be10cdc03f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d5ed2f2902a7c948f5566be10cdc03f">&#9670;&#160;</a></span>putFile()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string Server::putFile </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classHttpMessage.html">HttpMessage</a>&#160;</td>
+          <td class="paramname"><em>msg</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function handles PUT requests. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns the response. </dd></dl>
 
 </div>
 </div>

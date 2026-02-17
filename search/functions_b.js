@@ -1,8 +1,6 @@
 var searchData=
 [
-  ['read_0',['read',['../classFileStorage.html#ad82f21c6c219f483c7d551f3d3ee20ed',1,'FileStorage']]],
-  ['report_1',['report',['../classLogger.html#a929077f65045db21b01627d6627c35b8',1,'Logger']]],
-  ['reportformat_2',['reportFormat',['../classLogger.html#a562f69731b732d87c9ca75847c499758',1,'Logger']]],
-  ['respondclient_3',['respondClient',['../classServer.html#a843db5c6154506193fd34d943d9e47d9',1,'Server']]],
-  ['respondclienthttps_4',['respondClientHttps',['../classServer.html#ab7637b81b8ed44f432a16decd881212d',1,'Server']]]
+  ['parsepermissions_0',['parsePermissions',['../classConfiguration.html#a9184486e2c7ec1e70a2af3e4f56632bc',1,'Configuration']]],
+  ['print_1',['print',['../classConfiguration.html#a5c96c0cb75e5b619068b0045605844a5',1,'Configuration::print()'],['../classHttpMessage.html#a71ffe91af15c4fbff8f1dfa890842570',1,'HttpMessage::print()']]],
+  ['putfile_2',['putFile',['../classServer.html#a0d5ed2f2902a7c948f5566be10cdc03f',1,'Server']]]
 ];

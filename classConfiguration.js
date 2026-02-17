@@ -3,7 +3,7 @@ var classConfiguration =
     [ "Configuration", "classConfiguration.html#a779947337bf652f0e773cb29f37f14ba", null ],
     [ "Configuration", "classConfiguration.html#ad5e464dc3698f19eac745bad5dca0ad2", null ],
     [ "askPermission", "classConfiguration.html#a1f92d8be64685974cc3c1da9833e6072", null ],
-    [ "authenticate", "classConfiguration.html#ab55d49db3b6f52867c314115a4aa3e3a", null ],
+    [ "authenticate", "classConfiguration.html#afee49d608bdc4b90b0fd1b8f6549e7bd", null ],
     [ "configString", "classConfiguration.html#a0335fda5e1eb81fa1d319175e00318f4", null ],
     [ "containsConfig", "classConfiguration.html#a557da68badb47492b74eef746a29913d", null ],
     [ "createPermissionTree", "classConfiguration.html#af1897c09b087fbf18b364529c5057a8a", null ],

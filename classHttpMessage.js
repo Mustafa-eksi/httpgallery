@@ -6,6 +6,7 @@ var classHttpMessage =
     [ "print", "classHttpMessage.html#a71ffe91af15c4fbff8f1dfa890842570", null ],
     [ "queriesToString", "classHttpMessage.html#aff4759abccfe98395ec34550e8768d53", null ],
     [ "address", "classHttpMessage.html#aac13002b254830b38357bfcb7eed8eaf", null ],
+    [ "content", "classHttpMessage.html#adf58ba7f4f5b279cf38e40caff6ca3d0", null ],
     [ "headers", "classHttpMessage.html#a4bb504dc2aa671b5dfbd0f3cc07a8a98", null ],
     [ "protocol_version", "classHttpMessage.html#af20e15af445bb234b154fed51e79ec11", null ],
     [ "queries", "classHttpMessage.html#abbec28aced26f3dcf7d7a3823c918fee", null ],

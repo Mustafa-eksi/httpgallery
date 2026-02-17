@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['operator_5b_5d_0',['operator[]',['../classConfiguration.html#a5138b93093617241a97fee52e6aaa61a',1,'Configuration']]]
+  ['logger_0',['Logger',['../classLogger.html',1,'Logger'],['../classLogger.html#a96dda6edb2fb696dbe757b2a47fbaece',1,'Logger::Logger()']]]
 ];

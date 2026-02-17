@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['errorpage_0',['ErrorPage',['../classHttpResponseBuilder.html#a21cb96161f4edf045b07f2f458c5c5a5',1,'HttpResponseBuilder']]],
-  ['exportmetrics_1',['exportMetrics',['../classLogger.html#a70cdee8f5a2105b451876e5ad87080ee',1,'Logger']]]
+  ['deletefile_0',['deleteFile',['../classServer.html#ad5713f4e1e2f51780fb984071e3ae02b',1,'Server']]]
 ];
