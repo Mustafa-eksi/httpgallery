@@ -108,5 +108,18 @@ int main() {
     }
     std::cout << "Test 13 Passed" << std::endl;
 
+    { // Test 14
+        auto msg = HttpMessage("GET / HTTP/1.1\r\n");
+        auto [start, end] = msg.getRange(100).value();
+        assert(start == 0 && end == 100);
+    }
+    std::cout << "Test 14 Passed" << std::endl;
+
+    { // Test 15
+        auto msg = genHttpMessage("bytes 99-102");
+        auto output = msg.getRange(100);
+        assert(!output.has_value());
+    }
+    std::cout << "Test 15 Passed" << std::endl;
     return 0;
 }

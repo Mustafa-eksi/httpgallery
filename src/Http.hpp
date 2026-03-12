@@ -92,6 +92,8 @@ public:
      * Use this function only for debug purposes.
      */
     void print();
+
+    bool operator==(const HttpMessage&) const = default;
 };
 
 /*

@@ -97,5 +97,29 @@ int main() {
                 && msg.queries["world"] == "42" && msg.queries["half-life"] == "3");
     }
     std::cout << "Test 14 passed" << std::endl;
+
+    { // Test 15
+        HttpMessage msg("POST / HTTP/1.1\r\n");
+        assert(msg.type == POST && msg.address == "/" && msg.protocol_version == "HTTP/1.1");
+    }
+    std::cout << "Test 15 passed" << std::endl;
+
+    { // Test 16
+        HttpMessage msg("PUT / HTTP/1.1\r\n");
+        assert(msg.type == PUT && msg.address == "/" && msg.protocol_version == "HTTP/1.1");
+    }
+    std::cout << "Test 16 passed" << std::endl;
+
+    { // Test 17
+        HttpMessage msg("DELETE / HTTP/1.1\r\n");
+        assert(msg.type == DELETE && msg.address == "/" && msg.protocol_version == "HTTP/1.1");
+    }
+    std::cout << "Test 17 passed" << std::endl;
+
+    { // Test 18
+        HttpMessage msg("PUT / HTTP/1.1\r\n\r\nHello World");
+        assert(msg.type == PUT && msg.address == "/" && msg.protocol_version == "HTTP/1.1" && msg.content == "Hello World");
+    }
+    std::cout << "Test 18 passed" << std::endl;
     return 0;
 }

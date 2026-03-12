@@ -2,7 +2,7 @@
 prefix=/usr
 BIN_DIR=$(prefix)/bin
 SHARE_DIR=$(prefix)/share
-CC=clang++
+CC=g++
 LIBS=libssl zlib
 DEBUG_CFLAGS=-Wall -Werror -Wextra -Wshadow -ggdb -std=c++23 -g \
 	   ${shell pkg-config --cflags $(LIBS)}
@@ -24,7 +24,8 @@ else
 endif
 all: format main
 
-TESTS=Http-getRange Http-HttpMessage Http-queriesToString Http-HtmlDecode
+TESTS=Http-getRange Http-HttpMessage Http-queriesToString Http-HtmlDecode \
+	  Http-parseMessages
 
 test: clean_test compile_test
 
@@ -38,6 +39,7 @@ clean_test:
 	rm -rf ./test/Http-HttpMessage
 	rm -rf ./test/Http-queriesToString
 	rm -rf ./test/Http-HtmlDecode
+	rm -rf ./test/Http-parseMessages
 	rm -f *.gcov
 	rm -f *.gcno
 
