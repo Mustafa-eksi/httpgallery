@@ -61,11 +61,11 @@ public:
  * operations.
  */
 class Configuration {
-    StructuredMap map;
     std::unique_ptr<PermissionNode> permission_root;
     std::unordered_map<std::string, std::string> users;
 
 public:
+    StructuredMap map;
     /**
      * @brief True if the config file includes errors.
      */
@@ -88,6 +88,20 @@ public:
      * @param config_path Path to the config file.
      */
     Configuration(std::string config_path);
+
+    static Configuration Default()
+    {
+        Configuration config;
+        config.map["config"]["UseHttps"]     = false;
+        config.map["config"]["Silent"]       = false;
+        config.map["config"]["NoMetrics"]    = true;
+        config.map["config"]["CacheFiles"]   = true;
+        config.map["config"]["Port"]         = 8000;
+        config.map["config"]["CacheSize"]    = 20;
+        config.map["config"]["Backlog"]      = 3;
+        config.map["config"]["LogsFilePath"] = ".";
+        return config;
+    }
 
     /**
      * @brief Converts s to appropriate ConfigVar.

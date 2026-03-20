@@ -26,6 +26,8 @@ template <typename T, typename U> class FileCache {
     std::list<Key> ordered_keys;
 
 public:
+    FileCache() { cap = 10; };
+
     FileCache(size_t capacity)
         : cap(capacity) { };
 

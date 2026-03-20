@@ -25,6 +25,8 @@ https://mustafa-eksi.github.io/httpgallery/
 - [X] File management
 - [ ] Package for Arch + Debian
 - [X] Docker image
+- [ ] Refactor
+    - [ ] Derived class way
 - [ ] HTTP2 support
 - [ ] HTTP3 support
 - [ ] Fuzz testing

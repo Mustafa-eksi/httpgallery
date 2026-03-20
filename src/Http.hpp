@@ -93,7 +93,7 @@ public:
      */
     void print();
 
-    bool operator==(const HttpMessage&) const = default;
+    bool operator==(const HttpMessage &) const = default;
 };
 
 /*

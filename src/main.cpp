@@ -3,8 +3,8 @@
 #include <utility>
 
 #include "Configuration.hpp"
+#include "FileServer.hpp"
 #include "Logging.hpp"
-#include "Server.hpp"
 
 const char HELP_MESSAGE[]
     = "Usage: httpgallery <path-to-folder> [options]\n"
@@ -46,17 +46,13 @@ void exit_handler(int s)
 int main(int argc, char **argv)
 {
     signal(SIGINT, &exit_handler);
-    std::string path = ".";
-    if (argc > 1 && !std::string(argv[1]).starts_with("-"))
-        path = argv[1];
+    Configuration config = Configuration::Default();
 
-    std::string logs_path = "./";
-    bool secure = false, silent = false, no_metrics = true, cache = true;
-    std::string cert_path, pkey_path;
-    int port                = 8000;
-    size_t cache_size       = 100;
-    int backlog             = 10;
-    std::string config_file = "";
+    if (argc > 1 && !std::string(argv[1]).starts_with("-"))
+        config.map["config"]["WorkingDirectory"] = argv[1];
+
+    std::string config_file;
+
     for (int i = 1; i < argc; i++) {
         std::string current_arg = argv[i];
         if (current_arg == "-h" || current_arg == "--help") {
@@ -70,9 +66,9 @@ int main(int argc, char **argv)
                 std::cout << HELP_MESSAGE;
                 return -1;
             }
-            cert_path = argv[i + 1];
-            pkey_path = argv[i + 2];
-            secure    = true;
+            config.map["config"]["CertificationPath"] = argv[i + 1];
+            config.map["config"]["PrivateKeyPath"]    = argv[i + 2];
+            config.map["config"]["UseHttps"]          = true;
 #else
             std::cout
                 << "\033[1;31mError: HTTPS feature is not available.\033[1;0m"
@@ -86,7 +82,7 @@ int main(int argc, char **argv)
                 std::cout << HELP_MESSAGE;
                 return -1;
             }
-            logs_path = argv[i + 1];
+            config.map["config"]["LogsFilePath"] = argv[i + 1];
         } else if (current_arg == "-c" || current_arg == "--config") {
             if (i + 1 >= argc) {
                 std::cout << "\033[1;31mError: Wrong flag usage\033[1;0m"
@@ -103,7 +99,7 @@ int main(int argc, char **argv)
                 return -1;
             }
             try {
-                port = std::stoi(argv[i + 1]);
+                config.map["config"]["Port"] = std::stoi(argv[i + 1]);
             } catch (std::out_of_range &e) {
                 std::cout << "\033[1;31mError: String to Integer conversion "
                              "error:\033[1;0m"
@@ -123,7 +119,7 @@ int main(int argc, char **argv)
                 return -1;
             }
             try {
-                backlog = std::stoi(argv[i + 1]);
+                config.map["config"]["Backlog"] = std::stoi(argv[i + 1]);
             } catch (std::out_of_range &e) {
                 std::cout << "\033[1;31mError: String to Integer conversion "
                              "error:\033[1;0m"
@@ -143,7 +139,7 @@ int main(int argc, char **argv)
                 return -1;
             }
             try {
-                cache_size = std::stoi(argv[i + 1]);
+                config.map["config"]["CacheSize"] = std::stoi(argv[i + 1]);
             } catch (std::out_of_range &e) {
                 std::cout << "\033[1;31mError: String to Integer conversion "
                              "error:\033[1;0m"
@@ -163,9 +159,9 @@ int main(int argc, char **argv)
                 return -1;
             }
             if (std::string(argv[i + 1]) == "true") {
-                cache = true;
+                config.map["config"]["CacheFiles"] = true;
             } else if (std::string(argv[i + 1]) == "false") {
-                cache = false;
+                config.map["config"]["CacheFiles"] = false;
             } else {
                 std::cout << "\033[1;31mError: Wrong flag usage\033[1;0m"
                           << std::endl;
@@ -173,69 +169,37 @@ int main(int argc, char **argv)
                 return -1;
             }
         } else if (current_arg == "--silent") {
-            silent = true;
+            config.map["config"]["Silent"] = true;
         } else if (current_arg == "--enable-metrics") {
-            no_metrics = false;
+            config.map["config"]["NoMetrics"] = false;
         }
     }
-    if (!std::filesystem::exists(path)) {
+    if (!std::filesystem::exists(config.configString("WorkingDirectory"))) {
         std::cout << "\033[1;31mError: specified path does not exist\033[1;0m"
                   << std::endl;
         std::cout << HELP_MESSAGE;
         return -2;
     }
 
-    Configuration config;
     if (!config_file.empty() && std::filesystem::exists(config_file)) {
         // TODO: Initialize configuration object
         config = Configuration(config_file);
     }
-    if (!config.faultyConfig) {
-        if (config.containsConfig("LogsFilePath"))
-            logs_path = config.configString("LogsFilePath");
-        if (config.containsConfig("CertificationPath"))
-            cert_path = config.configString("CertificationPath");
-
-        if (config.containsConfig("PkeyPath"))
-            pkey_path = config.configString("PkeyPath");
-        if (config.containsConfig("UseHttps"))
-            secure = config.configBool("UseHttps");
-        if (config.containsConfig("Silent"))
-            silent = config.configBool("Silent");
-        if (config.containsConfig("NoMetrics"))
-            no_metrics = config.configBool("NoMetrics");
-        if (config.containsConfig("CacheFiles"))
-            cache = config.configBool("CacheFiles");
-
-        if (config.containsConfig("Port"))
-            port = config.configInt("Port");
-        if (config.containsConfig("CacheSize"))
-            cache_size = config.configInt("CacheSize");
-        if (config.containsConfig("Backlog"))
-            backlog = config.configInt("Backlog");
-    } else {
-        std::cout << "\033[1;31mError: Error in the config file. Line: "
-                  << config.faultLine << "\033[1;0m" << std::endl;
-        return -1;
-    }
-    Logger logger
-        = Logger(logs_path + "httpgallery_logs.txt", true, !silent, no_metrics);
+    Logger logger = Logger(
+        config.configString("LogsFilePath") + "httpgallery_logs.txt", true,
+        !config.configBool("Silent"), config.configBool("NoMetrics"));
     logger.report("INFO", "Starting Server");
-    int ret                  = system("ffmpegthumbnailer -v > /dev/null 2>&1");
-    bool thumbnailer_present = (ret == 0);
-    if (secure) {
+    int ret = system("ffmpegthumbnailer -v > /dev/null 2>&1");
+    config.map["config"]["HasVideoThumbnailer"] = (ret == 0);
+    bool https                                  = config.configBool("UseHttps");
+    FileServer file_server = FileServer(logger, std::move(config));
+    shouldClose            = &file_server.shouldClose;
+    if (https) {
 #ifndef HTTPGALLERY_NO_OPENSSL
-        Server server
-            = Server(logger, std::move(config), path, port, cert_path,
-                     pkey_path, cache, cache_size, thumbnailer_present);
-        shouldClose = &server.shouldClose;
-        server.startHttps();
+        file_server.startHttps();
 #endif
     } else {
-        Server server = Server(logger, std::move(config), path, port, backlog,
-                               cache, cache_size, thumbnailer_present);
-        shouldClose   = &server.shouldClose;
-        server.start();
+        file_server.start();
     }
     return 0;
 }

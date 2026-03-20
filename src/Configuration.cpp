@@ -137,16 +137,22 @@ void Configuration::print()
 
 std::string Configuration::configString(std::string key)
 {
+    if (!map["config"].contains(key))
+        std::cout << key << " is not present in the config" << std::endl;
     return std::get<0>(map["config"][key]);
 }
 
 int Configuration::configInt(std::string key)
 {
+    if (!map["config"].contains(key))
+        std::cout << key << " is not present in the config" << std::endl;
     return std::get<1>(map["config"][key]);
 }
 
 bool Configuration::configBool(std::string key)
 {
+    if (!map["config"].contains(key))
+        std::cout << key << " is not present in the config" << std::endl;
     return std::get<2>(map["config"][key]);
 }
 

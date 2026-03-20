@@ -1,13 +1,9 @@
 #include "Configuration.hpp"
-#include "EmbeddedResources.hpp"
-#include "FileSystemInterface.hpp"
 #include "Http.hpp"
 #include "HttpResponseBuilder.hpp"
 #include "Logging.hpp"
-#include <atomic>
-#include <errno.h>
-#include <sys/resource.h>
 
+#include <atomic>
 #include <cassert>
 #include <cstdio>
 #include <cstring>
@@ -16,9 +12,11 @@
 #include <vector>
 
 #include <arpa/inet.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <netinet/in.h>
 #include <stdio.h>
+#include <sys/resource.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
@@ -32,37 +30,21 @@ const int HTTPGALLERY_SSL_CACHE_SIZE                  = 1024;
 const int HTTPGALLERY_SSL_TIMEOUT                     = 3600;
 #endif
 
-#ifndef HTTPGALLERY_RES_DIR
-#define HTTPGALLERY_RES_DIR "./res"
-#endif
-
-typedef enum PageType {
-    DirectoryPage,
-    FileDataPage,
-    IconData,
-} PageType;
-
-/**
- * @brief Includes inner workings of the http server
- */
 class Server {
+protected:
+    Logger &logger;
+    Configuration config;
+
+private:
 #ifndef HTTPGALLERY_NO_OPENSSL
     BIO *ssl_socket;
     SSL_CTX *ctx = NULL;
 #endif
-#ifndef HTTPGALLERY_EMBED_RESOURCES
-    std::string directory_icon_data, video_icon_data, text_icon_data;
-#endif
-    FileStorage file_storage;
     int socketfd;
     struct sockaddr_in server_address;
     socklen_t address_length;
     std::vector<std::thread> threads;
-    std::string path;
     std::string htmltemplate_list, htmltemplate_icon, htmltemplate_error;
-    bool https, cache_files, has_thumbnailer;
-    Logger &logger;
-    Configuration config;
 
 public:
     /**
@@ -74,52 +56,10 @@ public:
      * @brief Initialize a http server with https support.
      * @param logr Reference to the Logger.
      * @param conf Configuration object that is used for permission system.
-     * @param p Path to serve.
-     * @param cert_path Path to certificate chain file.
-     * @param pkey_path Path to private key file.
-     * @param caching Enables server side file caching.
-     * @param cache_size Sets file cache size (effective only when caching is
-     * true).
-     * @param thumbnailer Enables video thumbnailing (requires
-     * ffmpegthumbnailer)
      */
-    Server(Logger &logr, Configuration &&conf, std::string p, size_t port,
-           std::string cert_path, std::string pkey_path, bool caching = true,
-           size_t cache_size = 100, bool thumbnailer = false);
-
-    /**
-     * @brief Initialize a http server with https support.
-     * @param logr Reference to the Logger.
-     * @param conf Configuration object that is used for permission system.
-     * @param p Path to serve.
-     * @param port port number
-     * @param backlog sets socket's backlog (how many requests can there be in
-     * line to be processed)
-     * @param caching Enables server side file caching.
-     * @param cache_size Sets file cache size (effective only when caching is
-     * true).
-     * @param thumbnailer Enables video thumbnailing (requires
-     * ffmpegthumbnailer)
-     */
-    Server(Logger &logr, Configuration &&conf, std::string p = ".",
-           size_t port = 8000, int backlog = 100, bool caching = true,
-           size_t cache_size = 100, bool thumbnailer = false);
+    Server(Logger &logr, Configuration &&conf);
 
     ~Server();
-
-    /**
-     * @brief Returns appropriate page type based on http request.
-     * @param msg Http request.
-     * @return Returns the page type.
-     */
-    PageType choosePageType(HttpMessage msg);
-
-    /**
-     * @brief Generates video thumbnail.
-     * @param filepath path to the video file.
-     * @return Returns raw png data if succeeds, std::nullopt otherwise.
-     */
-    std::optional<std::string> generateVideoThumbnail(std::string filepath);
 
     /**
      * @brief Sanitizes the path against path traversal exploit.
@@ -128,27 +68,6 @@ public:
      * form), false otherwise.
      */
     bool isPathCanonical(std::string unsanitized_path);
-
-    /**
-     * @brief Generates http response according to msg.
-     * @param msg Http request.
-     * @return Html data.
-     */
-    std::string generateContent(HttpMessage msg);
-
-    /**
-     * @brief This function handles PUT requests.
-     *
-     * @return Returns the response.
-     */
-    std::string putFile(HttpMessage msg);
-
-    /**
-     * @brief This function handles DELETE requests.
-     *
-     * @return Returns the response.
-     */
-    std::string deleteFile(HttpMessage msg);
 
     /**
      * @brief Tries to get permission by authenticate request to browser.
@@ -161,6 +80,27 @@ public:
      */
     std::string negotiateAuth(HttpMessage msg, std::string filepath,
                               enum PermissionType pt);
+
+    /**
+     * @brief This function should handle GET requests.
+     * @param msg Http request.
+     * @return Html data.
+     */
+    virtual std::string handleGetRequest(HttpMessage msg) = 0;
+
+    /**
+     * @brief This function should handle PUT requests.
+     *
+     * @return Returns the response.
+     */
+    virtual std::string handlePutRequest(HttpMessage msg) = 0;
+
+    /**
+     * @brief This function should handle DELETE requests.
+     *
+     * @return Returns the response.
+     */
+    virtual std::string handleDeleteRequest(HttpMessage msg) = 0;
 
 #ifndef HTTPGALLERY_NO_OPENSSL
     /**

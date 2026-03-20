@@ -1,108 +1,135 @@
 #include "Server.hpp"
 
 #ifndef HTTPGALLERY_NO_OPENSSL
-Server::Server(Logger &logr, Configuration &&conf, std::string p, size_t port,
-               std::string cert_path, std::string pkey_path, bool caching,
-               size_t cache_size, bool thumbnailer)
-    : file_storage(cache_size, logr)
-    , cache_files(caching)
-    , has_thumbnailer(thumbnailer)
-    , logger(logr)
+Server::Server(Logger &logr, Configuration &&conf)
+    : logger(logr)
     , config(std::move(conf))
 {
-    this->https             = true;
-    this->htmltemplate_list = read_binary_to_string(
-        HTTPGALLERY_RES_DIR "/html/template-list-view.html");
-    this->htmltemplate_icon = read_binary_to_string(
-        HTTPGALLERY_RES_DIR "/html/template-icon-view.html");
-    this->htmltemplate_error = read_binary_to_string(
-        HTTPGALLERY_RES_DIR "/html/template-error.html");
-    this->path = p;
-#ifndef HTTPGALLERY_EMBED_RESOURCES
-    this->directory_icon_data = read_binary_to_string(
-        HTTPGALLERY_RES_DIR "/image/directory-icon.png");
-    this->video_icon_data
-        = read_binary_to_string(HTTPGALLERY_RES_DIR "/image/video-icon.png");
-    this->text_icon_data
-        = read_binary_to_string(HTTPGALLERY_RES_DIR "/image/text-icon.png");
-#endif
+    if (config.configBool("UseHttps")) {
+        // Setting up OpenSSL
+        ctx = SSL_CTX_new(TLS_server_method());
+        if (!ctx) {
+            ERR_print_errors_fp(stderr);
+            logger.report("ERROR", "Failed to create server ssl context");
+            return;
+        }
 
-    // Setting up OpenSSL
-    ctx = SSL_CTX_new(TLS_server_method());
-    if (!ctx) {
-        ERR_print_errors_fp(stderr);
-        logger.report("ERROR", "Failed to create server ssl context");
-        return;
-    }
+        if (!SSL_CTX_set_min_proto_version(ctx, TLS1_2_VERSION)) {
+            SSL_CTX_free(ctx);
+            ERR_print_errors_fp(stderr);
+            logger.report("ERROR", "Failed to set the minimum TLS version");
+            return;
+        }
+        long opts = SSL_OP_IGNORE_UNEXPECTED_EOF | SSL_OP_NO_RENEGOTIATION
+            | SSL_OP_CIPHER_SERVER_PREFERENCE;
+        SSL_CTX_set_options(ctx, opts);
 
-    if (!SSL_CTX_set_min_proto_version(ctx, TLS1_2_VERSION)) {
-        SSL_CTX_free(ctx);
-        ERR_print_errors_fp(stderr);
-        logger.report("ERROR", "Failed to set the minimum TLS version");
-        return;
-    }
-    long opts = SSL_OP_IGNORE_UNEXPECTED_EOF | SSL_OP_NO_RENEGOTIATION
-        | SSL_OP_CIPHER_SERVER_PREFERENCE;
-    SSL_CTX_set_options(ctx, opts);
+        if (SSL_CTX_use_certificate_chain_file(
+                ctx, config.configString("CertificationPath").c_str())
+            <= 0) {
+            SSL_CTX_free(ctx);
+            ERR_print_errors_fp(stderr);
+            logger.report("ERROR", "Failed to load the certificate");
+            return;
+        }
 
-    if (SSL_CTX_use_certificate_chain_file(ctx, cert_path.c_str()) <= 0) {
-        SSL_CTX_free(ctx);
-        ERR_print_errors_fp(stderr);
-        logger.report("ERROR", "Failed to load the certificate");
-        return;
-    }
+        if (SSL_CTX_use_PrivateKey_file(
+                ctx, config.configString("PrivateKeyPath").c_str(),
+                SSL_FILETYPE_PEM)
+            <= 0) {
+            SSL_CTX_free(ctx);
+            ERR_print_errors_fp(stderr);
+            logger.report("ERROR", "Failed to load the private key");
+            return;
+        }
 
-    if (SSL_CTX_use_PrivateKey_file(ctx, pkey_path.c_str(), SSL_FILETYPE_PEM)
-        <= 0) {
-        SSL_CTX_free(ctx);
-        ERR_print_errors_fp(stderr);
-        logger.report("ERROR", "Failed to load the private key");
-        return;
-    }
+        SSL_CTX_set_session_id_context(ctx, HTTPGALLERY_SSL_CACHE_ID,
+                                       sizeof(HTTPGALLERY_SSL_CACHE_ID));
+        SSL_CTX_set_session_cache_mode(ctx, SSL_SESS_CACHE_SERVER);
+        SSL_CTX_sess_set_cache_size(ctx, HTTPGALLERY_SSL_CACHE_SIZE);
+        SSL_CTX_set_timeout(ctx, HTTPGALLERY_SSL_TIMEOUT);
 
-    SSL_CTX_set_session_id_context(ctx, HTTPGALLERY_SSL_CACHE_ID,
-                                   sizeof(HTTPGALLERY_SSL_CACHE_ID));
-    SSL_CTX_set_session_cache_mode(ctx, SSL_SESS_CACHE_SERVER);
-    SSL_CTX_sess_set_cache_size(ctx, HTTPGALLERY_SSL_CACHE_SIZE);
-    SSL_CTX_set_timeout(ctx, HTTPGALLERY_SSL_TIMEOUT);
+        // Disable authentication of the client
+        SSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, NULL);
 
-    // Disable authentication of the client
-    SSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, NULL);
+        // FIXME: this is a hack, change this later
+        auto portstr     = std::to_string(config.configInt("Port"));
+        this->ssl_socket = BIO_new_accept(portstr.c_str());
+        if (!this->ssl_socket) {
+            SSL_CTX_free(ctx);
+            ERR_print_errors_fp(stderr);
+            logger.report("ERROR", "Failed to create a ssl socket");
+            return;
+        }
 
-    // FIXME: this is a hack, change this later
-    auto portstr     = std::to_string(port);
-    this->ssl_socket = BIO_new_accept(portstr.c_str());
-    if (!this->ssl_socket) {
-        SSL_CTX_free(ctx);
-        ERR_print_errors_fp(stderr);
-        logger.report("ERROR", "Failed to create a ssl socket");
-        return;
-    }
+        BIO_set_bind_mode(ssl_socket, BIO_BIND_REUSEADDR);
+        // First BIO_do_accept call doesn't accept a connection. It initiates
+        // the BIO acceptor.
+        if (BIO_do_accept(this->ssl_socket) <= 0) {
+            SSL_CTX_free(ctx);
+            ERR_print_errors_fp(stderr);
+            logger.report("ERROR", "Failed to set up bio acceptor socket");
+            return;
+        }
+    } else {
+        this->socketfd = socket(AF_INET, SOCK_STREAM, 0);
+        if (socketfd == -1) {
+            logger.report("ERROR", "Socket");
+            return;
+        }
+        // TODO: this might cause problems
+        int temp = 1;
+        if (setsockopt(socketfd, SOL_SOCKET, SO_REUSEADDR, &temp, sizeof(int))
+            == -1) {
+            logger.report("ERROR", "setsockopt");
+            return;
+        }
 
-    BIO_set_bind_mode(ssl_socket, BIO_BIND_REUSEADDR);
-    // First BIO_do_accept call doesn't accept a connection. It initiates the
-    // BIO acceptor.
-    if (BIO_do_accept(this->ssl_socket) <= 0) {
-        SSL_CTX_free(ctx);
-        ERR_print_errors_fp(stderr);
-        logger.report("ERROR", "Failed to set up bio acceptor socket");
-        return;
+        int status = fcntl(socketfd, F_SETFL,
+                           fcntl(socketfd, F_GETFL, 0) | O_NONBLOCK);
+        if (status == -1) {
+            logger.report("ERROR", "fcntl failed");
+            return;
+        }
+
+        server_address = (struct sockaddr_in){
+            .sin_family = AF_INET,
+            .sin_port = htons(config.configInt("Port")),
+            .sin_addr = (struct in_addr) {
+                .s_addr = htonl(INADDR_ANY),
+            },
+            .sin_zero = {}
+        };
+        address_length = sizeof(server_address);
+        if (bind(socketfd, (struct sockaddr *)&server_address,
+                 sizeof(server_address))
+            < 0) {
+            logger.report("ERROR", "bind");
+            return;
+        }
+        if (listen(socketfd, config.configInt("Backlog")) < 0) {
+            logger.report("ERROR", "listen");
+            return;
+        }
     }
 }
 
 void Server::respondClientHttps(SSL *ssl_handle, HttpMessage msg, std::mutex *m)
 {
     std::string response;
-    if (msg.address.ends_with("favicon.ico")) {
-        std::string image_data(directory_icon_data.begin(),
-                               directory_icon_data.end());
-        response = HttpResponseBuilder()
-                       .Status(200)
-                       .ContentType("image/png")
-                       .Content(image_data)
-                       .build();
-    } else {
-        response = generateContent(msg);
+    switch (msg.type) {
+    case GET:
+        response = handleGetRequest(msg);
+        break;
+    case PUT:
+        response = handlePutRequest(msg);
+        break;
+    case DELETE:
+        response = handleDeleteRequest(msg);
+        break;
+    default:
+        logger.report("ERROR", "Operation not supported");
+        break;
     }
     m->lock();
     if (SSL_write(ssl_handle, response.c_str(), response.length()) <= 0) {
@@ -192,30 +219,6 @@ void Server::startHttps()
 }
 #endif // HTTPGALLERY_NO_OPENSSL
 
-PageType Server::choosePageType(HttpMessage msg)
-{
-    if (msg.queries.contains("icon"))
-        return IconData;
-    std::string decoded_path = path + msg.address;
-    bool is_dir              = std::filesystem::is_directory(decoded_path);
-    return is_dir ? DirectoryPage : FileDataPage;
-}
-
-std::optional<std::string> Server::generateVideoThumbnail(std::string filepath)
-{
-    std::string thumbnail_path
-        = "/tmp/httpgallery-" + base64_hash(filepath) + ".png";
-    if (access(thumbnail_path.c_str(), R_OK) == 0)
-        return read_binary_to_string(thumbnail_path);
-
-    std::string command = "ffmpegthumbnailer -i\"" + filepath + "\" -o"
-        + thumbnail_path + " -m -a";
-    system(command.c_str());
-    if (access(thumbnail_path.c_str(), R_OK) == 0)
-        return read_binary_to_string(thumbnail_path);
-    return std::nullopt;
-}
-
 bool Server::isPathCanonical(std::string unsanitized_path)
 {
     try {
@@ -229,131 +232,6 @@ bool Server::isPathCanonical(std::string unsanitized_path)
     } catch (std::filesystem::filesystem_error &e) {
         return false;
     }
-}
-
-std::string Server::generateContent(HttpMessage msg)
-{
-    PageType pt = this->choosePageType(msg);
-    if (path.back() == '/' && path.size() > 1)
-        path = path.substr(0, path.length() - 1);
-
-    auto filepath = path + msg.address;
-    // This responds with 404 rather than 403 because 403 can leak existence of
-    // some files
-    if (access(filepath.c_str(), R_OK) != 0
-        || (path != "." && !isPathCanonical(filepath)))
-        return HttpResponseBuilder().ErrorPage(htmltemplate_error, 404).build();
-
-    auto r = negotiateAuth(msg, filepath, P_READ);
-    if (!r.empty())
-        return r;
-
-    std::string comp = "";
-    if (msg.headers.contains("Accept-Encoding")) {
-        comp = msg.headers["Accept-Encoding"];
-    }
-    if (pt == FileDataPage) {
-        uintmax_t filesize = std::filesystem::file_size(filepath);
-        auto range_opt     = msg.getRange(filesize);
-        if (!range_opt.has_value()) {
-            return HttpResponseBuilder()
-                .ErrorPage(htmltemplate_error, 416)
-                .SetHeader("Content-Range",
-                           "bytes */" + std::to_string(filesize))
-                .build();
-        }
-        auto [range_start, range_end] = range_opt.value();
-        int status = (range_end - range_start) == filesize ? 200 : 206;
-        std::string mimetype = get_mime_type(msg.address);
-        std::string file_content;
-
-        logger.changeMetric("File Data Sent", filesize);
-        if (msg.type == GET) {
-            if (cache_files)
-                file_content
-                    = file_storage.read(filepath, range_start, range_end);
-            else
-                file_content
-                    = read_binary_to_string(filepath, range_start, range_end);
-        } else if (msg.type == HEAD) {
-            file_content = "";
-        }
-
-        return HttpResponseBuilder()
-            .Status(status)
-            .ContentType(mimetype)
-            .ContentRange(range_start, range_end)
-            .Content(file_content)
-            .CompressContent(comp)
-            .build();
-    } else if (pt == DirectoryPage) {
-        bool list_view = msg.queries.contains("list-view")
-            && msg.queries["list-view"] == "true";
-        std::string dir_page_contents = list_contents(
-            msg.address, filepath, msg.queriesToString(), list_view);
-        std::string current_path = msg.address.substr(
-            0, msg.address.length() - 1); // exclude last char
-
-        auto slash_pos = current_path.rfind('/');
-        std::string up = "/";
-        if (slash_pos != std::string::npos)
-            up = current_path.substr(0, slash_pos + 1);
-        std::string final_content = string_format(
-            list_view ? this->htmltemplate_list : this->htmltemplate_icon,
-            filepath.c_str(), up, dir_page_contents.c_str());
-        uintmax_t content_length = final_content.length();
-        if (msg.type == HEAD)
-            final_content = "";
-        return HttpResponseBuilder()
-            .Status(200)
-            .ContentType("text/html; charset=utf-8")
-            .Content(final_content)
-            .ContentLength(content_length) // Same as one in above
-            .CompressContent(comp)
-            .build();
-    } else if (pt == IconData) {
-        if (msg.queries["icon"] == "video") {
-            std::string image_data;
-            if (has_thumbnailer) {
-                auto thumb_opt = generateVideoThumbnail(filepath);
-                if (thumb_opt.has_value())
-                    image_data = thumb_opt.value();
-                else
-                    logger.report("ERROR", "Thumbnailer failed");
-            }
-
-            if (image_data.empty())
-                image_data = std::string(video_icon_data.begin(),
-                                         video_icon_data.end());
-            return HttpResponseBuilder()
-                .Status(200)
-                .ContentType("image/png")
-                .Content(image_data)
-                .CompressContent(comp)
-                .build();
-        } else if (msg.queries["icon"] == "directory") {
-            std::string image_data(directory_icon_data.begin(),
-                                   directory_icon_data.end());
-            return HttpResponseBuilder()
-                .Status(200)
-                .ContentType("image/png")
-                .Content(image_data)
-                .CompressContent(comp)
-                .build();
-        } else {
-            std::string image_data(text_icon_data.begin(),
-                                   text_icon_data.end());
-            return HttpResponseBuilder()
-                .Status(200)
-                .ContentType("image/png")
-                .Content(image_data)
-                .CompressContent(comp)
-                .build();
-        }
-    } else {
-        logger.report("ERROR", "Invalid page type");
-    }
-    return "";
 }
 
 std::string Server::negotiateAuth(HttpMessage msg, std::string filepath,
@@ -391,138 +269,22 @@ std::string Server::negotiateAuth(HttpMessage msg, std::string filepath,
             .build();
 }
 
-std::string Server::putFile(HttpMessage msg)
-{
-    if (msg.type != PUT)
-        return HttpResponseBuilder().ErrorPage(htmltemplate_error, 404).build();
-
-    // FIXME: setting path to "." enables non-canonical paths
-    auto filepath_   = std::filesystem::path(path + msg.address);
-    auto parent_path = filepath_.parent_path().string();
-    auto filepath    = filepath_.string();
-
-    // This responds with 404 rather than 403 because 403 can leak existence of
-    // some files
-    if (access(parent_path.c_str(), R_OK) != 0)
-        return HttpResponseBuilder().ErrorPage(htmltemplate_error, 404).build();
-
-    auto r = negotiateAuth(msg, parent_path, P_WRITE);
-    if (!r.empty())
-        return r;
-
-    std::ofstream f(filepath);
-    f << msg.content;
-    f.close();
-
-    return HttpResponseBuilder().Status(204).build();
-}
-
-std::string Server::deleteFile(HttpMessage msg)
-{
-    if (msg.type != DELETE || !std::filesystem::exists(path + msg.address))
-        return HttpResponseBuilder().ErrorPage(htmltemplate_error, 404).build();
-    auto filepath_   = std::filesystem::canonical(path + msg.address);
-    auto parent_path = filepath_.parent_path().string();
-    auto filepath    = filepath_.string();
-
-    // This responds with 404 rather than 403 because 403 can leak existence of
-    // some files
-    if (access(parent_path.c_str(), R_OK) != 0)
-        return HttpResponseBuilder().ErrorPage(htmltemplate_error, 404).build();
-    auto r = negotiateAuth(msg, filepath, P_DELETE);
-    if (!r.empty())
-        return r;
-
-    if (std::remove(filepath.c_str()) != 0)
-        return HttpResponseBuilder().ErrorPage(htmltemplate_error, 404).build();
-    else
-        return HttpResponseBuilder().Status(204).build();
-}
-
-Server::Server(Logger &logr, Configuration &&conf, std::string p, size_t port,
-               int backlog, bool caching, size_t cache_size, bool thumbnailer)
-    : file_storage(cache_size, logr)
-    , cache_files(caching)
-    , has_thumbnailer(thumbnailer)
-    , logger(logr)
-    , config(std::move(conf))
-{
-    this->https             = false;
-    this->htmltemplate_list = read_binary_to_string(
-        HTTPGALLERY_RES_DIR "/html/template-list-view.html");
-    this->htmltemplate_icon = read_binary_to_string(
-        HTTPGALLERY_RES_DIR "/html/template-icon-view.html");
-    this->htmltemplate_error = read_binary_to_string(
-        HTTPGALLERY_RES_DIR "/html/template-error.html");
-    this->path = p;
-#ifndef HTTPGALLERY_EMBED_RESOURCES
-    this->directory_icon_data = read_binary_to_string(
-        HTTPGALLERY_RES_DIR "/image/directory-icon.png");
-    this->video_icon_data
-        = read_binary_to_string(HTTPGALLERY_RES_DIR "/image/video-icon.png");
-    this->text_icon_data
-        = read_binary_to_string(HTTPGALLERY_RES_DIR "/image/text-icon.png");
-#endif
-
-    this->socketfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (socketfd == -1) {
-        logger.report("ERROR", "Socket");
-        return;
-    }
-    // TODO: this might cause problems
-    int temp = 1;
-    if (setsockopt(socketfd, SOL_SOCKET, SO_REUSEADDR, &temp, sizeof(int))
-        == -1) {
-        logger.report("ERROR", "setsockopt");
-        return;
-    }
-
-    int status
-        = fcntl(socketfd, F_SETFL, fcntl(socketfd, F_GETFL, 0) | O_NONBLOCK);
-    if (status == -1) {
-        logger.report("ERROR", "fcntl failed");
-        return;
-    }
-
-    server_address = (struct sockaddr_in){
-        .sin_family = AF_INET,
-        .sin_port = htons(port),
-        .sin_addr = (struct in_addr) {
-            .s_addr = htonl(INADDR_ANY),
-        },
-        .sin_zero = {}
-    };
-    address_length = sizeof(server_address);
-    if (bind(socketfd, (struct sockaddr *)&server_address,
-             sizeof(server_address))
-        < 0) {
-        logger.report("ERROR", "bind");
-        return;
-    }
-    if (listen(socketfd, backlog) < 0) {
-        logger.report("ERROR", "listen");
-        return;
-    }
-}
-
 void Server::respondClient(int client_socket, HttpMessage msg, std::mutex *m)
 {
     std::string response;
-    if (msg.address.ends_with("favicon.ico")) {
-        std::string image_data(directory_icon_data.begin(),
-                               directory_icon_data.end());
-        response = HttpResponseBuilder()
-                       .Status(200)
-                       .ContentType("image/png")
-                       .Content(image_data)
-                       .build();
-    } else {
-        if (msg.type == GET)
-            response = generateContent(msg);
-        else if (msg.type == PUT)
-            response = putFile(msg);
-        else if (msg.type == DELETE)
-            response = deleteFile(msg);
+    switch (msg.type) {
+    case GET:
+        response = handleGetRequest(msg);
+        break;
+    case PUT:
+        response = handlePutRequest(msg);
+        break;
+    case DELETE:
+        response = handleDeleteRequest(msg);
+        break;
+    default:
+        logger.report("ERROR", "Operation not supported");
+        break;
     }
     m->lock();
     if (send(client_socket, response.c_str(), response.length(), MSG_NOSIGNAL)
@@ -638,7 +400,7 @@ void Server::start()
 
 Server::~Server()
 {
-    if (https)
+    if (config.configBool("UseHttps"))
         SSL_CTX_free(ctx);
     else
         close(socketfd);

@@ -63,7 +63,8 @@ pkey.pem:
 chain.pem: pkey.pem
 	openssl req -x509 -new -key pkey.pem -days 36500 -subj '/CN=localhost' -out chain.pem
 
-SRCS=Configuration Http HttpResponseBuilder Logging Server main FileSystemInterface
+SRCS=Configuration Http HttpResponseBuilder Logging Server main FileSystemInterface \
+	 FileServer
 OBJS = $(SRCS:%=./build/%.oxx)
 
 build:
