@@ -93,45 +93,41 @@ $(document).ready(function(){initNavTree('classServer.html',''); initResizable()
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classServer-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">Server Class Reference</div></div>
+  <div class="headertitle"><div class="title">Server Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div></div>
 </div><!--header-->
 <div class="contents">
-
-<p>Includes inner workings of the http server.  
- <a href="classServer.html#details">More...</a></p>
-
-<p><code>#include &lt;<a class="el" href="Server_8hpp_source.html">Server.hpp</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for Server:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="classServer.png" usemap="#Server_map" alt=""/>
+  <map id="Server_map" name="Server_map">
+<area href="classFileServer.html" title="Includes inner workings of the http server." alt="FileServer" shape="rect" coords="0,56,72,80"/>
+  </map>
+</div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a980b924af53e57cc30bcad759e6827aa"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#a980b924af53e57cc30bcad759e6827aa">Server</a> (<a class="el" href="classLogger.html">Logger</a> &amp;logr, <a class="el" href="classConfiguration.html">Configuration</a> &amp;&amp;conf, std::string p, size_t port, std::string cert_path, std::string pkey_path, bool caching=true, size_t cache_size=100, bool thumbnailer=false)</td></tr>
-<tr class="memdesc:a980b924af53e57cc30bcad759e6827aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a http server with https support.  <br /></td></tr>
-<tr class="separator:a980b924af53e57cc30bcad759e6827aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a993f10d448681a9ff9bab23a93d2fa3b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#a993f10d448681a9ff9bab23a93d2fa3b">Server</a> (<a class="el" href="classLogger.html">Logger</a> &amp;logr, <a class="el" href="classConfiguration.html">Configuration</a> &amp;&amp;conf, std::string p=&quot;.&quot;, size_t port=8000, int backlog=100, bool caching=true, size_t cache_size=100, bool thumbnailer=false)</td></tr>
-<tr class="memdesc:a993f10d448681a9ff9bab23a93d2fa3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a http server with https support.  <br /></td></tr>
-<tr class="separator:a993f10d448681a9ff9bab23a93d2fa3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2531cb29d24d03e2b171f4a819e3f035"><td class="memItemLeft" align="right" valign="top">PageType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#a2531cb29d24d03e2b171f4a819e3f035">choosePageType</a> (<a class="el" href="classHttpMessage.html">HttpMessage</a> msg)</td></tr>
-<tr class="memdesc:a2531cb29d24d03e2b171f4a819e3f035"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns appropriate page type based on http request.  <br /></td></tr>
-<tr class="separator:a2531cb29d24d03e2b171f4a819e3f035"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2810b3e04cdcd9f052852c52b9eddea9"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#a2810b3e04cdcd9f052852c52b9eddea9">generateVideoThumbnail</a> (std::string filepath)</td></tr>
-<tr class="memdesc:a2810b3e04cdcd9f052852c52b9eddea9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates video thumbnail.  <br /></td></tr>
-<tr class="separator:a2810b3e04cdcd9f052852c52b9eddea9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe20c91088ed44806ac955278d89a457"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#afe20c91088ed44806ac955278d89a457">Server</a> (<a class="el" href="classLogger.html">Logger</a> &amp;logr, <a class="el" href="classConfiguration.html">Configuration</a> &amp;&amp;conf)</td></tr>
+<tr class="memdesc:afe20c91088ed44806ac955278d89a457"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a http server with https support.  <br /></td></tr>
+<tr class="separator:afe20c91088ed44806ac955278d89a457"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab435526536bb20b407cf68810f2ad9d3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#ab435526536bb20b407cf68810f2ad9d3">isPathCanonical</a> (std::string unsanitized_path)</td></tr>
 <tr class="memdesc:ab435526536bb20b407cf68810f2ad9d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sanitizes the path against path traversal exploit.  <br /></td></tr>
 <tr class="separator:ab435526536bb20b407cf68810f2ad9d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f77bc4c350e94eb8bf2fd943b41aa02"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#a0f77bc4c350e94eb8bf2fd943b41aa02">generateContent</a> (<a class="el" href="classHttpMessage.html">HttpMessage</a> msg)</td></tr>
-<tr class="memdesc:a0f77bc4c350e94eb8bf2fd943b41aa02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates http response according to msg.  <br /></td></tr>
-<tr class="separator:a0f77bc4c350e94eb8bf2fd943b41aa02"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d5ed2f2902a7c948f5566be10cdc03f"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#a0d5ed2f2902a7c948f5566be10cdc03f">putFile</a> (<a class="el" href="classHttpMessage.html">HttpMessage</a> msg)</td></tr>
-<tr class="memdesc:a0d5ed2f2902a7c948f5566be10cdc03f"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function handles PUT requests.  <br /></td></tr>
-<tr class="separator:a0d5ed2f2902a7c948f5566be10cdc03f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5713f4e1e2f51780fb984071e3ae02b"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#ad5713f4e1e2f51780fb984071e3ae02b">deleteFile</a> (<a class="el" href="classHttpMessage.html">HttpMessage</a> msg)</td></tr>
-<tr class="memdesc:ad5713f4e1e2f51780fb984071e3ae02b"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function handles DELETE requests.  <br /></td></tr>
-<tr class="separator:ad5713f4e1e2f51780fb984071e3ae02b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64df535ca063b2d86796e84257e5d1a6"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#a64df535ca063b2d86796e84257e5d1a6">negotiateAuth</a> (<a class="el" href="classHttpMessage.html">HttpMessage</a> msg, std::string filepath, enum PermissionType pt)</td></tr>
 <tr class="memdesc:a64df535ca063b2d86796e84257e5d1a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tries to get permission by authenticate request to browser.  <br /></td></tr>
 <tr class="separator:a64df535ca063b2d86796e84257e5d1a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac89d2403d6116bf8c14db901cd529fee"><td class="memItemLeft" align="right" valign="top">virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#ac89d2403d6116bf8c14db901cd529fee">handleGetRequest</a> (<a class="el" href="classHttpMessage.html">HttpMessage</a> msg)=0</td></tr>
+<tr class="memdesc:ac89d2403d6116bf8c14db901cd529fee"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function should handle GET requests.  <br /></td></tr>
+<tr class="separator:ac89d2403d6116bf8c14db901cd529fee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca19e6c3782499d5e7cbaf3ba9b1554a"><td class="memItemLeft" align="right" valign="top">virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#aca19e6c3782499d5e7cbaf3ba9b1554a">handlePutRequest</a> (<a class="el" href="classHttpMessage.html">HttpMessage</a> msg)=0</td></tr>
+<tr class="memdesc:aca19e6c3782499d5e7cbaf3ba9b1554a"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function should handle PUT requests.  <br /></td></tr>
+<tr class="separator:aca19e6c3782499d5e7cbaf3ba9b1554a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62ee0ba51138414535d1791179428ae6"><td class="memItemLeft" align="right" valign="top">virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#a62ee0ba51138414535d1791179428ae6">handleDeleteRequest</a> (<a class="el" href="classHttpMessage.html">HttpMessage</a> msg)=0</td></tr>
+<tr class="memdesc:a62ee0ba51138414535d1791179428ae6"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function should handle DELETE requests.  <br /></td></tr>
+<tr class="separator:a62ee0ba51138414535d1791179428ae6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab7637b81b8ed44f432a16decd881212d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classServer.html#ab7637b81b8ed44f432a16decd881212d">respondClientHttps</a> (SSL *ssl_handle, <a class="el" href="classHttpMessage.html">HttpMessage</a> msg, std::mutex *m)</td></tr>
 <tr class="memdesc:ab7637b81b8ed44f432a16decd881212d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calls generateContent and sends the result to client.  <br /></td></tr>
 <tr class="separator:ab7637b81b8ed44f432a16decd881212d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -159,12 +155,19 @@ Public Attributes</h2></td></tr>
 std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>shouldClose</b> = false</td></tr>
 <tr class="memdesc:a273814ce438a114c7e8a72af3ecfa3da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gracefully closes the server when it is set to true. <br /></td></tr>
 <tr class="separator:a273814ce438a114c7e8a72af3ecfa3da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
+<tr class="memitem:a3c1f558b24a485a61822b50d3a02192a"><td class="memItemLeft" align="right" valign="top"><a id="a3c1f558b24a485a61822b50d3a02192a" name="a3c1f558b24a485a61822b50d3a02192a"></a>
+<a class="el" href="classLogger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>logger</b></td></tr>
+<tr class="separator:a3c1f558b24a485a61822b50d3a02192a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08b27061b1d869d9a547248429b288e6"><td class="memItemLeft" align="right" valign="top"><a id="a08b27061b1d869d9a547248429b288e6" name="a08b27061b1d869d9a547248429b288e6"></a>
+<a class="el" href="classConfiguration.html">Configuration</a>&#160;</td><td class="memItemRight" valign="bottom"><b>config</b></td></tr>
+<tr class="separator:a08b27061b1d869d9a547248429b288e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Includes inner workings of the http server. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a980b924af53e57cc30bcad759e6827aa" name="a980b924af53e57cc30bcad759e6827aa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a980b924af53e57cc30bcad759e6827aa">&#9670;&#160;</a></span>Server() <span class="overload">[1/2]</span></h2>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="afe20c91088ed44806ac955278d89a457" name="afe20c91088ed44806ac955278d89a457"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe20c91088ed44806ac955278d89a457">&#9670;&#160;</a></span>Server()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -179,49 +182,7 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="classConfiguration.html">Configuration</a> &amp;&amp;&#160;</td>
-          <td class="paramname"><em>conf</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>p</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>port</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>cert_path</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>pkey_path</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>caching</em> = <code>true</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>cache_size</em> = <code>100</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>thumbnailer</em> = <code>false</code>&#160;</td>
+          <td class="paramname"><em>conf</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -236,91 +197,6 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>
   <table class="params">
     <tr><td class="paramname">logr</td><td>Reference to the <a class="el" href="classLogger.html" title="Custom logging class that also supports metrics.">Logger</a>. </td></tr>
     <tr><td class="paramname">conf</td><td><a class="el" href="classConfiguration.html" title="Configuration class manages the configuration file and related operations.">Configuration</a> object that is used for permission system. </td></tr>
-    <tr><td class="paramname">p</td><td>Path to serve. </td></tr>
-    <tr><td class="paramname">cert_path</td><td>Path to certificate chain file. </td></tr>
-    <tr><td class="paramname">pkey_path</td><td>Path to private key file. </td></tr>
-    <tr><td class="paramname">caching</td><td>Enables server side file caching. </td></tr>
-    <tr><td class="paramname">cache_size</td><td>Sets file cache size (effective only when caching is true). </td></tr>
-    <tr><td class="paramname">thumbnailer</td><td>Enables video thumbnailing (requires ffmpegthumbnailer) </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a993f10d448681a9ff9bab23a93d2fa3b" name="a993f10d448681a9ff9bab23a93d2fa3b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a993f10d448681a9ff9bab23a93d2fa3b">&#9670;&#160;</a></span>Server() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Server::Server </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classLogger.html">Logger</a> &amp;&#160;</td>
-          <td class="paramname"><em>logr</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classConfiguration.html">Configuration</a> &amp;&amp;&#160;</td>
-          <td class="paramname"><em>conf</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>p</em> = <code>&quot;.&quot;</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>port</em> = <code>8000</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>backlog</em> = <code>100</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>caching</em> = <code>true</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>cache_size</em> = <code>100</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>thumbnailer</em> = <code>false</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Initialize a http server with https support. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">logr</td><td>Reference to the <a class="el" href="classLogger.html" title="Custom logging class that also supports metrics.">Logger</a>. </td></tr>
-    <tr><td class="paramname">conf</td><td><a class="el" href="classConfiguration.html" title="Configuration class manages the configuration file and related operations.">Configuration</a> object that is used for permission system. </td></tr>
-    <tr><td class="paramname">p</td><td>Path to serve. </td></tr>
-    <tr><td class="paramname">port</td><td>port number </td></tr>
-    <tr><td class="paramname">backlog</td><td>sets socket's backlog (how many requests can there be in line to be processed) </td></tr>
-    <tr><td class="paramname">caching</td><td>Enables server side file caching. </td></tr>
-    <tr><td class="paramname">cache_size</td><td>Sets file cache size (effective only when caching is true). </td></tr>
-    <tr><td class="paramname">thumbnailer</td><td>Enables video thumbnailing (requires ffmpegthumbnailer) </td></tr>
   </table>
   </dd>
 </dl>
@@ -328,71 +204,62 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a2531cb29d24d03e2b171f4a819e3f035" name="a2531cb29d24d03e2b171f4a819e3f035"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2531cb29d24d03e2b171f4a819e3f035">&#9670;&#160;</a></span>choosePageType()</h2>
+<a id="a62ee0ba51138414535d1791179428ae6" name="a62ee0ba51138414535d1791179428ae6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62ee0ba51138414535d1791179428ae6">&#9670;&#160;</a></span>handleDeleteRequest()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">PageType Server::choosePageType </td>
+          <td class="memname">virtual std::string Server::handleDeleteRequest </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classHttpMessage.html">HttpMessage</a>&#160;</td>
           <td class="paramname"><em>msg</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Returns appropriate page type based on http request. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">msg</td><td>Http request. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns the page type. </dd></dl>
-
-</div>
-</div>
-<a id="ad5713f4e1e2f51780fb984071e3ae02b" name="ad5713f4e1e2f51780fb984071e3ae02b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad5713f4e1e2f51780fb984071e3ae02b">&#9670;&#160;</a></span>deleteFile()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string Server::deleteFile </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classHttpMessage.html">HttpMessage</a>&#160;</td>
-          <td class="paramname"><em>msg</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>This function handles DELETE requests. </p>
+<p>This function should handle DELETE requests. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns the response. </dd></dl>
 
+<p>Implemented in <a class="el" href="classFileServer.html#a6e76e375eca248579ea7a14fe4bff7ff">FileServer</a>.</p>
+
 </div>
 </div>
-<a id="a0f77bc4c350e94eb8bf2fd943b41aa02" name="a0f77bc4c350e94eb8bf2fd943b41aa02"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0f77bc4c350e94eb8bf2fd943b41aa02">&#9670;&#160;</a></span>generateContent()</h2>
+<a id="ac89d2403d6116bf8c14db901cd529fee" name="ac89d2403d6116bf8c14db901cd529fee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac89d2403d6116bf8c14db901cd529fee">&#9670;&#160;</a></span>handleGetRequest()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::string Server::generateContent </td>
+          <td class="memname">virtual std::string Server::handleGetRequest </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classHttpMessage.html">HttpMessage</a>&#160;</td>
           <td class="paramname"><em>msg</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Generates http response according to msg. </p>
+<p>This function should handle GET requests. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">msg</td><td>Http request. </td></tr>
@@ -401,32 +268,38 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Html data. </dd></dl>
 
+<p>Implemented in <a class="el" href="classFileServer.html#aa11a77ffd3203019f4f0ba4776292a94">FileServer</a>.</p>
+
 </div>
 </div>
-<a id="a2810b3e04cdcd9f052852c52b9eddea9" name="a2810b3e04cdcd9f052852c52b9eddea9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2810b3e04cdcd9f052852c52b9eddea9">&#9670;&#160;</a></span>generateVideoThumbnail()</h2>
+<a id="aca19e6c3782499d5e7cbaf3ba9b1554a" name="aca19e6c3782499d5e7cbaf3ba9b1554a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca19e6c3782499d5e7cbaf3ba9b1554a">&#9670;&#160;</a></span>handlePutRequest()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::optional&lt; std::string &gt; Server::generateVideoThumbnail </td>
+          <td class="memname">virtual std::string Server::handlePutRequest </td>
           <td>(</td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>filepath</em></td><td>)</td>
+          <td class="paramtype"><a class="el" href="classHttpMessage.html">HttpMessage</a>&#160;</td>
+          <td class="paramname"><em>msg</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Generates video thumbnail. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">filepath</td><td>path to the video file. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns raw png data if succeeds, std::nullopt otherwise. </dd></dl>
+<p>This function should handle PUT requests. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns the response. </dd></dl>
+
+<p>Implemented in <a class="el" href="classFileServer.html#afaa2c0180de9ea2d763c00d54805ce95">FileServer</a>.</p>
 
 </div>
 </div>
@@ -499,27 +372,6 @@ std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns empty string when successful. </dd></dl>
-
-</div>
-</div>
-<a id="a0d5ed2f2902a7c948f5566be10cdc03f" name="a0d5ed2f2902a7c948f5566be10cdc03f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0d5ed2f2902a7c948f5566be10cdc03f">&#9670;&#160;</a></span>putFile()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string Server::putFile </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classHttpMessage.html">HttpMessage</a>&#160;</td>
-          <td class="paramname"><em>msg</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>This function handles PUT requests. </p>
-<dl class="section return"><dt>Returns</dt><dd>Returns the response. </dd></dl>
 
 </div>
 </div>

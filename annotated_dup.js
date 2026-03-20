@@ -3,6 +3,7 @@ var annotated_dup =
     [ "Configuration", "classConfiguration.html", "classConfiguration" ],
     [ "FileCache", "classFileCache.html", null ],
     [ "FileEntryT", "structFileEntryT.html", null ],
+    [ "FileServer", "classFileServer.html", "classFileServer" ],
     [ "FileStorage", "classFileStorage.html", "classFileStorage" ],
     [ "HttpMessage", "classHttpMessage.html", "classHttpMessage" ],
     [ "HttpResponseBuilder", "classHttpResponseBuilder.html", "classHttpResponseBuilder" ],

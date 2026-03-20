@@ -1,7 +1,7 @@
 var searchData=
 [
   ['changemetric_0',['changeMetric',['../classLogger.html#a743698b463dfc6abb53f55caab09cf4b',1,'Logger']]],
-  ['choosepagetype_1',['choosePageType',['../classServer.html#a2531cb29d24d03e2b171f4a819e3f035',1,'Server']]],
+  ['choosepagetype_1',['choosePageType',['../classFileServer.html#a605f356399d9a46446833d5e8c49fa59',1,'FileServer']]],
   ['compresscontent_2',['CompressContent',['../classHttpResponseBuilder.html#a2f25b4a7139466b6bf5f1255f766ad7b',1,'HttpResponseBuilder']]],
   ['configstring_3',['configString',['../classConfiguration.html#a0335fda5e1eb81fa1d319175e00318f4',1,'Configuration']]],
   ['configuration_4',['Configuration',['../classConfiguration.html#a779947337bf652f0e773cb29f37f14ba',1,'Configuration::Configuration()'],['../classConfiguration.html#ad5e464dc3698f19eac745bad5dca0ad2',1,'Configuration::Configuration(std::string config_path)']]],
